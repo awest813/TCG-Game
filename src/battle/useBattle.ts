@@ -32,6 +32,7 @@ export const useBattle = (pDeck: string[], oDeck: string[], modifiers: BattleMod
           }, 1500);
           return () => clearTimeout(timer);
       }
+      return undefined;
   }, [battleState.isPlayerTurn, battleState.winner]);
 
   return { battleState, playCard, attack, endTurn };

@@ -33,6 +33,7 @@ export interface BattleState {
   log: string[];
   winner?: 'player' | 'opponent';
   modifiers: BattleModifier[];
+  field?: string | null;
 }
 
 export class BattleEngine {
@@ -110,11 +111,11 @@ export class BattleEngine {
             id: card.id,
             cardId: card.id,
             instanceId: Math.random().toString(36).substr(2, 9),
-            currentHealth: card.health,
-            maxHealth: card.health,
-            baseMaxHealth: card.health,
-            attack: card.attack,
-            baseAttack: card.attack,
+            currentHealth: card.health ?? 0,
+            maxHealth: card.health ?? 0,
+            baseMaxHealth: card.health ?? 0,
+            attack: card.attack ?? 0,
+            baseAttack: card.attack ?? 0,
             hasAttacked: false,
             canEvolve: false
         };
@@ -132,11 +133,11 @@ export class BattleEngine {
             if (target) {
                 newState.log.push(`${target.cardId} evolved into ${card.name}!`);
                 target.cardId = card.id;
-                target.attack = card.attack;
-                target.baseAttack = card.attack;
-                target.maxHealth = card.health;
-                target.baseMaxHealth = card.health;
-                target.currentHealth = Math.min(target.currentHealth + (card.health - target.maxHealth), card.health);
+                target.attack = card.attack ?? target.attack;
+                target.baseAttack = card.attack ?? target.baseAttack;
+                target.maxHealth = card.health ?? target.maxHealth;
+                target.baseMaxHealth = card.health ?? target.baseMaxHealth;
+                target.currentHealth = Math.min(target.currentHealth + ((card.health ?? target.maxHealth) - target.maxHealth), card.health ?? target.maxHealth);
                 target.canEvolve = false;
                 return newState;
             } else {

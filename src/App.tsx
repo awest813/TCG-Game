@@ -16,7 +16,7 @@ import { Profile } from './ui/Profile';
 import { DevConsole } from './ui/DevConsole';
 
 const App: React.FC = () => {
-  const { state, setScene } = useGame();
+  const { state } = useGame();
   const [showDev, setShowDev] = React.useState(false);
 
   React.useEffect(() => {

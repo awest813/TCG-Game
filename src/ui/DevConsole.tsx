@@ -2,7 +2,7 @@ import React from 'react';
 import { useGame } from '../core/GameStateContext';
 
 export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { setScene, updateGameState } = useGame();
+    const { setScene, updateProfile } = useGame();
 
     const scenes = [
         'MAIN_MENU', 'APARTMENT', 'DISTRICT_EXPLORE', 
@@ -33,8 +33,8 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
             <div style={{ marginTop: '30px', display: 'flex', gap: '20px' }}>
-                <button className="neo-button primary" onClick={() => updateGameState({ currency: 99999 })}>+99999 DP</button>
-                <button className="neo-button primary" onClick={() => updateGameState({ xp: 5000 })}>MAX SYNC</button>
+                <button className="neo-button primary" onClick={() => updateProfile({ currency: 99999 })}>+99999 DP</button>
+                <button className="neo-button primary" onClick={() => updateProfile({ xp: 5000 })}>MAX SYNC</button>
             </div>
             
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.6rem', marginTop: '20px' }}>* USE WITH CAUTION. OVERWRITES CURRENT LOGIC FLOW.</p>

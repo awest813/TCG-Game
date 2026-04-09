@@ -38,7 +38,7 @@ export const Tournament: React.FC = () => {
 
   if (!activeTourney) {
       // Selection Screen: Restricted by current district
-      const available = TOURNAMENT_TIERS.filter(t => {
+      const available = TOURNAMENT_TIERS.filter(() => {
           // Find if this tier's scene is in current district (mock check)
           return true; // Simplification for demo
       });
@@ -152,5 +152,5 @@ export const Tournament: React.FC = () => {
           </div>
       </div>
     </div>
-  );
-};};
+);
+};

@@ -8,7 +8,6 @@ interface GameContextType {
   updateGameState: (update: Partial<GameState>) => void;
   advanceTime: () => void;
   saveGame: () => void;
-  saveGame: () => void;
   loadGame: () => boolean;
   resetGame: () => void;
 }
@@ -35,6 +34,13 @@ const DEFAULT_PROFILE: PlayerProfile = {
     ],
     items: ["Basic Holo-Sleeve"]
   },
+  mainBioSync: {
+      id: "ziprail-p1",
+      species: "Ziprail",
+      happiness: 80,
+      hunger: 20,
+      bondLevel: 1
+  },
   primaryPartner: {
       id: "ziprail-p1",
       species: "Ziprail",
@@ -52,7 +58,8 @@ const DEFAULT_PROFILE: PlayerProfile = {
   progress: {
     unlockedDistricts: ["APARTMENT", "SUNSET_TERMINAL"],
     flags: {},
-    storyProgress: 0
+    storyProgress: 0,
+    chapter: 1
   }
 };
 

@@ -544,8 +544,6 @@ export const BASE_CARDS: Card[] = [
     rulesText: ["On Play: Deal 3 damage to all enemy units."],
     set: "CROWN_CIRCUIT"
   },
-    set: "CROWN_CIRCUIT"
-  },
   {
     id: "royal-bloom",
     name: "Royal Bloom",

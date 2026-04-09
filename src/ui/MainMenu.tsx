@@ -1,10 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useGame } from '../core/GameStateContext';
 import { SystemMenu } from './SystemMenu';
 
 export const MainMenu: React.FC = () => {
-  const { setScene, loadGame, resetGame } = useGame();
+  const { loadGame, resetGame } = useGame();
   const [showSettings, setShowSettings] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [hasSaveData, setHasSaveData] = useState(false);
+
+  const buildLabel = useMemo(() => 'BUILD v2.1.0 ALPHA', []);
+
+  useEffect(() => {
+    setHasSaveData(Boolean(localStorage.getItem('neo_sf_save')));
+  }, []);
+
+  useEffect(() => {
+    if (!statusMessage) {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(() => setStatusMessage(null), 3200);
+    return () => window.clearTimeout(timeout);
+  }, [statusMessage]);
 
   const handleNewGame = () => {
     resetGame();
@@ -12,112 +30,106 @@ export const MainMenu: React.FC = () => {
 
   const handleContinue = () => {
     if (loadGame()) {
-      // Game loaded
-    } else {
-      alert("No sync state found!");
+      setStatusMessage('Link restored. Resuming your last session.');
+      setHasSaveData(true);
+      return;
     }
+
+    setStatusMessage('No synced save found yet. Start a new career to create one.');
+    setHasSaveData(false);
   };
 
   return (
-    <div className="main-menu-scene fade-in" style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: 'black',
-      backgroundImage: 'radial-gradient(circle at 70% 30%, rgba(68,0,255,0.4), transparent 50%), radial-gradient(circle at 30% 70%, rgba(255,0,234,0.4), transparent 50%)',
-      overflow: 'hidden'
-    }}>
-      {/* Background Anime Character Silhouette / Portrait */}
-      <img src="/avatar_player.png" alt="Protagonist" style={{
-          position: 'absolute',
-          right: '-50px',
-          bottom: '0',
-          height: '110%',
-          opacity: 0.8,
-          maskImage: 'linear-gradient(to left, black 60%, transparent)',
-          zIndex: 1
-      }} />
+    <div className="main-menu-scene fade-in">
+      <div className="main-menu-backdrop" />
+      <img className="main-menu-avatar" src="/avatar_player.png" alt="Protagonist" />
 
-      <div style={{ padding: '80px', flex: 1, zIndex: 10, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ marginBottom: '80px' }}>
-              <h1 className="glow-text" style={{ fontSize: '6rem', margin: 0, letterSpacing: '8px', lineHeight: 1 }}>NEO SF</h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '10px' }}>
-                  <div style={{ width: '40px', height: '4px', background: 'var(--accent-cyan)' }}></div>
-                  <div style={{ fontSize: '1.2rem', color: 'var(--accent-cyan)', letterSpacing: '5px' }}>CHAMPION CIRCUIT</div>
-              </div>
+      <div className="main-menu-layout">
+        <section className="main-menu-copy">
+          <div className="main-menu-kicker">Neo Street League Protocol</div>
+          <h1 className="glow-text main-menu-title">NEO SF</h1>
+          <div className="main-menu-subtitle-row">
+            <div className="main-menu-rule" />
+            <div className="main-menu-subtitle">Champion Circuit</div>
+          </div>
+          <p className="main-menu-description">
+            Build your deck, push through district brackets, and climb from apartment scrims to citywide title matches.
+          </p>
+
+          <div className="main-menu-actions">
+            <button className="champion-button champion-button-primary" onClick={handleNewGame}>
+              <span className="btn-number">01</span>
+              <span className="btn-copy">
+                <span className="btn-text">NEW CAREER</span>
+                <span className="btn-caption">Restart from your apartment with a fresh starter list.</span>
+              </span>
+            </button>
+
+            <button className="champion-button" onClick={handleContinue} disabled={!hasSaveData}>
+              <span className="btn-number">02</span>
+              <span className="btn-copy">
+                <span className="btn-text">CONTINUE LINK</span>
+                <span className="btn-caption">{hasSaveData ? 'Resume your last synced run.' : 'No local save detected yet.'}</span>
+              </span>
+            </button>
+
+            <button className="champion-button champion-button-ghost" onClick={() => setShowSettings(true)}>
+              <span className="btn-number">03</span>
+              <span className="btn-copy">
+                <span className="btn-text">SETTINGS</span>
+                <span className="btn-caption">Adjust presentation, controls, and sync preferences.</span>
+              </span>
+            </button>
+
+            <button className="champion-button champion-button-ghost" onClick={() => setShowAbout((value) => !value)}>
+              <span className="btn-number">04</span>
+              <span className="btn-copy">
+                <span className="btn-text">{showAbout ? 'HIDE DOSSIER' : 'ABOUT'}</span>
+                <span className="btn-caption">View the project pitch and current control hints.</span>
+              </span>
+            </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '400px' }}>
-              <button className="champion-button" onClick={handleNewGame}>
-                  <span className="btn-number">01</span>
-                  <span className="btn-text">NEW CAREER</span>
-              </button>
-              <button className="champion-button secondary" onClick={handleContinue}>
-                  <span className="btn-number">02</span>
-                  <span className="btn-text">CONTINUE LINK</span>
-              </button>
-              <button className="champion-button ghost" onClick={() => setShowSettings(true)}>
-                  <span className="btn-number">03</span>
-                  <span className="btn-text">SETTINGS</span>
-              </button>
-              <button className="champion-button ghost">
-                  <span className="btn-number">04</span>
-                  <span className="btn-text">ABOUT</span>
-              </button>
+          <div className={`main-menu-status ${statusMessage ? 'visible' : ''}`} aria-live="polite">
+            {statusMessage ?? ' '}
+          </div>
+        </section>
+
+        <aside className="main-menu-panel glass-panel">
+          <div className="menu-panel-eyebrow">Operator Feed</div>
+          <div className="menu-panel-metric">
+            <span>Career State</span>
+            <strong>{hasSaveData ? 'SYNC READY' : 'FRESH START'}</strong>
+          </div>
+          <div className="menu-panel-metric">
+            <span>Debug Console</span>
+            <strong>Press `</strong>
+          </div>
+          <div className="menu-panel-metric">
+            <span>Primary Route</span>
+            <strong>Apartment Hub</strong>
           </div>
 
-          {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
+          {showAbout && (
+            <div className="menu-about-card">
+              <h2>Champion Circuit</h2>
+              <p>
+                A stylish single-player TCG RPG where city districts act like hubs, locals become rivals, and each bracket unlocks stronger card pools.
+              </p>
+              <p>
+                Current focus: smoother menu flow, stronger visual hierarchy, and cleaner transition into the playable scenes.
+              </p>
+            </div>
+          )}
 
-          <div style={{ marginTop: 'auto', display: 'flex', gap: '40px' }}>
-              <div className="glass-morphism" style={{ padding: '10px 20px', fontSize: '0.8rem', letterSpacing: '2px' }}>
-                  BUILD v2.0.1 ALPHA
-              </div>
-              <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', display: 'flex', alignItems: 'center' }}>
-                  PRESS [START] TO INITIALIZE
-              </div>
+          <div className="main-menu-footer">
+            <div className="glass-morphism build-chip">{buildLabel}</div>
+            <div className="menu-footer-note">Press settings for full-screen, audio, and data actions.</div>
           </div>
+        </aside>
       </div>
 
-      <style>{`
-          .champion-button {
-              background: rgba(255,255,255,0.05);
-              border: 1px solid rgba(255,255,255,0.1);
-              padding: 20px 40px;
-              display: flex;
-              align-items: center;
-              gap: 30px;
-              color: white;
-              cursor: pointer;
-              transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-              border-radius: 4px; /* Yu-Gi-Oh! sharp corners or slight rounding */
-          }
-          .champion-button:hover {
-              background: white;
-              color: black;
-              transform: translateX(20px);
-              box-shadow: -10px 0 0 var(--accent-cyan);
-          }
-          .btn-number {
-              color: var(--accent-cyan);
-              font-weight: bold;
-              font-size: 1.2rem;
-          }
-          .btn-text {
-              font-weight: 800;
-              font-size: 1.5rem;
-              letter-spacing: 2px;
-          }
-          .champion-button.ghost {
-              background: transparent;
-              border: none;
-              opacity: 0.6;
-          }
-          .champion-button.ghost:hover {
-              opacity: 1;
-              background: rgba(255,255,255,0.1);
-              color: white;
-          }
-      `}</style>
+      {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
     </div>
   );
 };

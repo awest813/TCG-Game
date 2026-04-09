@@ -1,4 +1,4 @@
-import { Card, GameState } from '../core/types';
+import { Card } from '../core/types';
 
 /**
  * Simple AI for Neo SF Battle Circuit
@@ -6,13 +6,15 @@ import { Card, GameState } from '../core/types';
  */
 export class BattleAI {
     static evaluatePlay(hand: Card[], currentSync: number, field: Card[], opponentField: Card[]): Card | null {
+        void field;
+        void opponentField;
         // 1. Can we play anything?
         const playable = hand.filter(c => c.cost <= currentSync);
         if (playable.length === 0) return null;
 
         // 2. Simple Logic: Play high attack units first if board is empty
         // Or play defense if opponent has more units
-        playable.sort((a, b) => b.attack - a.attack);
+        playable.sort((a, b) => (b.attack ?? 0) - (a.attack ?? 0));
 
         // For now, AI just plays the strongest card it can afford
         return playable[0];
