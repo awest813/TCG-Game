@@ -617,3 +617,27 @@ export const CARD_POOL = [...BASE_CARDS];
 export const getCardById = (id: string): Card | undefined => {
   return CARD_POOL.find(c => c.id === id);
 };
+
+export const getCardPalette = (card?: Card) => {
+  const typePalettes = {
+    Pulse: { accent: '#79f7ff', glow: 'rgba(121,247,255,0.45)', panel: 'linear-gradient(180deg, rgba(8,29,44,0.96), rgba(5,10,18,0.96))' },
+    Bloom: { accent: '#8effa7', glow: 'rgba(142,255,167,0.4)', panel: 'linear-gradient(180deg, rgba(14,42,25,0.96), rgba(7,17,12,0.96))' },
+    Tide: { accent: '#76b7ff', glow: 'rgba(118,183,255,0.42)', panel: 'linear-gradient(180deg, rgba(10,24,46,0.96), rgba(5,10,20,0.96))' },
+    Alloy: { accent: '#d5dae2', glow: 'rgba(213,218,226,0.28)', panel: 'linear-gradient(180deg, rgba(33,37,45,0.96), rgba(12,14,18,0.96))' },
+    Veil: { accent: '#ff7ae6', glow: 'rgba(255,122,230,0.4)', panel: 'linear-gradient(180deg, rgba(42,14,37,0.96), rgba(18,7,17,0.96))' },
+    Current: { accent: '#ffd166', glow: 'rgba(255,209,102,0.4)', panel: 'linear-gradient(180deg, rgba(44,30,8,0.96), rgba(18,12,4,0.96))' },
+    default: { accent: '#ff5fcf', glow: 'rgba(255,95,207,0.35)', panel: 'linear-gradient(180deg, rgba(27,14,33,0.96), rgba(12,8,16,0.96))' }
+  } as const;
+
+  const rarityFinish = {
+    common: 'rgba(255,255,255,0.08)',
+    uncommon: 'rgba(121,247,255,0.12)',
+    rare: 'rgba(255,209,102,0.16)'
+  } as const;
+
+  const palette = (card?.creatureType && typePalettes[card.creatureType]) || typePalettes.default;
+  return {
+    ...palette,
+    rarityFinish: rarityFinish[card?.rarity ?? 'common']
+  };
+};

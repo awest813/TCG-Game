@@ -1,33 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useBattle } from './useBattle';
 import { useGame } from '../core/GameStateContext';
-import { getCardById } from '../data/cards';
+import { Card } from '../core/types';
+import { getCardById, getCardPalette } from '../data/cards';
 
 export const BattleBoard: React.FC = () => {
   const { state, setScene } = useGame();
   const [showVS, setShowVS] = useState(true);
-  const [hoveredCard, setHoveredCard] = useState<any>(null);
+  const [hoveredCard, setHoveredCard] = useState<Card | null>(null);
   const { battleState, playCard, attack, endTurn } = useBattle(
     state.profile.inventory.deck,
     ['ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'quick-transfer', 'ziprail']
   );
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setShowVS(false), 2500);
+    const timer = window.setTimeout(() => setShowVS(false), 2200);
     return () => window.clearTimeout(timer);
   }, []);
 
   const activeField = battleState.field;
   const isPlayerTurn = battleState.isPlayerTurn;
+  const latestEvents = battleState.log.slice(-4).reverse();
 
   const fieldStyle = useMemo(() => {
     switch (activeField) {
       case 'neon-grid':
-        return { border: '4px solid var(--accent-cyan)', boxShadow: 'inset 0 0 100px rgba(121, 247, 255, 0.2)' };
+        return { border: '3px solid var(--accent-cyan)', boxShadow: 'inset 0 0 120px rgba(121, 247, 255, 0.18)' };
       case 'garden-haze':
-        return { border: '4px solid #44ff88', boxShadow: 'inset 0 0 100px rgba(68, 255, 136, 0.2)' };
+        return { border: '3px solid #8effa7', boxShadow: 'inset 0 0 120px rgba(142, 255, 167, 0.14)' };
       case 'void-rift':
-        return { border: '4px solid #7a6cff', boxShadow: 'inset 0 0 100px rgba(122, 108, 255, 0.2)' };
+        return { border: '3px solid #7a6cff', boxShadow: 'inset 0 0 120px rgba(122, 108, 255, 0.18)' };
+      case 'alloy-foundry':
+        return { border: '3px solid #d5dae2', boxShadow: 'inset 0 0 120px rgba(213, 218, 226, 0.16)' };
       default:
         return {};
     }
@@ -47,107 +51,97 @@ export const BattleBoard: React.FC = () => {
         background: '#050510',
         backgroundImage:
           activeField === 'garden-haze'
-            ? 'linear-gradient(rgba(0,10,5,0.8), rgba(0,0,0,0.9)), url("/garden_haze_field.png")'
-            : 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("/battle_base_bg.png")',
+            ? 'linear-gradient(rgba(5,18,10,0.82), rgba(0,0,0,0.92)), url("/garden_haze_field.png")'
+            : 'linear-gradient(rgba(2,6,18,0.88), rgba(0,0,0,0.92)), url("/battle_base_bg.png")',
         backgroundSize: 'cover',
-        padding: '40px',
+        padding: '28px',
         color: 'white',
         overflow: 'hidden',
-        transition: '1s',
+        transition: '0.8s',
         position: 'relative',
         ...fieldStyle
       }}
     >
       <div className="scanlines" />
+      <div className="battle-atmosphere" />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <img
-            src="/avatar_kaizen.png"
-            alt="Kaizen"
-            style={{ width: '80px', height: '80px', borderRadius: '50%', border: '4px solid var(--accent-magenta)', padding: '5px', boxShadow: '0 0 20px var(--accent-magenta)' }}
-          />
-          <div>
-            <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: 'var(--accent-magenta)', textShadow: '0 0 10px var(--accent-magenta)' }}>KAIZEN</div>
-            <div style={{ fontSize: '0.8rem', opacity: 0.6, letterSpacing: '2px' }}>RANK B // NEON_MISSION_SEED</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px', alignItems: 'start', zIndex: 10 }}>
+        <div className="glass-panel" style={{ padding: '18px 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(7,12,22,0.72)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <img src="/avatar_kaizen.png" alt="Kaizen" style={{ width: '72px', height: '72px', borderRadius: '20px', objectFit: 'cover', border: '2px solid var(--accent-magenta)' }} />
+            <div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', letterSpacing: '0.24rem' }}>OPPONENT LINK</div>
+              <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--accent-magenta)' }}>KAIZEN</div>
+              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.66)' }}>Rank B / Combat seed active</div>
+            </div>
           </div>
-        </div>
-        <LifePointTracker value={battleState.opponent.prizes} max={3} color="var(--accent-magenta)" name="OPPONENT_STOCKS" />
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gridTemplateRows: '1fr 1fr', gap: '60px', padding: '40px 0', zIndex: 5 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-          <div style={{ display: 'flex', gap: '30px' }}>
-            {battleState.opponent.bench.map((entity, index) => (
-              <BattleSlot
-                key={index}
-                entity={entity}
-                side="opponent"
-                onHover={(id) => setHoveredCard(getCardById(id))}
-                onLeave={() => setHoveredCard(null)}
-              />
-            ))}
-          </div>
-          <BattleSlot
-            entity={battleState.opponent.active}
-            isActive
-            side="opponent"
-            onHover={(id) => setHoveredCard(getCardById(id))}
-            onLeave={() => setHoveredCard(null)}
-          />
+          <BattleGauge label="FIELD STATE" value={activeField ? activeField.replace(/-/g, ' ').toUpperCase() : 'DEFAULT ARENA'} accent="var(--accent-yellow)" />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column-reverse', alignItems: 'center', gap: '20px' }}>
-          <div style={{ display: 'flex', gap: '30px' }}>
-            {battleState.player.bench.map((entity, index) => (
-              <BattleSlot
-                key={index}
-                entity={entity}
-                side="player"
-                onHover={(id) => setHoveredCard(getCardById(id))}
-                onLeave={() => setHoveredCard(null)}
-              />
+        <div className="glass-panel" style={{ minWidth: '250px', padding: '18px 20px', background: 'rgba(7,12,22,0.72)' }}>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', letterSpacing: '0.22rem', marginBottom: '10px' }}>RECENT EVENTS</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {latestEvents.map((event, index) => (
+              <div key={`${event}-${index}`} style={{ fontSize: '0.82rem', lineHeight: 1.4, color: index === 0 ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                {event}
+              </div>
             ))}
           </div>
-          <BattleSlot
-            entity={battleState.player.active}
-            isActive
-            side="player"
-            onClick={attack}
-            onHover={(id) => setHoveredCard(getCardById(id))}
-            onLeave={() => setHoveredCard(null)}
-          />
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 10, gap: '20px' }}>
-        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-          {battleState.player.hand.map((id, index) => (
-            <div key={`${id}-${index}`} className="holo-card" style={{ borderRadius: '6px' }}>
+      <div style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: '28px', padding: '24px 0', zIndex: 5 }}>
+        <FieldRow
+          title="Opponent Side"
+          side="opponent"
+          active={battleState.opponent.active}
+          bench={battleState.opponent.bench}
+          onHover={(id) => setHoveredCard(getCardById(id) ?? null)}
+          onLeave={() => setHoveredCard(null)}
+        />
+        <FieldRow
+          title="Player Side"
+          side="player"
+          active={battleState.player.active}
+          bench={battleState.player.bench}
+          onHover={(id) => setHoveredCard(getCardById(id) ?? null)}
+          onLeave={() => setHoveredCard(null)}
+          onAttack={attack}
+        />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '18px', alignItems: 'end', zIndex: 10 }}>
+        <div className="glass-panel" style={{ padding: '18px', background: 'rgba(7,12,22,0.72)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+            <div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', letterSpacing: '0.24rem' }}>HAND ARRAY</div>
+              <div style={{ fontSize: '1rem', fontWeight: 700 }}>{battleState.player.hand.length} cards ready</div>
+            </div>
+            <div style={{ color: isPlayerTurn ? 'var(--accent-cyan)' : 'var(--text-secondary)', fontWeight: 700 }}>
+              {isPlayerTurn ? 'PLAYER MAIN PHASE' : 'OPPONENT RESOLVING'}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+            {battleState.player.hand.map((id, index) => (
               <BattleCard
+                key={`${id}-${index}`}
                 cardId={id}
                 onClick={() => playCard(id)}
-                onHover={() => setHoveredCard(getCardById(id))}
+                onHover={() => setHoveredCard(getCardById(id) ?? null)}
                 onLeave={() => setHoveredCard(null)}
                 disabled={!isPlayerTurn || !!battleState.winner}
               />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-end' }}>
-          <LifePointTracker value={battleState.player.prizes} max={3} color="var(--accent-cyan)" name="PLAYER_STOCKS" />
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <div className="mana-pill" style={{ boxShadow: '0 0 15px var(--accent-cyan)' }}>
-              SYNC_ENERGY: {battleState.player.mana} EN
-            </div>
-            <button
-              className="neo-button primary"
-              onClick={endTurn}
-              disabled={!isPlayerTurn || !!battleState.winner}
-              style={{ height: '50px', padding: '0 40px', fontWeight: 900 }}
-            >
-              {isPlayerTurn ? 'CLOSE PHASE' : 'SYNCING...'}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', minWidth: '300px' }}>
+          <LifePointTracker value={battleState.opponent.prizes} max={3} color="var(--accent-magenta)" name="OPPONENT PRIZES" />
+          <LifePointTracker value={battleState.player.prizes} max={3} color="var(--accent-cyan)" name="PLAYER PRIZES" />
+          <div className="glass-panel" style={{ padding: '18px 20px', background: 'rgba(7,12,22,0.72)' }}>
+            <BattleGauge label="SYNC ENERGY" value={`${battleState.player.mana} / ${battleState.player.maxMana}`} accent="var(--accent-cyan)" />
+            <button className="neo-button primary" onClick={endTurn} disabled={!isPlayerTurn || !!battleState.winner} style={{ marginTop: '14px', width: '100%', justifyContent: 'center', display: 'flex' }}>
+              {isPlayerTurn ? 'END TURN' : 'WAITING...'}
             </button>
           </div>
         </div>
@@ -156,89 +150,79 @@ export const BattleBoard: React.FC = () => {
       {battleState.winner === 'player' && <EndMatchModal title="VICTORY" color="var(--accent-cyan)" onExit={() => setScene('DISTRICT_EXPLORE')} />}
       {battleState.winner === 'opponent' && <EndMatchModal title="DEFEAT" color="var(--accent-magenta)" onExit={() => setScene('MAIN_MENU')} />}
 
-      {hoveredCard && (
-        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 500, pointerEvents: 'none' }}>
-          <div
-            className="glass-panel"
-            style={{
-              background: 'rgba(5,5,15,0.95)',
-              border: '3px solid var(--accent-cyan)',
-              padding: '40px',
-              width: '350px',
-              boxShadow: '0 0 100px rgba(0,242,255,0.3)'
-            }}
-          >
-            <div style={{ fontSize: '0.7rem', color: 'var(--accent-cyan)', letterSpacing: '2px' }}>DATA_INSPECTOR_v4</div>
-            <h3 style={{ fontSize: '2rem', margin: '10px 0' }}>{hoveredCard.name.toUpperCase()}</h3>
-            <div style={{ color: 'var(--accent-yellow)', fontWeight: 'bold', marginBottom: '20px' }}>COST: {hoveredCard.cost}</div>
-
-            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '4px', fontSize: '1rem', lineHeight: '1.4' }}>
-              {hoveredCard.rulesText.map((text: string, index: number) => (
-                <p key={index} style={{ margin: 0 }}>
-                  {text}
-                </p>
-              ))}
-            </div>
-
-            <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {hoveredCard.keywords?.map((keyword: string) => (
-                <div key={keyword} style={{ background: 'var(--accent-cyan)', color: 'black', padding: '4px 10px', fontSize: '0.6rem', fontWeight: 'bold', borderRadius: '2px' }}>
-                  {keyword.toUpperCase()}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {hoveredCard && <CardInspector card={hoveredCard} />}
 
       <style>{`
-        .mana-pill {
-          background: rgba(0, 0, 0, 0.8);
-          border: 1px solid var(--accent-cyan);
-          padding: 10px 20px;
-          border-radius: 4px;
-          color: var(--accent-cyan);
-          font-weight: bold;
-          display: flex;
-          align-items: center;
+        .battle-atmosphere {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(circle at 20% 20%, rgba(121,247,255,0.12), transparent 24%),
+            radial-gradient(circle at 80% 18%, rgba(255,95,207,0.16), transparent 26%),
+            linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+          pointer-events: none;
         }
       `}</style>
     </div>
   );
 };
 
-const LifePointTracker: React.FC<{ value: number; max: number; color: string; name: string }> = ({ value, max, color, name }) => (
-  <div className="glass-morphism" style={{ padding: '20px 40px', borderLeft: `8px solid ${color}`, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', letterSpacing: '4px' }}>{name}</div>
-    <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color }}>
-      {value} <span style={{ fontSize: '1rem', opacity: 0.3 }}>/ {max}</span>
+const FieldRow: React.FC<{
+  title: string;
+  side: 'player' | 'opponent';
+  active: any;
+  bench: (any | null)[];
+  onHover: (id: string) => void;
+  onLeave: () => void;
+  onAttack?: () => void;
+}> = ({ title, side, active, bench, onHover, onLeave, onAttack }) => (
+  <div className="glass-panel" style={{ padding: '18px', background: 'rgba(7,12,22,0.62)', display: 'grid', gridTemplateColumns: '220px 1fr', gap: '24px', alignItems: 'center' }}>
+    <div>
+      <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', letterSpacing: '0.24rem' }}>{title.toUpperCase()}</div>
+      <div style={{ marginTop: '8px', fontSize: '1.1rem', fontWeight: 700 }}>{side === 'player' ? 'Active attack route' : 'Enemy threat board'}</div>
+    </div>
+    <div style={{ display: 'flex', gap: '18px', alignItems: 'center', justifyContent: side === 'player' ? 'flex-start' : 'flex-end' }}>
+      {side === 'opponent' && <EntityStack entities={bench} side={side} onHover={onHover} onLeave={onLeave} />}
+      <BattleSlot entity={active} isActive side={side} onClick={onAttack} onHover={onHover} onLeave={onLeave} />
+      {side === 'player' && <EntityStack entities={bench} side={side} onHover={onHover} onLeave={onLeave} />}
     </div>
   </div>
 );
 
+const EntityStack: React.FC<{ entities: (any | null)[]; side: 'player' | 'opponent'; onHover: (id: string) => void; onLeave: () => void }> = ({ entities, side, onHover, onLeave }) => (
+  <div style={{ display: 'flex', gap: '14px' }}>
+    {entities.map((entity, index) => (
+      <BattleSlot key={index} entity={entity} side={side} onHover={onHover} onLeave={onLeave} />
+    ))}
+  </div>
+);
+
+const LifePointTracker: React.FC<{ value: number; max: number; color: string; name: string }> = ({ value, max, color, name }) => (
+  <div className="glass-panel" style={{ padding: '16px 18px', background: 'rgba(7,12,22,0.72)' }}>
+    <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', letterSpacing: '0.24rem' }}>{name}</div>
+    <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+      <div style={{ fontSize: '2rem', fontWeight: 800, color }}>{value}</div>
+      <div style={{ color: 'var(--text-secondary)' }}>/{max}</div>
+    </div>
+  </div>
+);
+
+const BattleGauge: React.FC<{ label: string; value: string; accent: string }> = ({ label, value, accent }) => (
+  <div>
+    <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', letterSpacing: '0.22rem' }}>{label}</div>
+    <div style={{ marginTop: '8px', fontSize: '1rem', fontWeight: 800, color: accent }}>{value}</div>
+  </div>
+);
+
 const VSDisplay: React.FC<{ playerAvatar: string; opponentAvatar: string; opponentName: string }> = ({ playerAvatar, opponentAvatar, opponentName }) => (
-  <div className="vs-screen fade-in" style={{ height: '100vh', background: 'black', display: 'flex', overflow: 'hidden', position: 'relative' }}>
+  <div className="vs-screen fade-in" style={{ height: '100vh', background: 'linear-gradient(135deg, #050816, #13081a)', display: 'flex', overflow: 'hidden', position: 'relative' }}>
     <div style={{ flex: 1, position: 'relative' }}>
-      <img src={playerAvatar} alt="Player" style={{ height: '100%', width: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
+      <img src={playerAvatar} alt="Player" style={{ height: '100%', width: '100%', objectFit: 'cover', transform: 'scaleX(-1)', opacity: 0.82 }} />
       <div style={{ position: 'absolute', bottom: '40px', left: '40px', fontSize: '4rem', fontWeight: '900', color: 'var(--accent-cyan)' }}>PLAYER 1</div>
     </div>
-    <div
-      style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%) rotate(-10deg)',
-        fontSize: '12rem',
-        fontWeight: '900',
-        fontStyle: 'italic',
-        zIndex: 10,
-        textShadow: '0 0 50px rgba(255,255,255,0.5)'
-      }}
-    >
-      VS
-    </div>
+    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-8deg)', fontSize: '11rem', fontWeight: '900', fontStyle: 'italic', zIndex: 10, textShadow: '0 0 50px rgba(255,255,255,0.5)' }}>VS</div>
     <div style={{ flex: 1, position: 'relative' }}>
-      <img src={opponentAvatar} alt={opponentName} style={{ height: '100%', width: '100%', objectFit: 'cover' }} />
+      <img src={opponentAvatar} alt={opponentName} style={{ height: '100%', width: '100%', objectFit: 'cover', opacity: 0.82 }} />
       <div style={{ position: 'absolute', top: '40px', right: '40px', fontSize: '4rem', fontWeight: '900', color: 'var(--accent-magenta)' }}>{opponentName}</div>
     </div>
   </div>
@@ -252,8 +236,9 @@ const BattleSlot: React.FC<{
   onHover?: (id: string) => void;
   onLeave?: () => void;
 }> = ({ entity, isActive, side, onClick, onHover, onLeave }) => {
-  const sourceCard = entity ? getCardById(entity.cardId) : undefined;
-  const isDamaged = entity && sourceCard ? entity.currentHealth < sourceCard.health : false;
+  const card = entity ? getCardById(entity.cardId) : undefined;
+  const palette = getCardPalette(card);
+  const isDamaged = entity && card ? entity.currentHealth < (card.health ?? entity.currentHealth) : false;
 
   return (
     <div
@@ -261,100 +246,145 @@ const BattleSlot: React.FC<{
       onMouseEnter={() => entity && onHover?.(entity.cardId)}
       onMouseLeave={onLeave}
       style={{
-        width: isActive ? '200px' : '140px',
-        height: isActive ? '260px' : '180px',
-        border: `2px solid ${side === 'player' ? 'var(--accent-cyan)' : 'var(--accent-magenta)'}`,
-        borderRadius: '4px',
-        background: entity ? 'rgba(5,5,15,0.4)' : 'rgba(255,255,255,0.02)',
+        width: isActive ? '190px' : '132px',
+        minHeight: isActive ? '248px' : '168px',
+        padding: isActive ? '14px' : '12px',
+        borderRadius: '22px',
+        border: `1px solid ${palette.accent}`,
+        background: `${palette.panel}, linear-gradient(180deg, rgba(255,255,255,0.04), transparent)`,
+        boxShadow: `0 18px 42px ${palette.glow}`,
         cursor: onClick && entity && !entity.hasAttacked ? 'pointer' : entity ? 'help' : 'default',
-        transition: '0.3s',
-        position: 'relative'
-      }}
-    >
-      {entity && sourceCard && (
-        <div className={`holo-projector ${isDamaged ? 'glitch-anim' : ''}`} style={{ height: '100%', padding: '15px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-          <div className="scanlines" style={{ opacity: 0.3 }} />
-          <div style={{ fontSize: '0.7rem', color: 'var(--accent-cyan)', letterSpacing: '2px', zIndex: 10 }}>{sourceCard.creatureType?.toUpperCase()}</div>
-          <div style={{ fontSize: '1rem', fontWeight: 'bold', zIndex: 10 }}>{sourceCard.name.toUpperCase()}</div>
-          <div style={{ flex: 1 }} />
-          <div style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--accent-yellow)', zIndex: 10 }}>
-            {entity.attack} <span style={{ opacity: 0.2 }}>/</span> {entity.currentHealth}
-          </div>
-        </div>
-      )}
-      {!entity && <div style={{ opacity: 0.1, fontSize: '0.6rem', textAlign: 'center', width: '100%', marginTop: '45%' }}>GRID_SLOT</div>}
-    </div>
-  );
-};
-
-const BattleCard: React.FC<{ cardId: string; onClick: () => void; onHover: () => void; onLeave: () => void; disabled: boolean }> = ({
-  cardId,
-  onClick,
-  onHover,
-  onLeave,
-  disabled
-}) => {
-  const card = getCardById(cardId);
-  if (!card) return null;
-
-  const typeColor =
-    card.creatureType === 'Pulse' ? 'var(--accent-cyan)' : card.creatureType === 'Bloom' ? '#44ff88' : card.creatureType === 'Alloy' ? '#aaaaaa' : 'var(--accent-magenta)';
-
-  return (
-    <div
-      onClick={disabled ? undefined : onClick}
-      onMouseEnter={onHover}
-      onMouseLeave={onLeave}
-      style={{
-        width: '140px',
-        height: '200px',
-        background: 'rgba(10,10,25,0.98)',
-        border: `1px solid ${typeColor}`,
-        boxShadow: (card.attack ?? 0) > 6 ? `0 0 15px ${typeColor}` : 'none',
-        cursor: disabled ? 'default' : 'pointer',
-        opacity: disabled ? 0.4 : 1,
-        transition: '0.2s',
-        display: 'flex',
-        flexDirection: 'column',
+        opacity: entity ? 1 : 0.36,
+        transition: '0.24s ease',
         position: 'relative',
         overflow: 'hidden'
       }}
     >
-      <div style={{ padding: '8px', background: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: '0.65rem', fontWeight: '900', letterSpacing: '1px' }}>{card.name.toUpperCase()}</div>
-        <div style={{ color: 'var(--accent-yellow)', fontWeight: 'bold', fontSize: '0.8rem' }}>{card.cost} EN</div>
-      </div>
+      {entity && card ? (
+        <>
+          <div className="scanlines" style={{ opacity: 0.16 }} />
+          <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+              <div style={{ fontSize: '0.56rem', color: palette.accent, letterSpacing: '0.18rem' }}>{card.creatureType?.toUpperCase()}</div>
+              {isActive && <div style={{ fontSize: '0.54rem', color: 'var(--text-secondary)', letterSpacing: '0.18rem' }}>ACTIVE</div>}
+            </div>
+            <div style={{ marginTop: '8px', fontWeight: 800, lineHeight: 1.05 }}>{card.name.toUpperCase()}</div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div style={{ width: isActive ? '84px' : '62px', height: isActive ? '84px' : '62px', borderRadius: '999px', background: palette.glow, filter: 'blur(10px)' }} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', alignItems: 'end' }}>
+              <div>
+                <div style={{ fontSize: '0.56rem', color: 'var(--text-secondary)' }}>ATK</div>
+                <div style={{ fontSize: isActive ? '1.7rem' : '1.3rem', fontWeight: 800, color: 'var(--accent-yellow)' }}>{entity.attack}</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.56rem', color: 'var(--text-secondary)' }}>HP</div>
+                <div style={{ fontSize: isActive ? '1.7rem' : '1.3rem', fontWeight: 800, color: isDamaged ? 'var(--accent-magenta)' : 'var(--text-primary)' }}>{entity.currentHealth}</div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.62rem', letterSpacing: '0.18rem', color: 'rgba(255,255,255,0.28)' }}>EMPTY SLOT</div>
+      )}
+    </div>
+  );
+};
 
-      <div
-        style={{
-          flex: 1,
-          background: `linear-gradient(to bottom, ${typeColor}22, transparent)`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative'
-        }}
-      >
-        <div className="scanlines" style={{ opacity: 0.2 }} />
-        <div style={{ width: '60%', height: '60%', background: typeColor, opacity: 0.2, filter: 'blur(20px)', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', fontSize: '0.5rem', color: typeColor, letterSpacing: '2px', fontWeight: 'bold' }}>DATA_ID: {card.id.toUpperCase()}</div>
-      </div>
+const BattleCard: React.FC<{ cardId: string; onClick: () => void; onHover: () => void; onLeave: () => void; disabled: boolean }> = ({ cardId, onClick, onHover, onLeave, disabled }) => {
+  const card = getCardById(cardId);
+  if (!card) return null;
+  const palette = getCardPalette(card);
 
-      <div style={{ padding: '8px', background: 'rgba(0,0,0,0.5)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-        <div style={{ fontSize: '0.5rem', color: typeColor, letterSpacing: '2px', marginBottom: '4px' }}>{card.creatureType?.toUpperCase() || 'SUPPORT'}</div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <div style={{ fontSize: '0.9rem', fontWeight: '900', color: 'var(--accent-yellow)' }}>{card.attack ?? '-'}</div>
-          <div style={{ fontSize: '0.9rem', fontWeight: '900', color: 'var(--text-primary)' }}>{card.health ?? '-'}</div>
+  return (
+    <button
+      onClick={disabled ? undefined : onClick}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      disabled={disabled}
+      style={{
+        width: '168px',
+        minHeight: '236px',
+        borderRadius: '24px',
+        border: `1px solid ${palette.accent}`,
+        background: `${palette.panel}, linear-gradient(180deg, ${palette.rarityFinish}, transparent 70%)`,
+        boxShadow: `0 18px 36px ${palette.glow}`,
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.42 : 1,
+        transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '14px',
+        position: 'relative',
+        overflow: 'hidden',
+        color: 'inherit',
+        textAlign: 'left'
+      }}
+    >
+      <div className="scanlines" style={{ opacity: 0.12 }} />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '10px', height: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'start' }}>
+          <div>
+            <div style={{ fontSize: '0.54rem', color: palette.accent, letterSpacing: '0.18rem' }}>{card.cardType.toUpperCase()}</div>
+            <div style={{ marginTop: '6px', fontSize: '1rem', fontWeight: 800, lineHeight: 1.1 }}>{card.name.toUpperCase()}</div>
+          </div>
+          <div style={{ minWidth: '44px', textAlign: 'right', color: 'var(--accent-yellow)', fontWeight: 800 }}>{card.cost}</div>
+        </div>
+
+        <div style={{ flex: 1, borderRadius: '18px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '68%', height: '68%', borderRadius: '999px', background: palette.glow, filter: 'blur(14px)' }} />
+          <div style={{ position: 'absolute', bottom: '10px', fontSize: '0.58rem', letterSpacing: '0.16rem', color: palette.accent }}>{card.set ?? 'CORE SET'}</div>
+        </div>
+
+        <div style={{ fontSize: '0.74rem', lineHeight: 1.45, color: 'var(--text-secondary)', minHeight: '52px' }}>
+          {card.rulesText?.[0] ?? 'No effect text loaded.'}
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
+          <div style={{ fontSize: '0.62rem', color: palette.accent, letterSpacing: '0.18rem' }}>{card.rarity.toUpperCase()}</div>
+          <div style={{ fontWeight: 800, fontSize: '1rem' }}>{card.cardType === 'creature' ? `${card.attack ?? '-'} / ${card.health ?? '-'}` : 'TACTIC'}</div>
+        </div>
+      </div>
+    </button>
+  );
+};
+
+const CardInspector: React.FC<{ card: Card }> = ({ card }) => {
+  const palette = getCardPalette(card);
+  return (
+    <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 500, pointerEvents: 'none' }}>
+      <div className="glass-panel" style={{ background: `${palette.panel}`, border: `2px solid ${palette.accent}`, padding: '28px', width: '360px', boxShadow: `0 0 80px ${palette.glow}` }}>
+        <div style={{ fontSize: '0.68rem', color: palette.accent, letterSpacing: '0.22rem' }}>CARD INSPECTOR</div>
+        <h3 style={{ fontSize: '2rem', margin: '12px 0 8px' }}>{card.name.toUpperCase()}</h3>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '16px' }}>
+          <Chip label={card.cardType.toUpperCase()} accent={palette.accent} />
+          {card.creatureType && <Chip label={card.creatureType.toUpperCase()} accent="var(--accent-yellow)" />}
+          <Chip label={`${card.cost} EN`} accent="var(--text-primary)" />
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px', fontSize: '0.92rem', lineHeight: 1.5 }}>
+          {(card.rulesText ?? ['No effect text loaded.']).map((text, index) => (
+            <p key={index} style={{ margin: index === 0 ? 0 : '10px 0 0' }}>{text}</p>
+          ))}
+        </div>
+        <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
+          <div style={{ color: 'var(--text-secondary)' }}>{card.set ?? 'CORE SET'}</div>
+          {card.cardType === 'creature' && <div style={{ fontSize: '1.3rem', fontWeight: 800 }}>{card.attack ?? '-'} / {card.health ?? '-'}</div>}
         </div>
       </div>
     </div>
   );
 };
 
+const Chip: React.FC<{ label: string; accent: string }> = ({ label, accent }) => (
+  <div style={{ padding: '5px 10px', borderRadius: '999px', border: `1px solid ${accent}`, fontSize: '0.62rem', letterSpacing: '0.16rem', color: accent }}>
+    {label}
+  </div>
+);
+
 const EndMatchModal: React.FC<{ title: string; color: string; onExit: () => void }> = ({ title, color, onExit }) => (
   <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-    <h1 style={{ fontSize: '10rem', color, fontStyle: 'italic', fontWeight: '900', letterSpacing: '20px' }}>{title}</h1>
-    <button className="neo-button primary" style={{ marginTop: '60px', background: color, minWidth: '300px' }} onClick={onExit}>
+    <h1 style={{ fontSize: '9rem', color, fontStyle: 'italic', fontWeight: '900', letterSpacing: '18px' }}>{title}</h1>
+    <button className="neo-button primary" style={{ marginTop: '46px', background: color, minWidth: '280px' }} onClick={onExit}>
       EXIT ARENA
     </button>
   </div>
