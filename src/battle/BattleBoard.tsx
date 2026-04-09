@@ -279,8 +279,25 @@ const BattleCard: React.FC<{ cardId: string, onClick: () => void, onHover: () =>
                </div>
            </div>
         </div>
-     );
-};
+const BattleCard: React.FC<{ card: Card, isOpponent?: boolean }> = ({ card, isOpponent }) => (
+    <div className="battle-card-unit fade-in" style={{ 
+        width: '120px', height: '160px', 
+        background: 'rgba(5,5,15,0.9)', 
+        border: `2px solid ${isOpponent ? 'var(--accent-magenta)' : 'var(--accent-cyan)'}`,
+        boxShadow: `0 0 15px ${isOpponent ? 'rgba(255,0,170,0.3)' : 'rgba(0,242,255,0.3)'}`,
+        borderRadius: '10px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        position: 'relative',
+        animation: 'float 3s ease-in-out infinite'
+    }}>
+        <div style={{ fontSize: '2rem' }}>{card.type === 'PULSE' ? '⚡' : '🛡️'}</div>
+        <div style={{ fontWeight: 'bold', fontSize: '0.8rem', marginTop: '10px', textAlign: 'center' }}>{card.name.toUpperCase()}</div>
+        <div style={{ position: 'absolute', bottom: 10, display: 'flex', gap: '15px', fontSize: '0.8rem' }}>
+            <span style={{ color: 'var(--accent-yellow)' }}>{card.attack}</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>{card.defense}</span>
+        </div>
+    </div>
+);
 
 const EndMatchModal: React.FC<{ title: string, color: string, onExit: () => void }> = ({ title, color, onExit }) => (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>

@@ -69,9 +69,18 @@ export interface Badge {
     tier: "BRONZE" | "SILVER" | "GOLD" | "PLATINUM";
 }
 
+export interface BioSyncStats {
+    id: string;
+    species: string;
+    happiness: number; // 0-100
+    hunger: number; // 0-100
+    bondLevel: number;
+    lastFed?: string;
+}
+
 export interface PlayerProfile {
   name: string;
-  currency: number; // Renamed for consistency
+  currency: number;
   level: number;
   xp: number;
   inventory: {
@@ -80,6 +89,7 @@ export interface PlayerProfile {
     deck: string[];
     items: string[];
   };
+  mainBioSync: BioSyncStats;
   badges: Badge[];
   stats: {
     wins: number;

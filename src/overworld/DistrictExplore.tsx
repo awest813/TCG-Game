@@ -88,12 +88,12 @@ export const DistrictExplore: React.FC = () => {
             {/* Top Bar: Sector Status */}
             <div style={{ position: 'absolute', top: 40, left: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: '20px' }}>
                 <div className="glass-panel" style={{ padding: '15px 30px', borderLeft: '5px solid var(--accent-cyan)', background: 'rgba(5,5,15,0.8)' }}>
-                    <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '4px' }}>SECTOR_ACTIVE</div>
+                    <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '4px' }}>ACTIVE_CLUB //</div>
                     <div style={{ fontSize: '1.4rem', fontWeight: 900 }}>{currentLoc.name.toUpperCase()}</div>
                 </div>
                 <div className="glass-panel" style={{ padding: '15px 30px', background: 'rgba(5,5,15,0.8)' }}>
-                    <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>TIME_CYCLE</div>
-                    <div style={{ fontWeight: 'bold', color: 'var(--accent-yellow)' }}>{state.timeOfDay}</div>
+                    <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '2px' }}>CHASE_PHASE //</div>
+                    <div style={{ fontWeight: 'bold', color: 'var(--accent-yellow)', fontSize: '1.2rem' }}>{state.timeOfDay}</div>
                 </div>
             </div>
 
@@ -109,16 +109,16 @@ export const DistrictExplore: React.FC = () => {
                     </button>
                 ))}
                 <div style={{ height: '20px' }}></div>
-                <button className="neo-button ghost" onClick={() => setShowSettings(true)}>SYSTEM CONFIG</button>
-                <button className="neo-button ghost" onClick={() => setScene('TRANSIT')}>TRANSIT HUB</button>
+                <button className="neo-button ghost" style={{ fontSize: '0.7rem' }} onClick={() => setShowSettings(true)}>SYSTEM_OS_v2.0</button>
+                <button className="neo-button ghost" style={{ fontSize: '0.7rem' }} onClick={() => setScene('TRANSIT')}>TRANSIT_GRID</button>
               </div>
             )}
 
             {/* Location Flavor: Description Box */}
             {!activeDialogue && (
               <div className="glass-panel fade-in" style={{ position: 'absolute', left: 60, bottom: 60, width: '450px', padding: '30px', zIndex: 10, background: 'rgba(5,5,15,0.7)', borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
-                  <div style={{ fontSize: '0.6rem', color: 'var(--accent-cyan)', marginBottom: '10px', letterSpacing: '2px' }}>ENVIRONMENT_LOG //</div>
-                  <p style={{ margin: 0, fontSize: '1rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.6, fontStyle: 'italic' }}>"{currentLoc.description}"</p>
+                  <div style={{ fontSize: '0.6rem', color: 'var(--accent-cyan)', marginBottom: '10px', letterSpacing: '4px' }}>CIRCUIT_SCOUTER //</div>
+                  <p style={{ margin: 0, fontSize: '1rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.6, fontStyle: 'italic', fontWeight: 300 }}>"{currentLoc.description}"</p>
               </div>
             )}
 

@@ -19,7 +19,8 @@
 ---
 
 ## ⚡ Phase 5: "Sync Awakening" & Post-Game (FUTURE)
-- [ ] **Archetype Evolution**: Morph cards into higher-sync variants based on XP (The 'Awakening' system).
+- [ ] **Sync-Pet Care System**: A Tamagotchi-style gameplay loop launched from the Sync-Den. Feed, groom, and bond with your primary partner to unlock 'Sync-Boost' battle multipliers and hidden evolution paths.
+- [ ] **Archetype Evolution**: Morph cards into higher-sync variants based on XP and Bond level (The 'Awakening' system).
 - [ ] **Prismatic Foil Crafting**: Personalized card styling and holographic field effects.
 - [ ] **Steam Deck & Controller Optimization**: Full gamepad binding for high-velocity circuit navigation.
 - [ ] **P2P Local Terminal Duel**: Direct maglev-link duels between two players over local network.

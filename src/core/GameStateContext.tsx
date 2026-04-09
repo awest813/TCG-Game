@@ -35,6 +35,13 @@ const DEFAULT_PROFILE: PlayerProfile = {
     ],
     items: ["Basic Holo-Sleeve"]
   },
+  primaryPartner: {
+      id: "ziprail-p1",
+      species: "Ziprail",
+      happiness: 80,
+      hunger: 20,
+      bondLevel: 1
+  },
   badges: [],
   stats: {
     wins: 0,
