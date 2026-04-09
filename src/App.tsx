@@ -1,32 +1,53 @@
-import * as BABYLON from "@babylonjs/core";
-import "@babylonjs/loaders/glTF";
-import "pepjs";
-import SceneComponent from "babylonjs-hook";
+import React from 'react';
+import { useGame } from './core/GameStateContext';
+import { MainMenu } from './ui/MainMenu';
+import { ApartmentHub } from './overworld/ApartmentHub';
+import { DistrictExplore } from './overworld/DistrictExplore';
+import { BattleBoard } from './battle/BattleBoard';
+import { DeckEditor } from './cards/DeckEditor';
+import { PackOpening } from './cards/PackOpening';
 
-export default function App() {
-	// declare any variables required to be updated regularly
-	let box;
-	
-	function onSceneReady(scene: BABYLON.Scene) {
-		// create scene items here.
-		const canvas = scene.getEngine().getRenderingCanvas();
+import { CardShop } from './economy/CardShop';
 
-		const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, BABYLON.Vector3.Zero(), scene);
-		camera.attachControl(canvas, true);
+import { SocialHangout } from './social/SocialHangout';
+import { Tournament } from './ui/Tournament';
+import { TransitStation } from './ui/TransitStation';
 
-		const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+const App: React.FC = () => {
+  const { state } = useGame();
 
-		box = BABYLON.MeshBuilder.CreateBox("box", {}, scene);
-	}
+  const renderScene = () => {
+    switch (state.currentScene) {
+      case 'MAIN_MENU':
+        return <MainMenu />;
+      case 'APARTMENT':
+        return <ApartmentHub />;
+      case 'DISTRICT_EXPLORE':
+        return <DistrictExplore />;
+      case 'BATTLE':
+        return <BattleBoard />;
+      case 'DECK_EDITOR':
+        return <DeckEditor />;
+      case 'STORE':
+        return <CardShop />;
+      case 'PACK_OPENING':
+        return <PackOpening />;
+      case 'SOCIAL':
+        return <SocialHangout />;
+      case 'TOURNAMENT':
+        return <Tournament />;
+      case 'TRANSIT':
+        return <TransitStation />;
+      default:
+        return <MainMenu />;
+    }
+  };
 
-	function onRender(scene: BABYLON.Scene) {
-		// update your scene here
-		const deltaTimeInMillis = scene.getEngine().getDeltaTime();
+  return (
+    <div className="app-container">
+      {renderScene()}
+    </div>
+  );
+};
 
-		const rpm = 10;
-
-		box.rotation.y += (rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000);
-	}
-	
-	return <SceneComponent className="w-screen h-auto focus:outline-none touch-none" antialias onSceneReady={onSceneReady} onRender={onRender} />;
-}
+export default App;

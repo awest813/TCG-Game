@@ -1,34 +1,47 @@
-# ts-react-tailwind-babylonjs-template
+# NEO SF: Champion Circuit
+**A Single-Player Urban Creature Card RPG**
 
-## Description
-This is a [Babylon.js](/BabylonJS/Babylon.js/) minimal React template with [Typescript](https://www.typescriptlang.org/) and [Tailwind.css](https://tailwindcss.com/) using [Vite](https://vitejs.dev/).
+Welcome to **Neo SF**, a vibrant, high-octane card-battling RPG set in the sprawling metropolises of a near-future world. Rise through the ranks of the Champion Circuit, build your reputation across five distinct districts, and sync with powerful digital creatures to become the legend of Neo SF.
 
-## Instructions
-1. Download or clone the repository.
-2. Type ```npm install``` in the terminal to download the required NPM modules.
-3. Enter ```npm run dev``` into the terminal to run a development server or ```npm run build``` to create a production build.
+---
 
-## Development Usage
-Create a development server using ```npm run dev``` in the terminal. This will open a local port which you can visit to view your project.
+## 🌆 Key Features
 
-## Production Usage
-Create a production build of your project using ```npm run build``` in the terminal. This will create a folder named ```dist``` which contains all the files needed for distrubution.
+### 🎴 Advanced Tactical Card Battles
+- **Sync System**: Manage your Sync Energy (Mana) to deploy units and support cards with surgical precision.
+- **Holographic Combat**: Experience duels on the "Hologrid" with 3D projected units, dynamic field effects, and system-degradation (glitch) visuals.
+- **Set Archetypes**: Master unique card sets like **Metro Pulse** (Aggro/Speed), **Garden Shift** (Control/Bloom), and **Alloy Core** (Industrial/Defense).
 
-## File Structure
-### /index.html
-Root .html file of your project.
+### 🏙️ Narrative District Navigation
+- **Authorial Overworld**: Explore a "Visual Novel Hybrid" world featuring high-fidelity authored scenes.
+- **Diverse Districts**: From the neon-drenched **Market Central** and the high-energy **Neon Mission** to the elite tranquility of **Redwood Heights**.
+- **Social Rhythm**: Interact with unique NPCs like **Maya** (Mentor), **Rin Vale** (Rookie Pro), and **Champion Zeno** across multiple sub-locations including Arcades, Clubs, and Rooftop Lounges.
 
-### /public
-All images or assets are stored here. Note that the files and folders in this directory will be served to the root.
+### 🛠️ Pro-Circuit Infrastructure
+- **Deck Inspector**: A centralized Keyword Dictionary and Card Inspector ensure tactical transparency in every turn.
+- **System Config**: Fully featured options menu including Fullscreen support, Master Volume, and Combat Flow (Turbo) toggles.
+- **Sync-Data**: Robust local save/load system to persist your circuit progress.
 
-### /src
-All the code of your project. 
+---
 
-### /src/main.tsx 
-The main file that is used in the ```/index.html``` file.
+## 🚀 Getting Started
 
-### /src/App.tsx
-Your actual Babylon.js code. Edit this file to create your scene.
+1. **Setup**: `npm install`
+2. **Launch**: `npm run dev`
+3. **New Career**: Click "New Career" in the Main Menu to initialize your profile and begin Chapter 1.
 
-## Thanks!
-Thank you for using this template, Feel free to use and contribute to this open-source Babylon.js template as you wish. If more complexity or updated code is needed, just fork the template and I will be happy to pull it from it.
+---
+
+## 🛠️ Tech Stack
+- **Core**: React + TypeScript
+- **Visuals**: Vanilla CSS (Glassmorphism + Cyber-Aesthetics)
+- **Packaging**: Vite
+
+---
+
+## 📜 Legal
+**© 2026 Allen West. All Rights Reserved.**
+Unauthorized duplication, distribution, or use of the "Neo SF" brand, assets, or code is strictly prohibited. Final rights reserved to **Allen West (2026)**.
+
+---
+*Built with passion for the next generation of card battlers.*
