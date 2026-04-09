@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArcRotateCamera, Color3, Engine, GlowLayer, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { useGame } from '../core/GameStateContext';
+import { TutorialGuide } from '../ui/TutorialGuide';
 
 export const ApartmentHub: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { state, setScene, saveGame, advanceTime } = useGame();
+  const { state, setScene, saveGame, advanceTime, updateProfile } = useGame();
   const [showWakeUp, setShowWakeUp] = useState(state.timeOfDay === 'MORNING');
   const [statusText, setStatusText] = useState('Apartment systems online.');
+  const needsOnboarding = !state.profile.progress.flags.onboardingComplete;
+  const starter = state.profile.progress.flags.onboardingStarter as string | undefined;
 
   useEffect(() => {
     if (!canvasRef.current) return undefined;
@@ -141,6 +144,38 @@ export const ApartmentHub: React.FC = () => {
         <div className="wake-up-overlay" style={{ position: 'fixed', inset: 0, background: 'black', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, opacity: 0, animation: 'fadeOut 2s forwards' }} onAnimationEnd={() => setShowWakeUp(false)}>
           <h2 className="glow-text" style={{ fontSize: '3rem' }}>WAKE UP</h2>
         </div>
+      )}
+
+      {needsOnboarding && (
+        <TutorialGuide
+          title="Lucy // Rookie Link Coach"
+          subtitle="FIRST SESSION GUIDE"
+          message={`Welcome home, ${state.profile.name}. I tuned your ${starter ?? 'starter'} loadout and left the sync terminal hot. First thing: open the terminal so I can walk you through the deck you just picked.`}
+          objective="Use the TERMINAL button or the glowing desk terminal to inspect your starter deck."
+          actions={[
+            {
+              label: 'OPEN TERMINAL',
+              onClick: () => {
+                setStatusText('Lucy routed you to the sync terminal.');
+                setScene('DECK_EDITOR');
+              }
+            },
+            {
+              label: 'SKIP INTRO',
+              variant: 'secondary',
+              onClick: () =>
+                updateProfile({
+                  progress: {
+                    ...state.profile.progress,
+                    flags: {
+                      ...state.profile.progress.flags,
+                      onboardingComplete: true
+                    }
+                  }
+                })
+            }
+          ]}
+        />
       )}
 
       <style>{`

@@ -10,6 +10,7 @@
 		"moduleResolution": "node",
 		"noResolve": false,
 		"isolatedModules": true,
+		"noEmit": true,
 		"removeComments": true,
 		"esModuleInterop": true,
 		"noImplicitAny": false,

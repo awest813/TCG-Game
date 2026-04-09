@@ -2,11 +2,12 @@ import React, { useMemo, useState } from 'react';
 import { useGame } from '../core/GameStateContext';
 import { Card } from '../core/types';
 import { getCardById, getCardPalette } from '../data/cards';
+import { TutorialGuide } from '../ui/TutorialGuide';
 
 type CardTypeFilter = 'ALL' | 'Pulse' | 'Bloom' | 'Tide' | 'Alloy' | 'Veil' | 'Current' | 'TACTIC';
 
 export const DeckEditor: React.FC = () => {
-  const { state, updateProfile, setScene } = useGame();
+  const { state, updateProfile, updateGameState, setScene } = useGame();
   const [filter, setFilter] = useState<CardTypeFilter>('ALL');
   const [search, setSearch] = useState('');
   const [focusedCardId, setFocusedCardId] = useState<string | null>(state.profile.inventory.deck[0] ?? state.profile.inventory.cards[0] ?? null);
@@ -61,6 +62,8 @@ export const DeckEditor: React.FC = () => {
   const creatureCount = deck.filter((id) => getCardById(id)?.cardType === 'creature').length;
   const tacticCount = deck.length - creatureCount;
   const focusedCard = getCardById(focusedCardId ?? '');
+  const needsOnboarding = !state.profile.progress.flags.onboardingComplete;
+  const starter = state.profile.progress.flags.onboardingStarter as string | undefined;
 
   return (
     <div
@@ -188,6 +191,40 @@ export const DeckEditor: React.FC = () => {
           SYNC & DEPLOY
         </button>
       </div>
+
+      {needsOnboarding && (
+        <TutorialGuide
+          title="Lucy // Deck Sync Walkthrough"
+          subtitle="STARTER DECK REVIEW"
+          message={`This is your ${starter ?? 'starter'} starter list. Keep an eye on card count, average cost, and the highlighted detail panel on the right. For your first hour, I want you to understand what your deck is trying to do before you change too much.`}
+          objective="Review your starter deck, then return to the apartment ready to leave for Sunset Terminal."
+          actions={[
+            {
+              label: 'INTRO COMPLETE',
+              onClick: () => {
+                updateProfile({
+                  progress: {
+                    ...state.profile.progress,
+                    flags: {
+                      ...state.profile.progress.flags,
+                      onboardingComplete: true
+                    }
+                  }
+                });
+                updateGameState({
+                  currentQuest: 'Leave the apartment and ride to Sunset Terminal.'
+                });
+                setScene('APARTMENT');
+              }
+            },
+            {
+              label: 'KEEP BROWSING',
+              variant: 'secondary',
+              onClick: () => undefined
+            }
+          ]}
+        />
+      )}
     </div>
   );
 };

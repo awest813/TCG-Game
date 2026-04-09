@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { GameState, PlayerProfile, SceneType, TimeOfDay } from './types';
+import { GameState, NewGameConfig, PlayerProfile, SceneType, TimeOfDay } from './types';
 
 interface GameContextType {
   state: GameState;
@@ -9,97 +9,128 @@ interface GameContextType {
   advanceTime: () => void;
   saveGame: () => void;
   loadGame: () => boolean;
-  resetGame: () => void;
+  resetGame: (config?: NewGameConfig) => void;
 }
 
-const INITIAL_QUEST = "Tutorial: Talk to Maya in your Apartment";
+const INITIAL_QUEST = 'Tutorial: Talk to Maya in your Apartment';
 
-const DEFAULT_PROFILE: PlayerProfile = {
-  name: "Neo_Rookie",
-  currency: 1250,
-  level: 1,
-  xp: 0,
-  inventory: {
-    cards: [
-        "ziprail", "ziprail", "neon-striker", "neon-striker", 
-        "voltlynx", "voltlynx", "signalmite", "signalmite",
-        "quick-transfer", "quick-transfer", "rooftop-remedy", "rooftop-remedy",
-        "iron-mite", "iron-mite", "mosshop", "mosshop"
-    ],
-    packs: ["Metro Pulse", "Metro Pulse"],
-    deck: [
-        "ziprail", "ziprail", "neon-striker", "neon-striker", 
-        "voltlynx", "voltlynx", "signalmite", "signalmite",
-        "quick-transfer", "quick-transfer", "rooftop-remedy", "rooftop-remedy"
-    ],
-    items: ["Basic Holo-Sleeve"]
+const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; species: string; deck: string[]; collection: string[]; packs: string[]; quest: string }> = {
+  Pulse: {
+    partnerId: 'ziprail-p1',
+    species: 'Ziprail',
+    deck: ['ziprail', 'ziprail', 'neon-striker', 'neon-striker', 'voltlynx', 'voltlynx', 'signalmite', 'signalmite', 'quick-transfer', 'quick-transfer', 'rooftop-remedy', 'rooftop-remedy'],
+    collection: ['ziprail', 'ziprail', 'rail-bastion', 'neon-striker', 'neon-striker', 'voltlynx', 'voltlynx', 'overdrive-fox', 'signalmite', 'signalmite', 'quick-transfer', 'quick-transfer', 'signal-boost', 'rooftop-remedy', 'rooftop-remedy', 'power-cell'],
+    packs: ['Metro Pulse', 'Metro Pulse'],
+    quest: 'Tutorial: Visit the terminal and learn your Pulse opener.'
   },
-  mainBioSync: {
-      id: "ziprail-p1",
-      species: "Ziprail",
-      happiness: 80,
-      hunger: 20,
-      bondLevel: 1
+  Bloom: {
+    partnerId: 'mosshop-p1',
+    species: 'Mosshop',
+    deck: ['mosshop', 'mosshop', 'verdajack', 'verdajack', 'spore-scout', 'spore-scout', 'signalmite', 'signalmite', 'rooftop-remedy', 'rooftop-remedy', 'quick-transfer', 'system-refresh'],
+    collection: ['mosshop', 'mosshop', 'lush-golem', 'verdajack', 'verdajack', 'spore-scout', 'spore-scout', 'bloom-whisper', 'seedling-bot', 'solar-rose', 'quick-transfer', 'system-refresh', 'rooftop-remedy', 'rooftop-remedy', 'stim-patch', 'power-cell'],
+    packs: ['Garden Shift', 'Metro Pulse'],
+    quest: 'Tutorial: Talk to Maya and test your Bloom sustain plan.'
   },
-  primaryPartner: {
-      id: "ziprail-p1",
-      species: "Ziprail",
-      happiness: 80,
-      hunger: 20,
-      bondLevel: 1
-  },
-  badges: [],
-  stats: {
-    wins: 0,
-    losses: 0,
-    tournamentsWon: 0,
-    cardsCollected: 16
-  },
-  progress: {
-    unlockedDistricts: ["APARTMENT", "SUNSET_TERMINAL"],
-    flags: {},
-    storyProgress: 0,
-    chapter: 1
+  Tide: {
+    partnerId: 'wharfin-p1',
+    species: 'Wharfin',
+    deck: ['wharfin', 'wharfin', 'mist-glider', 'mist-glider', 'coral-guard', 'coral-guard', 'quick-transfer', 'quick-transfer', 'system-refresh', 'system-refresh', 'rooftop-remedy', 'power-cell'],
+    collection: ['wharfin', 'wharfin', 'tidal-whale', 'mist-glider', 'mist-glider', 'coral-guard', 'coral-guard', 'wave-rider', 'data-diver', 'quick-transfer', 'quick-transfer', 'system-refresh', 'system-refresh', 'rooftop-remedy', 'stim-patch', 'power-cell'],
+    packs: ['Neon Echo', 'Bayline Current'],
+    quest: 'Tutorial: Learn how to control tempo with your Tide starter.'
   }
+};
+
+const createProfile = (config?: NewGameConfig): PlayerProfile => {
+  const starter = config?.starter ?? 'Pulse';
+  const loadout = STARTER_LOADOUTS[starter];
+
+  return {
+    name: config?.name?.trim() || 'Neo_Rookie',
+    currency: 1250,
+    level: 1,
+    xp: 0,
+    inventory: {
+      cards: [...loadout.collection],
+      packs: [...loadout.packs],
+      deck: [...loadout.deck],
+      items: ['Basic Holo-Sleeve']
+    },
+    mainBioSync: {
+      id: loadout.partnerId,
+      species: loadout.species,
+      happiness: 80,
+      hunger: 20,
+      bondLevel: 1
+    },
+    primaryPartner: {
+      id: loadout.partnerId,
+      species: loadout.species,
+      happiness: 80,
+      hunger: 20,
+      bondLevel: 1
+    },
+    badges: [],
+    stats: {
+      wins: 0,
+      losses: 0,
+      tournamentsWon: 0,
+      cardsCollected: loadout.collection.length
+    },
+    progress: {
+      unlockedDistricts: ['APARTMENT', 'SUNSET_TERMINAL'],
+      flags: {
+        onboardingStarter: starter,
+        onboardingComplete: false
+      },
+      storyProgress: 0,
+      chapter: 1
+    }
+  };
+};
+
+const createInitialState = (config?: NewGameConfig, startInMenu = true): GameState => {
+  const starter = config?.starter ?? 'Pulse';
+  return {
+    profile: createProfile(config),
+    currentScene: config || !startInMenu ? 'APARTMENT' : 'MAIN_MENU',
+    location: 'APARTMENT',
+    timeOfDay: 'MORNING',
+    currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore Sunset Terminal' : INITIAL_QUEST,
+    activeTournament: null
+  };
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<GameState>({
-    profile: DEFAULT_PROFILE,
-    currentScene: "MAIN_MENU",
-    location: "APARTMENT",
-    timeOfDay: "MORNING",
-    currentQuest: "Explore Sunset Terminal",
-    activeTournament: null
-  });
+  const [state, setState] = useState<GameState>(createInitialState());
 
   const setScene = (scene: SceneType) => {
-    setState(prev => ({ ...prev, currentScene: scene }));
+    setState((prev) => ({ ...prev, currentScene: scene }));
   };
 
   const updateProfile = (update: Partial<PlayerProfile>) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       profile: { ...prev.profile, ...update }
     }));
   };
 
   const updateGameState = (update: Partial<GameState>) => {
-    setState(prev => ({ ...prev, ...update }));
+    setState((prev) => ({ ...prev, ...update }));
   };
 
   const advanceTime = () => {
-    const times: TimeOfDay[] = ["MORNING", "AFTERNOON", "EVENING"];
+    const times: TimeOfDay[] = ['MORNING', 'AFTERNOON', 'EVENING'];
     const currentIndex = times.indexOf(state.timeOfDay);
     const nextIndex = (currentIndex + 1) % times.length;
-    setState(prev => ({ ...prev, timeOfDay: times[nextIndex] }));
+    setState((prev) => ({ ...prev, timeOfDay: times[nextIndex] }));
   };
 
   const saveGame = () => {
     localStorage.setItem('neo_sf_save', JSON.stringify(state));
-    console.log("Game Saved");
+    console.log('Game Saved');
   };
 
   const loadGame = () => {
@@ -111,26 +142,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
-  const resetGame = () => {
-      setState({
-          profile: DEFAULT_PROFILE,
-          currentScene: "APARTMENT",
-          location: "APARTMENT",
-          timeOfDay: "MORNING",
-          currentQuest: INITIAL_QUEST,
-          activeTournament: null
-      });
+  const resetGame = (config?: NewGameConfig) => {
+    setState(createInitialState(config ?? { name: 'Neo_Rookie', starter: 'Pulse' }, false));
   };
 
-  return (
-    <GameContext.Provider value={{ state, setScene, updateProfile, updateGameState, advanceTime, saveGame, loadGame, resetGame }}>
-      {children}
-    </GameContext.Provider>
-  );
+  return <GameContext.Provider value={{ state, setScene, updateProfile, updateGameState, advanceTime, saveGame, loadGame, resetGame }}>{children}</GameContext.Provider>;
 };
 
 export const useGame = () => {
   const context = useContext(GameContext);
-  if (!context) throw new Error("useGame must be used within GameProvider");
+  if (!context) throw new Error('useGame must be used within GameProvider');
   return context;
 };

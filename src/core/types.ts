@@ -105,6 +105,11 @@ export interface PlayerProfile {
   };
 }
 
+export interface NewGameConfig {
+  name: string;
+  starter: 'Pulse' | 'Bloom' | 'Tide';
+}
+
 export interface GameState {
   profile: PlayerProfile;
   currentScene: SceneType;
