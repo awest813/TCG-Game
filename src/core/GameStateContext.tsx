@@ -16,8 +16,10 @@ interface GameContextType {
 const INITIAL_QUEST = "Tutorial: Talk to Maya in your Apartment";
 
 const DEFAULT_PROFILE: PlayerProfile = {
-  name: "Player 1",
-  credits: 1000,
+  name: "Neo_Rookie",
+  currency: 1250,
+  level: 1,
+  xp: 0,
   inventory: {
     cards: [
         "ziprail", "ziprail", "neon-striker", "neon-striker", 
@@ -30,7 +32,15 @@ const DEFAULT_PROFILE: PlayerProfile = {
         "ziprail", "ziprail", "neon-striker", "neon-striker", 
         "voltlynx", "voltlynx", "signalmite", "signalmite",
         "quick-transfer", "quick-transfer", "rooftop-remedy", "rooftop-remedy"
-    ]
+    ],
+    items: ["Basic Holo-Sleeve"]
+  },
+  badges: [],
+  stats: {
+    wins: 0,
+    losses: 0,
+    tournamentsWon: 0,
+    cardsCollected: 16
   },
   progress: {
     unlockedDistricts: ["APARTMENT", "SUNSET_TERMINAL"],

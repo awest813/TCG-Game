@@ -16,235 +16,126 @@ export interface LocationAction {
 export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
     "SUNSET_TERMINAL": [
         {
-            id: "sunset-plaza",
-            name: "Station Plaza",
+            id: "home-bedroom",
+            name: "Rookie Sync-Den",
             districtId: "SUNSET_TERMINAL",
-            backgroundImage: "/sunset_terminal_bg.png",
-            description: "The neighborhood's main transit hub. Always warm and bustling.",
+            backgroundImage: "/apt_bedroom_bg.png",
+            description: "Your training room. Posters of Legendary Sync-Masters line the walls. Here, you and your partners prepare to conquer the Neo-Circuit!",
             actions: [
-                { label: "Talk to Kaizen", type: "TALK", targetId: "kaizen" },
-                { label: "Check Event Board", type: "EVENT" },
-                { label: "Head to Cafe", type: "SCENE_JUMP", targetId: "sunset-cafe" },
-                { label: "Return to Apartments", type: "SCENE_JUMP", targetId: "sunset-apartments" }
+                { label: "Rest with Partners", type: "EVENT" },
+                { label: "Sync Terminal", type: "SCENE_JUMP", targetId: "deck-editor" },
+                { label: "Exit to Club Gates", type: "SCENE_JUMP", targetId: "sunset-station" }
             ]
         },
         {
-            id: "sunset-apartments",
-            name: "Sunset Apartments",
+            id: "sunset-station",
+            name: "Sunset Club Gates",
             districtId: "SUNSET_TERMINAL",
-            backgroundImage: "/sunset_apartments_bg.png",
-            description: "The brick-faced courtyard of your home block.",
+            backgroundImage: "/train_arrival_bg.png",
+            description: "The gateway to your legend! Board the NEORail to find the 8 Grand Medals and reach the Civic Crown!",
             actions: [
-                { label: "Enter Apartment", type: "SCENE_JUMP", targetId: "home" }, // Special jump
-                { label: "Head to Plaza", type: "SCENE_JUMP", targetId: "sunset-plaza" }
-            ]
-        },
-        {
-            id: "sunset-cafe",
-            name: "Cafe Patio",
-            districtId: "SUNSET_TERMINAL",
-            backgroundImage: "/sunset_cafe_bg.png",
-            description: "A cozy spot overlooking the tracks. Good for deck discussion.",
-            actions: [
-                { label: "Hang out with Kaizen", type: "TALK", targetId: "kaizen" },
-                { label: "Head to Plaza", type: "SCENE_JUMP", targetId: "sunset-plaza" }
+                { label: "Check Medal Count", type: "EVENT" },
+                { label: "Board NEORail", type: "TRAVEL" },
+                { label: "Return Home", type: "SCENE_JUMP", targetId: "home-bedroom" }
             ]
         }
     ],
     "BAYLINE_WHARF": [
         {
             id: "wharf-boardwalk",
-            name: "Harbor Boardwalk",
+            name: "The Tide Club",
             districtId: "BAYLINE_WHARF",
             backgroundImage: "/bayline_wharf_bg.png",
-            description: "Misty wooden planks and the scent of salt water.",
+            description: "The official home of Tide-type duelists. Can you face the Club Master and earn the Aqua Medal?",
             actions: [
-                { label: "Go to Pier Market", type: "SCENE_JUMP", targetId: "wharf-market" },
-                { label: "Visit Ferry Terminal", type: "SCENE_JUMP", targetId: "wharf-ferry" },
-                { label: "Approach Maya", type: "TALK", targetId: "maya" }
+                { label: "Challenge Club Master", type: "TALK", targetId: "maya" },
+                { label: "Visit Tide Shop", type: "SCENE_JUMP", targetId: "wharf-market" }
             ]
         },
-        {
-            id: "wharf-market",
-            name: "Pier Market",
-            districtId: "BAYLINE_WHARF",
-            backgroundImage: "/bayline_market_bg.png",
-            description: "Open-air stalls selling coastal card packs and tide gear.",
-            actions: [
-                { label: "Shop Tide Cards", type: "SHOP" },
-                { label: "Enter Side Alley", type: "SCENE_JUMP", targetId: "wharf-alley" },
-                { label: "Back to Boardwalk", type: "SCENE_JUMP", targetId: "wharf-boardwalk" }
-            ]
-        },
-        {
-            id: "wharf-alley",
-            name: "Wharf Side-Alley",
-            districtId: "BAYLINE_WHARF",
-            backgroundImage: "/bayline_alley_bg.png",
-            description: "A quiet, atmospheric passage filled with card-culture murals.",
-            actions: [
-                { label: "Look at Murals", type: "EVENT" },
-                { label: "Back to Market", type: "SCENE_JUMP", targetId: "wharf-market" }
-            ]
-        },
-        {
-            id: "wharf-ferry",
-            name: "Ferry Terminal",
-            districtId: "BAYLINE_WHARF",
-            backgroundImage: "/bayline_ferry_bg.png",
-            description: "The departure point for cross-bay ferry lines.",
-            actions: [
-                { label: "Check Schedule", type: "EVENT" },
-                { label: "Back to Boardwalk", type: "SCENE_JUMP", targetId: "wharf-boardwalk" }
-            ]
-        }
+        // ... (other Bayline items)
     ],
     "MARKET_CENTRAL": [
         {
-            id: "market-interchange",
-            name: "Grand Interchange",
+            id: "market-street",
+            name: "The Pulse Club",
             districtId: "MARKET_CENTRAL",
-            backgroundImage: "/market_interchange_bg.png",
-            description: "The beating heart of Neo SF's commerce and card league logistics.",
+            backgroundImage: "/market_street_bg.png",
+            description: "The pulsing heart of the league! Masters of the Pulse-type gather here to test their speed in high-velocity duels.",
             actions: [
-                { label: "Talk to Vex", type: "TALK", targetId: "vex" },
-                { label: "Check League Rankings", type: "EVENT" },
-                { label: "Head to Arcade", type: "SCENE_JUMP", targetId: "market-arcade" },
-                { label: "Go Outside to Plaza", type: "SCENE_JUMP", targetId: "market-plaza" }
-            ]
-        },
-        {
-            id: "market-arcade",
-            name: "Premium Arcade",
-            districtId: "MARKET_CENTRAL",
-            backgroundImage: "/market_alley_bg.png",
-            description: "A hallway of high-end card boutiques and 'High Meta' flagship stores.",
-            actions: [
-                { label: "Enter Top Deck Shop", type: "SHOP" },
-                { label: "Talk to Collectors", type: "EVENT" },
-                { label: "Return to Interchange", type: "SCENE_JUMP", targetId: "market-interchange" }
+                { label: "Challenge Club Master", type: "TALK", targetId: "vex" },
+                { label: "Buy Pro Booster", type: "SHOP" },
+                { label: "Go to Stadium", type: "SCENE_JUMP", targetId: "market-plaza" }
             ]
         },
         {
             id: "market-plaza",
-            name: "Central Plaza",
+            name: "Championship Square",
             districtId: "MARKET_CENTRAL",
-            backgroundImage: "/market_plaza_bg.png",
-            description: "A massive outdoor square with a fountain and towering neon card ads.",
+            backgroundImage: "/civic_square_bg.png",
+            description: "Where aspiring duelists dream of greatness. The huge screen tracks the world's most powerful Sync-Bonds!",
             actions: [
-                { label: "Watch Ads", type: "EVENT" },
-                { label: "Return to Interchange", type: "SCENE_JUMP", targetId: "market-interchange" }
-            ]
-        },
-        {
-            id: "market-transit",
-            name: "Metro Gate 6",
-            districtId: "MARKET_CENTRAL",
-            backgroundImage: "/market_transit_bg.png",
-            description: "The high-traffic entrance to Market Central. Check the boards for the latest league seeds.",
-            actions: [
-                { label: "Board NEORail", type: "TRAVEL" },
-                { label: "Check Seeds", type: "EVENT" },
-                { label: "Enter Interchange", type: "SCENE_JUMP", targetId: "market-interchange" }
+                { label: "Watch Master Duel", type: "EVENT" },
+                { label: "Return to Pulse Club", type: "SCENE_JUMP", targetId: "market-street" }
             ]
         }
     ],
     "NEON_MISSION": [
         {
             id: "neon-plaza",
-            name: "Neon Plaza",
+            name: "The Neon Club",
             districtId: "NEON_MISSION",
             backgroundImage: "/neon_mission_bg.png",
-            description: "The electric heart of Neo SF's nightlife. Bills and beats are equally loud here.",
+            description: "A neon-lit arena where the flashy Veil-type masters rule the night. Are you brave enough to take their Medal?",
             actions: [
-                { label: "Enter Zone X", type: "SCENE_JUMP", targetId: "neon-arcade" },
-                { label: "Go to Club Spectrum", type: "SCENE_JUMP", targetId: "neon-club" },
-                { label: "Check Showcase board", type: "EVENT" }
-            ]
-        },
-        {
-            id: "neon-arcade",
-            name: "Zone X Arcade",
-            districtId: "NEON_MISSION",
-            backgroundImage: "/market_alley_bg.png",
-            description: "A high-octane gaming arena where fast-paced duels are the main attraction.",
-            actions: [
-                { label: "Play Card-Arcade", type: "EVENT" },
-                { label: "Talk to Pro-Gamer", type: "TALK", targetId: "rin" },
-                { label: "Back to Plaza", type: "SCENE_JUMP", targetId: "neon-plaza" }
-            ]
-        },
-        {
-            id: "neon-club",
-            name: "Club Spectrum",
-            districtId: "NEON_MISSION",
-            backgroundImage: "/spectrum_lounge_bg.png",
-            description: "A trendy lounge where elite duelists gather to show off their rarest foils.",
-            actions: [
-                { label: "Visit Duel Bar", type: "TALK", targetId: "kaizen" },
-                { label: "Back to Plaza", type: "SCENE_JUMP", targetId: "neon-plaza" }
-            ]
-        },
-        {
-            id: "neon-stage",
-            name: "Azure Event Stage",
-            districtId: "NEON_MISSION",
-            backgroundImage: "/neon_mission_stage_bg.png",
-            description: "A massive open-air stage dedicated to Card-Sport Idol performances and league finals.",
-            actions: [
-                { label: "Watch Azure Performance", type: "EVENT" },
-                { label: "Talk to Azure", type: "TALK", targetId: "azure" },
-                { label: "Back to Plaza", type: "SCENE_JUMP", targetId: "neon-plaza" }
+                { label: "Battle Street Master", type: "DUEL" },
+                { label: "Enter Ultra Arcade", type: "SCENE_JUMP", targetId: "neon-arcade" }
             ]
         }
     ],
     "REDWOOD_HEIGHTS": [
         {
             id: "redwood-garden",
-            name: "Rooftop Garden",
+            name: "The Bloom Club",
             districtId: "REDWOOD_HEIGHTS",
             backgroundImage: "/redwood_park_bg.png",
-            description: "Exclusive serenity above the city clouds. The air smells like premium card stock and jasmine.",
+            description: "An elegant rooftop sanctuary for those who master the Bloom-types. Only the most graceful duelists survive here.",
             actions: [
-                { label: "Talk to Valerious", type: "TALK", targetId: "valerious" },
-                { label: "Enter Bloom Boutique", type: "SCENE_JUMP", targetId: "redwood-boutique" },
-                { label: "Head to Skywalk", type: "SCENE_JUMP", targetId: "redwood-skywalk" }
-            ]
-        },
-        {
-            id: "redwood-boutique",
-            name: "Collectable Boutique BLOOM",
-            districtId: "REDWOOD_HEIGHTS",
-            backgroundImage: "/redwood_boutique_bg.png",
-            description: "A high-end gallery showcasing the most exquisite Bloom-type foils in Neo SF.",
-            actions: [
-                { label: "Browse Premium Collection", type: "SHOP" },
-                { label: "Exhibition Duel", type: "EVENT" },
-                { label: "Return to Garden", type: "SCENE_JUMP", targetId: "redwood-garden" }
-            ]
-        },
-        {
-            id: "redwood-skywalk",
-            name: "Bloom Skywalk",
-            districtId: "REDWOOD_HEIGHTS",
-            backgroundImage: "/redwood_rooftop_bg.png",
-            description: "A glass path overlooking the urban canopy of Neo SF. Perfect for twilight reflection.",
-            actions: [
-                { label: "Admire Horizon", type: "EVENT" },
-                { label: "Back to Garden", type: "SCENE_JUMP", targetId: "redwood-garden" }
+                { label: "Challenge Master Valerious", type: "TALK", targetId: "valerious" },
+                { label: "Visit Bloom Boutique", type: "SCENE_JUMP", targetId: "redwood-boutique" }
             ]
         }
     ],
     "CIVIC_CROWN": [
         {
-            id: "crown-arena",
-            name: "League Grand Arena",
+            id: "crown-street",
+            name: "Champion Road",
             districtId: "CIVIC_CROWN",
-            backgroundImage: "/civic_crown_stage_bg.png",
-            description: "The ultimate proving ground where legends of the Neo SF Circuit are crowned in the Grand Finals.",
+            backgroundImage: "/crown_main_bg.png",
+            description: "The final road to glory! Only those with 8 Medals may pass these gates into the Hall of Champions!",
             actions: [
-                { label: "Meet Champion Zeno", type: "TALK", targetId: "zeno" },
-                { label: "Initialize Grand Finals", type: "EVENT" }
+                { label: "Show Medals to Guard", type: "EVENT" },
+                { label: "Proceed to Stadium", type: "SCENE_JUMP", targetId: "crown-plaza" }
+            ]
+        },
+        {
+            id: "crown-plaza",
+            name: "Hall of Champions",
+            districtId: "CIVIC_CROWN",
+            backgroundImage: "/civic_crown_ext_bg.png",
+            description: "The threshold of destiny. The greatest Sync-Masters in history are waiting for you inside.",
+            actions: [
+                { label: "Challenge Elite Four", type: "EVENT" },
+                { label: "Enter Grand Arena", type: "SCENE_JUMP", targetId: "crown-arena" }
+            ]
+        },
+        {
+            id: "crown-arena",
+            name: "The Grand Stadium",
+            districtId: "CIVIC_CROWN",
+            backgroundImage: "/civic_crown_arena_bg.png",
+            description: "The ultimate arena! 100,000 fans are cheering your name. Unleash your soul and become the Neo SF Champion!",
+            actions: [
+                { label: "FINAL DUEL: ZENO", type: "TALK", targetId: "zeno" }
             ]
         }
     ]

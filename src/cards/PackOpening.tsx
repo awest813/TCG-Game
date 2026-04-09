@@ -7,23 +7,28 @@ export const PackOpening: React.FC = () => {
   const [revealedCards, setRevealedCards] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [isOpening, setIsOpening] = useState(false);
+  const [packStatus, setPackStatus] = useState<'IDLE' | 'BURST' | 'SHRED' | 'REVEAL'>('IDLE');
+
+  const startSequence = () => {
+    if (state.profile.inventory.packs.length === 0) return;
+    setPackStatus('BURST');
+    setTimeout(() => {
+        setPackStatus('SHRED');
+        setTimeout(() => {
+            openPack();
+            setPackStatus('REVEAL');
+            setIsOpening(true);
+        }, 300);
+    }, 500);
+  };
 
   const openPack = () => {
-    if (state.profile.inventory.packs.length === 0) {
-        alert("No packs in inventory!");
-        return;
-    }
-
-    setIsOpening(true);
     const newCards: string[] = [];
-    
-    // Weighted selection
     for (let i = 0; i < 5; i++) {
         const rollout = Math.random();
         let pool = CARD_POOL.filter(c => c.rarity === 'common');
         if (rollout > 0.95) pool = CARD_POOL.filter(c => c.rarity === 'rare');
         else if (rollout > 0.8) pool = CARD_POOL.filter(c => c.rarity === 'uncommon');
-        
         const rand = Math.floor(Math.random() * pool.length);
         newCards.push(pool[rand].id);
     }
@@ -58,66 +63,69 @@ export const PackOpening: React.FC = () => {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      background: '#050510',
+      position: 'relative',
       overflow: 'hidden'
     }}>
-      {!isOpening ? (
-        <div className="glass-panel" style={{ textAlign: 'center', padding: '60px', borderRadius: '40px' }}>
-            <h1 className="glow-text" style={{ marginBottom: '40px', fontSize: '2.5rem' }}>DATA DECRYPTION</h1>
+      <div className="scanlines" />
+      {packStatus === 'BURST' && <div className="energy-beam" />}
+
+      {packStatus !== 'REVEAL' ? (
+        <div className="glass-panel" style={{ textAlign: 'center', padding: '60px', borderRadius: '40px', zIndex: 10 }}>
+            <h1 className="glow-text" style={{ marginBottom: '60px', fontSize: '1rem', letterSpacing: '10px', opacity: 0.5 }}>DATA_DECRYPTION_MODE</h1>
             
-            <div className="pack-visual floating" style={{ 
-                width: '240px', 
-                height: '340px', 
-                margin: '0 auto 40px', 
-                background: 'linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-magenta) 100%)',
-                borderRadius: '25px',
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                boxShadow: '0 0 50px rgba(0, 242, 255, 0.3)',
-                border: '4px solid white',
+            <div className={`pack-visual ${packStatus === 'IDLE' ? 'floating' : (packStatus === 'BURST' ? 'pack-burst' : 'shred-anim')}`} style={{ 
+                width: '260px', 
+                height: '360px', 
+                margin: '0 auto 60px', 
+                background: 'linear-gradient(215deg, #222 0%, #000 100%)',
+                boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
+                border: '1px solid rgba(255,255,255,0.1)',
                 cursor: 'pointer',
-                position: 'relative'
-            }} onClick={openPack}>
-                <div style={{ textAlign: 'center' }}>
-                    <h2 className="glow-text" style={{ fontSize: '1.8rem', letterSpacing: '2px' }}>{state.profile.inventory.packs[0] || "NULL"}</h2>
-                    <div style={{ fontSize: '0.7rem', marginTop: '15px', color: 'rgba(255,255,255,0.7)', letterSpacing: '3px' }}>5 DATA FRAGMENTS</div>
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '8px'
+            }} onClick={startSequence}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40px', background: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontWeight: 900, color: 'black' }}>
+                    METRO_PULSE_SET
                 </div>
-                <div style={{ position: 'absolute', inset: '10px', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '15px' }}></div>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '10rem', opacity: 0.05, fontWeight: 900 }}>P</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--accent-cyan)', letterSpacing: '4px' }}>ACCESS_GRANTED</div>
+                </div>
+                <div className="scanlines" style={{ opacity: 0.1 }} />
             </div>
             
             <div style={{ marginBottom: '40px' }}>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '2px' }}>Inventory Surplus</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{state.profile.inventory.packs.length} PACKS</div>
+                <div style={{ fontSize: '2rem', fontWeight: 900, color: 'white' }}>{state.profile.inventory.packs.length} PACKS</div>
             </div>
 
             {state.profile.inventory.packs.length > 0 ? (
-                <p style={{ color: 'var(--accent-cyan)', fontSize: '0.9rem', animation: 'pulse 2s infinite' }}>CLICK TO INITIALIZE SEQUENCE</p>
+                <p style={{ color: 'var(--accent-cyan)', fontSize: '0.7rem', letterSpacing: '2px', animation: 'pulse 2s infinite' }}>INITIALIZE SYNC PROTOCOL</p>
             ) : (
                 <button className="neo-button" onClick={() => setScene('APARTMENT')}>RETURN TO HUB</button>
             )}
         </div>
       ) : (
-        <div style={{ textAlign: 'center', width: '100%', maxWidth: '400px' }}>
+        <div style={{ textAlign: 'center', width: '100%', maxWidth: '500px', zIndex: 10 }}>
             {currentIndex >= 0 && (
-                <div className="card-reveal-area" style={{ perspective: '1200px' }}>
+                <div className="card-reveal-area" style={{ perspective: '2000px' }}>
                     <RevealCard cardId={revealedCards[currentIndex]} onNext={nextCard} />
                 </div>
             )}
             
-            <div style={{ marginTop: '60px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+            <div style={{ marginTop: '80px', display: 'flex', justifyContent: 'center', gap: '8px' }}>
                 {revealedCards.map((_, i) => (
                     <div key={i} style={{ 
-                        width: '50px', 
-                        height: '6px', 
-                        borderRadius: '3px',
-                        background: i === currentIndex ? 'var(--accent-cyan)' : (i < currentIndex ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.1)'),
-                        boxShadow: i === currentIndex ? '0 0 10px var(--accent-cyan)' : 'none',
-                        transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                        width: '60px', 
+                        height: '4px', 
+                        background: i === currentIndex ? 'var(--accent-cyan)' : (i < currentIndex ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)'),
+                        boxShadow: i === currentIndex ? '0 0 15px var(--accent-cyan)' : 'none',
+                        transition: '0.6s'
                     }} />
                 ))}
-            </div>
-            <div style={{ marginTop: '30px', color: 'var(--text-secondary)', fontSize: '0.8rem', letterSpacing: '2px' }}>
-                {currentIndex === revealedCards.length - 1 ? 'SEQUENCE COMPLETE' : 'TAP FRAGMENT TO REVEAL'}
             </div>
         </div>
       )}

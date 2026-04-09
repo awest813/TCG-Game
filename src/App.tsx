@@ -12,6 +12,7 @@ import { CardShop } from './economy/CardShop';
 import { SocialHangout } from './social/SocialHangout';
 import { Tournament } from './ui/Tournament';
 import { TransitStation } from './ui/TransitStation';
+import { Profile } from './ui/Profile';
 
 const App: React.FC = () => {
   const { state } = useGame();
@@ -38,6 +39,8 @@ const App: React.FC = () => {
         return <Tournament />;
       case 'TRANSIT':
         return <TransitStation />;
+      case 'PROFILE':
+        return <Profile />;
       default:
         return <MainMenu />;
     }

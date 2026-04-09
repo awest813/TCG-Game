@@ -15,11 +15,11 @@ export const NPCS: NPC[] = [
     {
         id: "kaizen",
         name: "Kaizen",
-        role: "Neighborhood Rival",
+        role: "Rival Duelist",
         dialogue: {
-            MORNING: "You're up early. Training for the terminal open?",
-            AFTERNOON: "Looking for a duel? My Pulse deck is ready.",
-            EVENING: "Sunset Terminal is beautiful this time of day, isn't it?"
+            MORNING: "Hey! Don't tell me you're still sleeping? My deck and I have been training since dawn!",
+            AFTERNOON: "You won't believe the new combo I pulled. Ready to feel the heat of a real battle?",
+            EVENING: "We're going to the top of the Neo SF Circuit, you and me. Don't you dare lose before then!"
         },
         deck: ["ziprail", "neon-striker", "voltlynx", "overdrive-fox", "quick-transfer"],
         location: "SUNSET_TERMINAL",
@@ -29,11 +29,11 @@ export const NPCS: NPC[] = [
     {
         id: "maya",
         name: "Maya",
-        role: "Tide Specialist",
+        role: "Tide Club Master",
         dialogue: {
-            MORNING: "The current is steady today.",
-            AFTERNOON: "Slow and steady wins the match. Want to test your speed?",
-            EVENING: "I'm heading to the cafe soon."
+            MORNING: "The currents of destiny are shifting. Do you think your deck can handle the pressure?",
+            AFTERNOON: "Like a crashing wave, my Tide-monsters will overwhelm your defenses! Prove your worth!",
+            EVENING: "You possess a rare spark... keep that fire burning, and the Aqua Medal will be yours one day."
         },
         deck: ["wave-rider", "tsunami-core", "wharfin", "mist-glider", "system-refresh"],
         location: "BAYLINE_WHARF",
@@ -43,11 +43,11 @@ export const NPCS: NPC[] = [
     {
         id: "vex",
         name: "Vex",
-        role: "Market Shark",
+        role: "Pulse Club Master",
         dialogue: {
-            MORNING: "Credit spreads look good. You look like a mark.",
-            AFTERNOON: "Step into my office. And by office, I mean this dueling mat.",
-            EVENING: "Business is booming. Go away unless you're buying."
+            MORNING: "Speed is life, kid. If your sync isn't instant, you're already obsolete.",
+            AFTERNOON: "My Pulse Deck moves faster than the maglev! Try to keep up if you want the Speed Medal!",
+            EVENING: "Not bad... but to be a Champion, you need more than just fast cards. You need a soul that never stops."
         },
         deck: ["shield-drone", "fortress-walker", "ziprail", "neon-striker", "voltlynx"],
         location: "MARKET_CENTRAL",
@@ -57,11 +57,11 @@ export const NPCS: NPC[] = [
     {
         id: "luna",
         name: "LUNA",
-        role: "Cyber Idol",
+        role: "Neon Club Master",
         dialogue: {
-            MORNING: "Sound check is at noon. Don't be late!",
-            AFTERNOON: "Everyone's watching. Make it a show!",
-            EVENING: "The lights reflect everything in Neo SF."
+            MORNING: "The lights are rising! Today is the day we put on the greatest show in Neo SF history!",
+            AFTERNOON: "Dueling is performance art! Let the neon glow reflect the brilliant bonds of your partners!",
+            EVENING: "Even when the sun goes down, our spirits shine bright. Never let your light fade, duelist!"
         },
         deck: ["seedling-bot", "solar-rose", "bloom-monarch", "voltlynx", "neon-striker"],
         location: "NEON_MISSION",
@@ -71,11 +71,11 @@ export const NPCS: NPC[] = [
     {
         id: "valerious",
         name: "Valerious",
-        role: "Redwood Elite",
+        role: "Bloom Elite Master",
         dialogue: {
-            MORNING: "The view from here is... acceptable.",
-            AFTERNOON: "A deck is a work of art. Yours seems... incomplete.",
-            EVENING: "Join me for a rooftop duel? The stakes are high."
+            MORNING: "Nature is the ultimate architect. Your deck... it lacks the elegance of a growing forest.",
+            AFTERNOON: "To master the Bloom-type is to master life itself. Can you survive the thorns of my garden?",
+            EVENING: "The night air brings out the strongest scents. One final duel before the moon peaks?"
         },
         deck: ["seedling-bot", "solar-rose", "bloom-monarch", "shield-drone", "fortress-walker"],
         location: "REDWOOD_HEIGHTS",
@@ -85,58 +85,15 @@ export const NPCS: NPC[] = [
     {
         id: "zeno",
         name: "ZENO",
-        role: "Crown League Champion",
+        role: "Grand League Champion",
         dialogue: {
-            MORNING: "Victory is the only result I accept.",
-            AFTERNOON: "To standing atop the Civic Crown, you must be iron.",
-            EVENING: "The circuit is closing soon. One last match?"
+            MORNING: "I have stood atop the Civic Crown for five years. Why do you think today will be different?",
+            AFTERNOON: "The Heart of the Circuit beats within me! Show me your passion, or fail here and now!",
+            EVENING: "This is the final sync. Two souls, one arena, and the title of World Champion on the line!"
         },
         deck: ["omega-link", "royal-bloom", "tsunami-core", "stream-ace", "mirror-phantom"],
         location: "CIVIC_CROWN",
         activeTimes: ["MORNING", "AFTERNOON", "EVENING"],
         avatarColor: "#ffffff"
-    },
-    {
-        id: "rin",
-        name: "Rin Vale",
-        role: "Rookie Pro",
-        dialogue: {
-            MORNING: "First to the shop gets the best pulls! That's my rule.",
-            AFTERNOON: "My deck is hitting its peak resonance. Care for a test?",
-            EVENING: "Long day of dueling. Sunset over the arcade is the best."
-        },
-        deck: ["ziprail", "neon-striker", "data-diver", "overclock", "system-refresh"],
-        location: "MARKET_CENTRAL",
-        activeTimes: ["MORNING", "AFTERNOON", "EVENING"],
-        activeTimes: ["MORNING", "AFTERNOON", "EVENING"],
-        avatarColor: "#ff4400"
-    },
-    {
-        id: "azure",
-        name: "Azure",
-        role: "Card-Sport Idol",
-        dialogue: {
-            MORNING: "The sun is up, and so is the volume! Let's get tuned in.",
-            AFTERNOON: "Rehearsals are going great. My deck is as sharp as my vocals!",
-            EVENING: "Neon Mission looks beautiful from up here. Care for a spotlight duel?"
-        },
-        deck: ["neon-striker", "signal-boost", "overclock", "omega-link"],
-        location: "NEON_MISSION",
-        activeTimes: ["MORNING", "AFTERNOON", "EVENING"],
-        avatarColor: "#00f2ff"
-    },
-    {
-        id: "rin_summer",
-        name: "Rin (Wharf)",
-        role: "Beach Duelist",
-        dialogue: {
-            MORNING: "The tide is coming in... perfect for some water-type tech!",
-            AFTERNOON: "Sand in my deck? Not a chance! My sleeves are waterproof.",
-            EVENING: "Even at the beach, the circuit never stops. Ready?"
-        },
-        deck: ["wharfin", "tidal-whale", "tsunami-core", "wave-rider"],
-        location: "BAYLINE_WHARF",
-        activeTimes: ["MORNING", "AFTERNOON", "EVENING"],
-        avatarColor: "#ffaa00"
     }
 ];

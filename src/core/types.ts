@@ -60,13 +60,32 @@ export interface FieldCard extends BaseCard {
 
 export type Card = CreatureCard | SupportCard | ItemCard | FieldCard;
 
+export interface Badge {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    dateUnlocked?: string;
+    tier: "BRONZE" | "SILVER" | "GOLD" | "PLATINUM";
+}
+
 export interface PlayerProfile {
   name: string;
-  credits: number;
+  currency: number; // Renamed for consistency
+  level: number;
+  xp: number;
   inventory: {
-    cards: string[]; // IDs of cards owned
-    packs: string[]; // Names of packs owned
-    deck: string[]; // IDs of cards in current deck
+    cards: string[];
+    packs: string[];
+    deck: string[];
+    items: string[];
+  };
+  badges: Badge[];
+  stats: {
+    wins: number;
+    losses: number;
+    tournamentsWon: number;
+    cardsCollected: number;
   };
   progress: {
     unlockedDistricts: string[];
@@ -75,15 +94,14 @@ export interface PlayerProfile {
   };
 }
 
-export type TimeOfDay = "MORNING" | "AFTERNOON" | "EVENING";
-
-export interface GameState {
-  profile: PlayerProfile;
-  currentScene: SceneType;
-  location: string;
-  timeOfDay: TimeOfDay;
-  currentQuest: string;
-  activeTournament: any | null;
+export interface ShopItem {
+    id: string;
+    targetId: string; // cardId or packType
+    name: string;
+    description: string;
+    cost: number;
+    type: "PACK" | "SINGLE" | "COSMETIC";
+    image: string;
 }
 
 export type SceneType = 
@@ -98,4 +116,5 @@ export type SceneType =
   | "SOCIAL"
   | "TOURNAMENT"
   | "TRANSIT"
-  | "SAVE_LOAD";
+  | "SAVE_LOAD"
+  | "PROFILE";

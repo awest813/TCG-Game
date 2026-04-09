@@ -1,47 +1,47 @@
-# NEO SF: Champion Circuit
-**A Single-Player Urban Creature Card RPG**
+# NEO SF: Master Circuit
+**The Definitive Urban Creature Card RPG**
 
-Welcome to **Neo SF**, a vibrant, high-octane card-battling RPG set in the sprawling metropolises of a near-future world. Rise through the ranks of the Champion Circuit, build your reputation across five distinct districts, and sync with powerful digital creatures to become the legend of Neo SF.
-
----
-
-## 🌆 Key Features
-
-### 🎴 Advanced Tactical Card Battles
-- **Sync System**: Manage your Sync Energy (Mana) to deploy units and support cards with surgical precision.
-- **Holographic Combat**: Experience duels on the "Hologrid" with 3D projected units, dynamic field effects, and system-degradation (glitch) visuals.
-- **Set Archetypes**: Master unique card sets like **Metro Pulse** (Aggro/Speed), **Garden Shift** (Control/Bloom), and **Alloy Core** (Industrial/Defense).
-
-### 🏙️ Narrative District Navigation
-- **Authorial Overworld**: Explore a "Visual Novel Hybrid" world featuring high-fidelity authored scenes.
-- **Diverse Districts**: From the neon-drenched **Market Central** and the high-energy **Neon Mission** to the elite tranquility of **Redwood Heights**.
-- **Social Rhythm**: Interact with unique NPCs like **Maya** (Mentor), **Rin Vale** (Rookie Pro), and **Champion Zeno** across multiple sub-locations including Arcades, Clubs, and Rooftop Lounges.
-
-### 🛠️ Pro-Circuit Infrastructure
-- **Deck Inspector**: A centralized Keyword Dictionary and Card Inspector ensure tactical transparency in every turn.
-- **System Config**: Fully featured options menu including Fullscreen support, Master Volume, and Combat Flow (Turbo) toggles.
-- **Sync-Data**: Robust local save/load system to persist your circuit progress.
+Welcome to **Neo SF**, a world where your cards aren't just data—they're your partners. Rise from the **Sunset Sync-Den** to the **Hall of Champions**! Battle through the 8 Great Clubs, earn your Medals, and prove your bond is the strongest in the Master Circuit.
 
 ---
 
-## 🚀 Getting Started
+## 🌆 The Master Experience
 
-1. **Setup**: `npm install`
-2. **Launch**: `npm run dev`
-3. **New Career**: Click "New Career" in the Main Menu to initialize your profile and begin Chapter 1.
+### 🎴 Tactical Sync-Combat
+- **Heart of the Circuit**: Manage your Sync Energy to unleash devastating creature combos.
+- **Cinematic Duels**: High-fidelity holographic battleboards with "Postcard Polish" visuals including camera zoom and digital particle fields.
+- **Archetype Synergy**: Master the unique styles of **Tide**, **Pulse**, **Bloom**, and **Veil** type creatures.
+
+### 🏆 The Road to Champion
+- **Club & Medal System**: Conquer the 8 Great Clubs (Sunset, Bayline, Market, Neon, Redwood) and collect the **Grand Medals** to enter the **Civic Crown Grand Finals**.
+- **Endless Gauntlet**: High-stakes, infinite tournament play in the **Unlimited Crown Gauntlet**. How many wins can you stack before your sync breaks?
+- **Card-Master Boutique**: A high-end shopping experience for acquiring rare booster packs, powerful singles, and legendary card cosmetics.
+
+### 🆔 Pro-Duelist Features
+- **Social IDs**: A rich profile system tracking your **XP**, **Level**, **Medal Collection**, and career win/loss stats.
+- **Visual Novel Immersion**: Animated dialogue with typing effects and unique NPC branding for an authentic "Classic Card RPG" feel.
+- **Music Manager**: Dynamic BGM that shifts as you travel from the quiet Wharf to the roaring Grand Stadium.
+
+---
+
+## 🚀 Initialize Your Journey
+
+1. **Install**: `npm install`
+2. **Sync**: `npm run dev`
+3. **Begin**: Start a "New Career" to enter the Rookie Sync-Den and meet your first partners!
 
 ---
 
 ## 🛠️ Tech Stack
-- **Core**: React + TypeScript
-- **Visuals**: Vanilla CSS (Glassmorphism + Cyber-Aesthetics)
-- **Packaging**: Vite
+- **Engine**: React + TypeScript + Vite
+- **Visuals**: Vanilla CSS (Ken Burns Effects + Data Particles)
+- **Audio**: Custom Audio Logic Layer
 
 ---
 
-## 📜 Legal
+## 📜 Legal & Governance
 **© 2026 Allen West. All Rights Reserved.**
 Unauthorized duplication, distribution, or use of the "Neo SF" brand, assets, or code is strictly prohibited. Final rights reserved to **Allen West (2026)**.
 
 ---
-*Built with passion for the next generation of card battlers.*
+*Unleash your spirit. Trust the data.*

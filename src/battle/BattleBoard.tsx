@@ -218,30 +218,68 @@ const BattleSlot: React.FC<{ entity: any, isActive?: boolean, side: 'player' | '
 const BattleCard: React.FC<{ cardId: string, onClick: () => void, onHover: () => void, onLeave: () => void, disabled: boolean }> = ({ cardId, onClick, onHover, onLeave, disabled }) => {
     const card = getCardById(cardId);
     if (!card) return null;
+    
+    const typeColor = card.creatureType === 'Pulse' ? 'var(--accent-cyan)' : 
+                      card.creatureType === 'Bloom' ? '#44ff88' : 
+                      card.creatureType === 'Alloy' ? '#aaaaaa' : 'var(--accent-magenta)';
+
     return (
         <div 
             onClick={disabled ? undefined : onClick}
             onMouseEnter={onHover}
             onMouseLeave={onLeave}
             style={{
-                width: '130px',
-                height: '180px',
-                background: 'rgba(5,5,15,0.95)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                padding: '15px',
+                width: '140px',
+                height: '200px',
+                background: 'rgba(10,10,25,0.98)',
+                border: `1px solid ${typeColor}`,
+                boxShadow: card.attack > 2000 ? `0 0 15px ${typeColor}` : 'none',
                 cursor: disabled ? 'default' : 'pointer',
                 opacity: disabled ? 0.4 : 1,
                 transition: '0.2s',
-                transform: 'translateY(0)',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                position: 'relative',
+                overflow: 'hidden'
             }}
         >
-           <div style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{card.name.toUpperCase()}</div>
-           <div style={{ flex: 1 }}></div>
-           <div style={{ textAlign: 'right', fontWeight: '900', color: 'var(--accent-yellow)', fontSize: '1.2rem' }}>{card.cost}⚡</div>
+           {/* Top Header: Name & Cost */}
+           <div style={{ padding: '8px', background: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+               <div style={{ fontSize: '0.65rem', fontWeight: '900', letterSpacing: '1px' }}>{card.name.toUpperCase()}</div>
+               <div style={{ color: 'var(--accent-yellow)', fontWeight: 'bold', fontSize: '0.8rem' }}>{card.cost}⚡</div>
+           </div>
+
+           {/* Illustration Window (Top 60%) */}
+           <div style={{ 
+               flex: 1, 
+               background: `linear-gradient(to bottom, ${typeColor}22, transparent)`,
+               display: 'flex',
+               alignItems: 'center',
+               justifyContent: 'center',
+               position: 'relative'
+           }}>
+              <div className="scanlines" style={{ opacity: 0.2 }} />
+              {/* Symbolic Placeholder for Monster Art */}
+              <div style={{ 
+                  width: '60%', height: '60%', 
+                  background: typeColor, 
+                  opacity: 0.2, 
+                  filter: 'blur(20px)',
+                  borderRadius: '50%'
+              }} />
+              <div style={{ position: 'absolute', fontSize: '0.5rem', color: typeColor, letterSpacing: '2px', fontWeight: 'bold' }}>DATA_ID: {card.id.toUpperCase()}</div>
+           </div>
+
+           {/* Stats & Type Bottom Bar */}
+           <div style={{ padding: '8px', background: 'rgba(0,0,0,0.5)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+               <div style={{ fontSize: '0.5rem', color: typeColor, letterSpacing: '2px', marginBottom: '4px' }}>{card.creatureType?.toUpperCase() || 'SUPPORT'}</div>
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                   <div style={{ fontSize: '0.9rem', fontWeight: '900', color: 'var(--accent-yellow)' }}>{card.attack}</div>
+                   <div style={{ fontSize: '0.9rem', fontWeight: '900', color: 'var(--text-primary)' }}>{card.health}</div>
+               </div>
+           </div>
         </div>
-    );
+     );
 };
 
 const EndMatchModal: React.FC<{ title: string, color: string, onExit: () => void }> = ({ title, color, onExit }) => (
