@@ -19,6 +19,18 @@ export const Tournament: React.FC = () => {
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
 
+  const renderStars = (count: number) => {
+    return (
+      <div style={{ display: 'flex', gap: '3px', color: 'var(--accent-yellow)' }}>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <span key={i} style={{ fontSize: '0.9rem', opacity: i < count ? 1 : 0.2 }}>
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   const startTournament = (tier: TournamentTier) => {
     if (state.profile.currency < tier.entryFee) {
       alert('Insufficient Credits for entry.');
@@ -108,7 +120,19 @@ export const Tournament: React.FC = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '16px' }}>
                     <div>
                       <div className="system-menu-kicker">{tier.locationId.replace(/-/g, ' ')}</div>
-                      <h2 style={{ marginTop: '10px', fontSize: '1.7rem', fontWeight: 900 }}>{tier.name.toUpperCase()}</h2>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '10px' }}>
+                        <h2 style={{ fontSize: '1.7rem', fontWeight: 900, textShadow: tier.prestige >= 4 ? '0 0 15px rgba(240, 198, 124, 0.4)' : 'none' }}>
+                          {tier.name.toUpperCase()}
+                        </h2>
+                      </div>
+                      <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {renderStars(tier.prestige)}
+                        {tier.prestige >= 4 && (
+                          <span style={{ fontSize: '0.6rem', color: 'var(--accent-yellow)', letterSpacing: '0.1rem', fontWeight: 800 }}>
+                            PRESTIGE EVENT
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {tier.isEndless && (
                       <div className="glass-morphism" style={{ padding: '0.4rem 0.65rem', fontSize: '0.62rem', letterSpacing: '0.14rem', color: 'var(--accent-magenta)' }}>
@@ -182,7 +206,7 @@ export const Tournament: React.FC = () => {
   const opponent = NPCS.find((entry) => entry.id === activeTourney.currentOpponentId);
   const trainer = getTrainerById(activeTourney.currentOpponentId);
   const relationshipScore = social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0;
-  const banter = getTournamentBanter(activeTourney.currentOpponentId, relationshipScore, activeTourney.wins);
+  const banter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, relationshipScore, activeTourney.wins);
   const roundLabel = getTournamentRoundLabel(tier.id, activeTourney.wins);
   const opponentMeta = getOpponentMeta(activeTourney.currentOpponentId);
 
@@ -206,12 +230,22 @@ export const Tournament: React.FC = () => {
         <div className="glass-panel" style={{ padding: '22px 24px', background: 'rgba(7, 10, 16, 0.72)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '20px', flexWrap: 'wrap' }}>
             <div>
-              <div className="system-menu-kicker">{roundLabel}</div>
-              <h1 className="glow-text" style={{ fontSize: '3rem', marginTop: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <div className="system-menu-kicker">{roundLabel}</div>
+                {renderStars(tier.prestige)}
+              </div>
+              <h1 className="glow-text" style={{ fontSize: '3rem', marginTop: '8px', textShadow: tier.prestige >= 4 ? '0 0 25px rgba(240, 198, 124, 0.6)' : 'none' }}>
                 {tier.name.toUpperCase()}
               </h1>
-              <div style={{ marginTop: '8px', color: 'var(--accent-magenta)', fontSize: '0.8rem', letterSpacing: '0.22rem' }}>
-                WINS: {activeTourney.wins} // RELATION LINK: {relationshipScore}
+              <div style={{ marginTop: '8px', display: 'flex', gap: '15px', alignItems: 'center' }}>
+                <div style={{ color: 'var(--accent-magenta)', fontSize: '0.8rem', letterSpacing: '0.22rem' }}>
+                  WINS: {activeTourney.wins} // RELATION LINK: {relationshipScore}
+                </div>
+                {tier.prestige >= 4 && (
+                   <div style={{ color: 'var(--accent-yellow)', fontSize: '0.7rem', letterSpacing: '0.15rem', fontWeight: 800, padding: '2px 8px', border: '1px solid var(--accent-yellow)', borderRadius: '4px' }}>
+                    ELITE CIRCUIT
+                  </div>
+                )}
               </div>
             </div>
             <div className="glass-morphism" style={{ padding: '18px 22px', minWidth: '220px' }}>
@@ -227,10 +261,14 @@ export const Tournament: React.FC = () => {
             <h2 style={{ marginTop: '10px', fontSize: '2.1rem', fontWeight: 900 }}>
               {opponent?.name ?? 'ELITE BOT'} // {opponent?.role ?? 'Circuit Opponent'}
             </h2>
-              <div style={{ marginTop: '10px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{banter.intro}</div>
               {trainer && <div style={{ marginTop: '12px', color: 'var(--accent-yellow)', lineHeight: 1.6 }}>{trainer.summary}</div>}
 
               <div style={{ marginTop: '26px', display: 'grid', gap: '14px' }}>
+              <div className="glass-morphism" style={{ padding: '18px 20px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '0.12rem', fontWeight: 800 }}>{banter.announcerLabel}</div>
+                <div style={{ marginTop: '10px', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic' }}>"{banter.intro}"</div>
+              </div>
+
               <div className="glass-morphism" style={{ padding: '18px 20px', borderLeft: `3px solid ${banter.accentColor}` }}>
                 <div style={{ fontSize: '0.64rem', color: banter.accentColor, letterSpacing: '0.16rem' }}>{banter.opponentLabel}</div>
                 <div style={{ marginTop: '8px', lineHeight: 1.65 }}>{banter.rival}</div>

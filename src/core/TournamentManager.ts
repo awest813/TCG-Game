@@ -8,6 +8,7 @@ export interface TournamentTier {
   rarityMultiplier: number;
   enemyLevelRange: [number, number];
   isEndless: boolean;
+  prestige: number; // 1 to 5 star rating
 }
 
 export interface TournamentBanterPack {
@@ -20,6 +21,8 @@ export interface TournamentBanterPack {
   opponentLabel: string;
   /** Display label for the player response line */
   playerLabel: string;
+  /** Label for the intro/announcer text, e.g. 'RADIO ANNOUNCER' or 'BROADCAST ANNOUNCER' */
+  announcerLabel: string;
   /** Accent color for the opponent panel, sourced from trainer data */
   accentColor: string;
 }
@@ -34,7 +37,8 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
     baseReward: 200,
     rarityMultiplier: 1.0,
     enemyLevelRange: [1, 3],
-    isEndless: false
+    isEndless: false,
+    prestige: 1
   },
   {
     id: 'market-pro-am',
@@ -45,7 +49,8 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
     baseReward: 1500,
     rarityMultiplier: 1.5,
     enemyLevelRange: [3, 7],
-    isEndless: false
+    isEndless: false,
+    prestige: 2
   },
   {
     id: 'neon-night-league',
@@ -56,7 +61,8 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
     baseReward: 6000,
     rarityMultiplier: 2.2,
     enemyLevelRange: [7, 12],
-    isEndless: false
+    isEndless: false,
+    prestige: 4
   },
   {
     id: 'crown-unlimited',
@@ -67,7 +73,8 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
     baseReward: 25000,
     rarityMultiplier: 5.0,
     enemyLevelRange: [15, 99],
-    isEndless: true
+    isEndless: true,
+    prestige: 5
   }
 ];
 
@@ -158,11 +165,12 @@ export const getTournamentPreviewLine = (tier: TournamentTier) => {
   return 'The crown-side gauntlet where each win turns the bracket crueler and the payout more addictive.';
 };
 
-export const getTournamentBanter = (opponentId: string, relationship = 0, wins = 0): TournamentBanterPack => {
+export const getTournamentBanter = (opponentId: string, prestige: number, relationship = 0, wins = 0): TournamentBanterPack => {
   const base = DEFAULT_BANTER[opponentId] ?? DEFAULT_BANTER.kaizen;
   const meta = getOpponentMeta(opponentId);
 
   const playerLabel = 'YOU';
+  const announcerLabel = prestige >= 3 ? 'BROADCAST ANNOUNCER' : 'RADIO ANNOUNCER';
 
   if (relationship >= 3) {
     return {
@@ -171,6 +179,7 @@ export const getTournamentBanter = (opponentId: string, relationship = 0, wins =
       player: `${base.player} We know each other too well for empty lines now.`,
       opponentLabel: meta.label,
       playerLabel,
+      announcerLabel,
       accentColor: meta.accentColor
     };
   }
@@ -182,6 +191,7 @@ export const getTournamentBanter = (opponentId: string, relationship = 0, wins =
       player: `${base.player} Then let's give the bracket a round worth remembering.`,
       opponentLabel: meta.label,
       playerLabel,
+      announcerLabel,
       accentColor: meta.accentColor
     };
   }
@@ -190,6 +200,7 @@ export const getTournamentBanter = (opponentId: string, relationship = 0, wins =
     ...base,
     opponentLabel: meta.label,
     playerLabel,
+    announcerLabel,
     accentColor: meta.accentColor
   };
 };
