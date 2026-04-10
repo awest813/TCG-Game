@@ -8,6 +8,7 @@ import { getCardById, getCardPalette } from '../data/cards';
 import { BattleEntity } from './BattleEngine';
 import { NPCS } from '../npc/npcs';
 import { audioManager } from '../core/AudioManager';
+import { BattleArena3D } from './BattleArena3D';
 
 export const BattleBoard: React.FC = () => {
   const { state, setScene, updateGameState, updateProfile } = useGame();
@@ -162,6 +163,14 @@ export const BattleBoard: React.FC = () => {
     >
       <div className="scanlines" />
       <div className="battle-atmosphere" />
+
+      <BattleArena3D 
+        playerActive={battleState.player.active}
+        opponentActive={battleState.opponent.active}
+        playerBench={battleState.player.bench}
+        opponentBench={battleState.opponent.bench}
+        field={activeField}
+      />
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px', alignItems: 'start', zIndex: 10 }}>
         <div className="glass-panel" style={{ padding: '18px 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(7,12,22,0.72)' }}>
