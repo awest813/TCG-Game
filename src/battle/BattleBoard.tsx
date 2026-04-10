@@ -7,6 +7,7 @@ import { applyFactionReputationDelta, applyTrainerRelationshipDelta, getFactionB
 import { getCardById, getCardPalette } from '../data/cards';
 import { BattleEntity } from './BattleEngine';
 import { NPCS } from '../npc/npcs';
+import { audioManager } from '../core/AudioManager';
 
 export const BattleBoard: React.FC = () => {
   const { state, setScene, updateGameState, updateProfile } = useGame();
@@ -29,6 +30,10 @@ export const BattleBoard: React.FC = () => {
   );
 
   useEffect(() => {
+    // Battle entrance effects
+    audioManager.playBGM('BATTLE');
+    audioManager.playSFX('vs_impact');
+    
     const timer = window.setTimeout(() => setShowVS(false), 2200);
     return () => window.clearTimeout(timer);
   }, []);
@@ -222,8 +227,8 @@ export const BattleBoard: React.FC = () => {
               <BattleCard
                 key={`${id}-${index}`}
                 cardId={id}
-                onClick={() => playCard(id)}
-                onHover={() => setHoveredCard(getCardById(id) ?? null)}
+                onClick={() => { audioManager.playSFX('card_play'); playCard(id); }}
+                onHover={() => { audioManager.playSFX('hover_soft'); setHoveredCard(getCardById(id) ?? null); }}
                 onLeave={() => setHoveredCard(null)}
                 disabled={!isPlayerTurn || !!battleState.winner}
               />
@@ -236,15 +241,30 @@ export const BattleBoard: React.FC = () => {
           <LifePointTracker value={battleState.player.prizes} max={3} color="var(--accent-cyan)" name="PLAYER PRIZES" />
           <div className="glass-panel" style={{ padding: '18px 20px', background: 'rgba(7,12,22,0.72)' }}>
             <BattleGauge label="SYNC ENERGY" value={`${battleState.player.mana} / ${battleState.player.maxMana}`} accent="var(--accent-cyan)" />
-            <button className="neo-button primary" onClick={endTurn} disabled={!isPlayerTurn || !!battleState.winner} style={{ marginTop: '14px', width: '100%', justifyContent: 'center', display: 'flex' }}>
+            <button 
+              className="neo-button primary" 
+              onClick={() => { audioManager.playSFX('turn_end'); endTurn(); }} 
+              disabled={!isPlayerTurn || !!battleState.winner} 
+              style={{ marginTop: '14px', width: '100%', justifyContent: 'center', display: 'flex' }}
+            >
               {isPlayerTurn ? 'END TURN' : 'WAITING...'}
             </button>
           </div>
         </div>
       </div>
 
-      {battleState.winner === 'player' && <EndMatchModal title="VICTORY" color="var(--accent-cyan)" onExit={handleVictoryExit} />}
-      {battleState.winner === 'opponent' && <EndMatchModal title="DEFEAT" color="var(--accent-magenta)" onExit={handleDefeatExit} />}
+      {battleState.winner === 'player' && (
+        <>
+          {useEffect(() => { audioManager.playBGM('VICTORY'); audioManager.playSFX('victory_stinger'); }, [])}
+          <EndMatchModal title="VICTORY" color="var(--accent-cyan)" onExit={handleVictoryExit} />
+        </>
+      )}
+      {battleState.winner === 'opponent' && (
+        <>
+          {useEffect(() => { audioManager.playSFX('defeat_stinger'); }, [])}
+          <EndMatchModal title="DEFEAT" color="var(--accent-magenta)" onExit={handleDefeatExit} />
+        </>
+      )}
 
       {hoveredCard && <CardInspector card={hoveredCard} />}
 
@@ -278,17 +298,17 @@ const FieldRow: React.FC<{
       <div style={{ marginTop: '8px', fontSize: '1.1rem', fontWeight: 700 }}>{side === 'player' ? 'Active attack route' : 'Enemy threat board'}</div>
     </div>
     <div style={{ display: 'flex', gap: '18px', alignItems: 'center', justifyContent: side === 'player' ? 'flex-start' : 'flex-end' }}>
-      {side === 'opponent' && <EntityStack entities={bench} side={side} onHover={onHover} onLeave={onLeave} />}
-      <BattleSlot entity={active} isActive side={side} onClick={onAttack} onHover={onHover} onLeave={onLeave} />
-      {side === 'player' && <EntityStack entities={bench} side={side} onHover={onHover} onLeave={onLeave} />}
+      {side === 'opponent' && <EntityStack entities={bench} onHover={onHover} onLeave={onLeave} />}
+      <BattleSlot entity={active} isActive onClick={onAttack} onHover={onHover} onLeave={onLeave} />
+      {side === 'player' && <EntityStack entities={bench} onHover={onHover} onLeave={onLeave} />}
     </div>
   </div>
 );
 
-const EntityStack: React.FC<{ entities: (BattleEntity | null)[]; side: 'player' | 'opponent'; onHover: (id: string) => void; onLeave: () => void }> = ({ entities, side, onHover, onLeave }) => (
+const EntityStack: React.FC<{ entities: (BattleEntity | null)[]; onHover: (id: string) => void; onLeave: () => void }> = ({ entities, onHover, onLeave }) => (
   <div style={{ display: 'flex', gap: '14px' }}>
     {entities.map((entity, index) => (
-      <BattleSlot key={index} entity={entity} side={side} onHover={onHover} onLeave={onLeave} />
+      <BattleSlot key={index} entity={entity} onHover={onHover} onLeave={onLeave} />
     ))}
   </div>
 );
@@ -327,19 +347,18 @@ const VSDisplay: React.FC<{ playerAvatar: string; opponentAvatar: string; oppone
 const BattleSlot: React.FC<{
   entity: BattleEntity | null;
   isActive?: boolean;
-  side: 'player' | 'opponent';
   onClick?: () => void;
   onHover?: (id: string) => void;
   onLeave?: () => void;
-}> = ({ entity, isActive, side, onClick, onHover, onLeave }) => {
+}> = ({ entity, isActive, onClick, onHover, onLeave }) => {
   const card = entity ? getCardById(entity.cardId) : undefined;
   const palette = getCardPalette(card);
   const isDamaged = entity && card ? entity.currentHealth < (card.health ?? entity.currentHealth) : false;
 
   return (
     <div
-      onClick={entity && side === 'player' && !entity.hasAttacked ? onClick : undefined}
-      onMouseEnter={() => entity && onHover?.(entity.cardId)}
+      onClick={() => { if (onClick) { audioManager.playSFX('attack_init'); onClick(); } }}
+      onMouseEnter={() => { if (entity) { audioManager.playSFX('hover'); onHover?.(entity.cardId); } }}
       onMouseLeave={onLeave}
       style={{
         width: isActive ? '190px' : '132px',

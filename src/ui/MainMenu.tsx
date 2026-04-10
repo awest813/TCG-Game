@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { NewGameConfig } from '../core/types';
 import { SystemMenu } from './SystemMenu';
+import { audioManager } from '../core/AudioManager';
 
 const STARTER_OPTIONS: Array<{
   id: NewGameConfig['starter'];
@@ -68,6 +69,7 @@ export const MainMenu: React.FC = () => {
   };
 
   const handleCreateCareer = () => {
+    audioManager.playSFX('career_start');
     resetGame({
       name: playerName.trim() || 'Neo Rookie',
       starter
@@ -98,7 +100,11 @@ export const MainMenu: React.FC = () => {
           </div>
 
           <div className="main-menu-actions">
-            <button className="champion-button champion-button-primary" onClick={() => setShowOnboarding(true)}>
+            <button 
+              className="champion-button champion-button-primary" 
+              onMouseEnter={() => audioManager.playSFX('hover')}
+              onClick={() => { audioManager.playSFX('select'); setShowOnboarding(true); }}
+            >
               <span className="btn-number">01</span>
               <span className="btn-copy">
                 <span className="btn-text">Begin Chapter One</span>
@@ -106,7 +112,12 @@ export const MainMenu: React.FC = () => {
               </span>
             </button>
 
-            <button className="champion-button" onClick={handleContinue} disabled={!hasSaveData}>
+            <button 
+              className="champion-button" 
+              onMouseEnter={() => audioManager.playSFX('hover')}
+              onClick={() => { audioManager.playSFX('select'); handleContinue(); }} 
+              disabled={!hasSaveData}
+            >
               <span className="btn-number">02</span>
               <span className="btn-copy">
                 <span className="btn-text">Resume Chronicle</span>
@@ -114,7 +125,11 @@ export const MainMenu: React.FC = () => {
               </span>
             </button>
 
-            <button className="champion-button champion-button-ghost" onClick={() => setShowSettings(true)}>
+            <button 
+              className="champion-button champion-button-ghost" 
+              onMouseEnter={() => audioManager.playSFX('hover')}
+              onClick={() => { audioManager.playSFX('menu_open'); setShowSettings(true); }}
+            >
               <span className="btn-number">03</span>
               <span className="btn-copy">
                 <span className="btn-text">Presentation</span>
@@ -122,7 +137,11 @@ export const MainMenu: React.FC = () => {
               </span>
             </button>
 
-            <button className="champion-button champion-button-ghost" onClick={() => setShowAbout((value) => !value)}>
+            <button 
+              className="champion-button champion-button-ghost" 
+              onMouseEnter={() => audioManager.playSFX('hover')}
+              onClick={() => { audioManager.playSFX('panel_toggle'); setShowAbout((value) => !value); }}
+            >
               <span className="btn-number">04</span>
               <span className="btn-copy">
                 <span className="btn-text">{showAbout ? 'Hide Dossier' : 'Open Dossier'}</span>
@@ -178,7 +197,7 @@ export const MainMenu: React.FC = () => {
                 <div className="system-menu-kicker">New Career Setup</div>
                 <h2 className="glow-text system-menu-title">Cast The Lead</h2>
               </div>
-              <button onClick={() => setShowOnboarding(false)} className="system-menu-close" aria-label="Close new game setup">
+              <button onClick={() => { audioManager.playSFX('menu_close'); setShowOnboarding(false); }} className="system-menu-close" aria-label="Close new game setup">
                 X
               </button>
             </div>
@@ -203,7 +222,8 @@ export const MainMenu: React.FC = () => {
                       <button
                         key={option.id}
                         className={`starter-card ${starter === option.id ? 'active' : ''}`}
-                        onClick={() => setStarter(option.id)}
+                        onMouseEnter={() => audioManager.playSFX('hover_soft')}
+                        onClick={() => { audioManager.playSFX('starter_select'); setStarter(option.id); }}
                       >
                         <div className="starter-card-header">
                           <div>
