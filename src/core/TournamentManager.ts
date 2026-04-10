@@ -12,8 +12,16 @@ export interface TournamentTier {
 
 export interface TournamentBanterPack {
   intro: string;
+  /** What the opponent says — displayed under their archetype label */
   rival: string;
+  /** How the player responds — displayed under the player label */
   player: string;
+  /** Display label for the opponent line, e.g. 'RIVAL' | 'CLUB MASTER' | 'ELITE' | 'CHAMPION' */
+  opponentLabel: string;
+  /** Display label for the player response line */
+  playerLabel: string;
+  /** Accent color for the opponent panel, sourced from trainer data */
+  accentColor: string;
 }
 
 export const TOURNAMENT_TIERS: TournamentTier[] = [
@@ -70,7 +78,9 @@ const TOURNAMENT_BRACKETS: Record<string, string[]> = {
   'crown-unlimited': ['kaizen', 'maya', 'vex', 'luna', 'valerious', 'zeno']
 };
 
-const DEFAULT_BANTER: Record<string, TournamentBanterPack> = {
+type RawBanterPack = Pick<TournamentBanterPack, 'intro' | 'rival' | 'player'>;
+
+const DEFAULT_BANTER: Record<string, RawBanterPack> = {
   kaizen: {
     intro: 'Rival sync signature detected in the bracket tunnel.',
     rival: 'You kept climbing. Good. Losing to me here would finally make this circuit honest.',
@@ -102,6 +112,20 @@ const DEFAULT_BANTER: Record<string, TournamentBanterPack> = {
     player: 'Good. Intent is the only thing I brought more of than nerves.'
   }
 };
+
+// Per-opponent archetype metadata — drives labels and accent colors in the UI
+const OPPONENT_META: Record<string, { label: string; accentColor: string; panelHeaderLabel: string }> = {
+  kaizen:    { label: 'RIVAL',       accentColor: '#cf6547', panelHeaderLabel: 'Rival Encounter' },
+  maya:      { label: 'CLUB MASTER', accentColor: '#76b7ff', panelHeaderLabel: 'Club Master Duel' },
+  vex:       { label: 'CLUB MASTER', accentColor: '#7dd7dd', panelHeaderLabel: 'Club Master Duel' },
+  luna:      { label: 'CLUB MASTER', accentColor: '#a855f7', panelHeaderLabel: 'Club Master Duel' },
+  valerious: { label: 'ELITE',       accentColor: '#8effa7', panelHeaderLabel: 'Elite Challenger' },
+  zeno:      { label: 'CHAMPION',    accentColor: '#f0c67c', panelHeaderLabel: 'Championship Bout' }
+};
+
+const FALLBACK_META = { label: 'OPPONENT', accentColor: 'var(--accent-cyan)', panelHeaderLabel: 'Pre-Fight Briefing' };
+
+export const getOpponentMeta = (opponentId: string) => OPPONENT_META[opponentId] ?? FALLBACK_META;
 
 export const getTournamentOpponents = (tierId: string) => TOURNAMENT_BRACKETS[tierId] ?? TOURNAMENT_BRACKETS['rookie-scrim'];
 
@@ -136,12 +160,18 @@ export const getTournamentPreviewLine = (tier: TournamentTier) => {
 
 export const getTournamentBanter = (opponentId: string, relationship = 0, wins = 0): TournamentBanterPack => {
   const base = DEFAULT_BANTER[opponentId] ?? DEFAULT_BANTER.kaizen;
+  const meta = getOpponentMeta(opponentId);
+
+  const playerLabel = 'YOU';
 
   if (relationship >= 3) {
     return {
       intro: `${base.intro} Familiarity detected. This is rivalry territory now, not a first meeting.`,
       rival: `${base.rival} And do not mistake history for mercy.`,
-      player: `${base.player} We know each other too well for empty lines now.`
+      player: `${base.player} We know each other too well for empty lines now.`,
+      opponentLabel: meta.label,
+      playerLabel,
+      accentColor: meta.accentColor
     };
   }
 
@@ -149,9 +179,17 @@ export const getTournamentBanter = (opponentId: string, relationship = 0, wins =
     return {
       intro: `${base.intro} Your bracket streak is drawing attention from the upper balconies.`,
       rival: `${base.rival} You have momentum now, which makes beating you worth more.`,
-      player: `${base.player} Then let's give the bracket a round worth remembering.`
+      player: `${base.player} Then let's give the bracket a round worth remembering.`,
+      opponentLabel: meta.label,
+      playerLabel,
+      accentColor: meta.accentColor
     };
   }
 
-  return base;
+  return {
+    ...base,
+    opponentLabel: meta.label,
+    playerLabel,
+    accentColor: meta.accentColor
+  };
 };

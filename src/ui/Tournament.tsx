@@ -6,6 +6,7 @@ import {
   getTournamentPreviewLine,
   getTournamentRoundLabel,
   getTournamentOpponents,
+  getOpponentMeta,
   TOURNAMENT_TIERS,
   TournamentTier
 } from '../core/TournamentManager';
@@ -183,6 +184,7 @@ export const Tournament: React.FC = () => {
   const relationshipScore = social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0;
   const banter = getTournamentBanter(activeTourney.currentOpponentId, relationshipScore, activeTourney.wins);
   const roundLabel = getTournamentRoundLabel(tier.id, activeTourney.wins);
+  const opponentMeta = getOpponentMeta(activeTourney.currentOpponentId);
 
   return (
     <div
@@ -220,8 +222,8 @@ export const Tournament: React.FC = () => {
         </div>
 
         <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(320px, 0.8fr)', gap: '28px', marginTop: '28px' }}>
-          <div className="glass-panel" style={{ padding: '28px', background: 'rgba(8, 10, 17, 0.78)' }}>
-            <div className="system-menu-kicker">Rival Banter</div>
+          <div className="glass-panel" style={{ padding: '28px', background: 'rgba(8, 10, 17, 0.78)', borderTop: `3px solid ${banter.accentColor}` }}>
+            <div className="system-menu-kicker" style={{ color: banter.accentColor }}>{opponentMeta.panelHeaderLabel}</div>
             <h2 style={{ marginTop: '10px', fontSize: '2.1rem', fontWeight: 900 }}>
               {opponent?.name ?? 'ELITE BOT'} // {opponent?.role ?? 'Circuit Opponent'}
             </h2>
@@ -229,15 +231,15 @@ export const Tournament: React.FC = () => {
               {trainer && <div style={{ marginTop: '12px', color: 'var(--accent-yellow)', lineHeight: 1.6 }}>{trainer.summary}</div>}
 
               <div style={{ marginTop: '26px', display: 'grid', gap: '14px' }}>
-              <div className="glass-morphism" style={{ padding: '18px 20px' }}>
-                <div style={{ fontSize: '0.64rem', color: 'var(--accent-magenta)', letterSpacing: '0.16rem' }}>RIVAL</div>
+              <div className="glass-morphism" style={{ padding: '18px 20px', borderLeft: `3px solid ${banter.accentColor}` }}>
+                <div style={{ fontSize: '0.64rem', color: banter.accentColor, letterSpacing: '0.16rem' }}>{banter.opponentLabel}</div>
                 <div style={{ marginTop: '8px', lineHeight: 1.65 }}>{banter.rival}</div>
               </div>
-              <div className="glass-morphism" style={{ padding: '18px 20px' }}>
-                <div style={{ fontSize: '0.64rem', color: 'var(--accent-cyan)', letterSpacing: '0.16rem' }}>YOU</div>
+              <div className="glass-morphism" style={{ padding: '18px 20px', borderLeft: '3px solid var(--accent-cyan)' }}>
+                <div style={{ fontSize: '0.64rem', color: 'var(--accent-cyan)', letterSpacing: '0.16rem' }}>{banter.playerLabel}</div>
                 <div style={{ marginTop: '8px', lineHeight: 1.65 }}>{banter.player}</div>
               </div>
-              <div className="glass-morphism" style={{ padding: '18px 20px' }}>
+              <div className="glass-morphism" style={{ padding: '18px 20px', borderLeft: '3px solid var(--accent-yellow)' }}>
                 <div style={{ fontSize: '0.64rem', color: 'var(--accent-yellow)', letterSpacing: '0.16rem' }}>TIME OF DAY FEED</div>
                 <div style={{ marginTop: '8px', lineHeight: 1.65 }}>
                   {opponent?.dialogue[state.timeOfDay] ?? 'The bracket announcer calls both duelists to the floor.'}

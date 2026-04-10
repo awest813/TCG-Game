@@ -1,7 +1,10 @@
+export type NPCArchetype = 'rival' | 'gym-master' | 'elite' | 'champion';
+
 export interface NPC {
     id: string;
     name: string;
     role: string;
+    archetype: NPCArchetype;
     dialogue: Record<string, string>; // timeOfDay -> text
     deck?: string[];
     location: string;
@@ -14,6 +17,7 @@ export const NPCS: NPC[] = [
         id: "kaizen",
         name: "Kaizen",
         role: "Rival Duelist",
+        archetype: "rival",
         dialogue: {
             MORNING: "Hey! Don't tell me you're still sleeping? My deck and I have been training since dawn!",
             AFTERNOON: "You won't believe the new combo I pulled. Ready to feel the heat of a real battle?",
@@ -28,6 +32,7 @@ export const NPCS: NPC[] = [
         id: "maya",
         name: "Maya",
         role: "Tide Club Master",
+        archetype: "gym-master",
         dialogue: {
             MORNING: "The currents of destiny are shifting. Do you think your deck can handle the pressure?",
             AFTERNOON: "Like a crashing wave, my Tide-monsters will overwhelm your defenses! Prove your worth!",
@@ -42,6 +47,7 @@ export const NPCS: NPC[] = [
         id: "vex",
         name: "Vex",
         role: "Pulse Club Master",
+        archetype: "gym-master",
         dialogue: {
             MORNING: "Speed is life, kid. If your sync isn't instant, you're already obsolete.",
             AFTERNOON: "My Pulse Deck moves faster than the maglev! Try to keep up if you want the Speed Medal!",
@@ -56,6 +62,7 @@ export const NPCS: NPC[] = [
         id: "luna",
         name: "LUNA",
         role: "Neon Club Master",
+        archetype: "gym-master",
         dialogue: {
             MORNING: "The lights are rising! Today is the day we put on the greatest show in Neo SF history!",
             AFTERNOON: "Dueling is performance art! Let the neon glow reflect the brilliant bonds of your partners!",
@@ -70,6 +77,7 @@ export const NPCS: NPC[] = [
         id: "valerious",
         name: "Valerious",
         role: "Bloom Elite Master",
+        archetype: "elite",
         dialogue: {
             MORNING: "Nature is the ultimate architect. Your deck... it lacks the elegance of a growing forest.",
             AFTERNOON: "To master the Bloom-type is to master life itself. Can you survive the thorns of my garden?",
@@ -84,6 +92,7 @@ export const NPCS: NPC[] = [
         id: "zeno",
         name: "ZENO",
         role: "Grand League Champion",
+        archetype: "champion",
         dialogue: {
             MORNING: "I have stood atop the Civic Crown for five years. Why do you think today will be different?",
             AFTERNOON: "The Heart of the Circuit beats within me! Show me your passion, or fail here and now!",
