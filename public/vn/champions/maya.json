@@ -1,0 +1,128 @@
+{
+  "id": "maya-route",
+  "title": "Maya // Tide Trial",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Harbor Trial",
+      "steps": [
+        {
+          "type": "visual",
+          "background": "/bayline_wharf_bg.png",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left",
+          "transition": "fade"
+        },
+        {
+          "type": "audio",
+          "action": "play-bgm",
+          "track": "bgm_harbor_trial"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "maya",
+          "text": "Listen to the harbor before you answer me. Strong duelists learn the rhythm beneath the noise.",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "choice",
+          "id": "maya_choice",
+          "prompt": "How do you approach Maya's test?",
+          "options": [
+            {
+              "id": "read_tide",
+              "text": "Tell her you already learned to read her pace.",
+              "conditions": [
+                {
+                  "relationship": "maya",
+                  "min": 2
+                }
+              ],
+              "effects": {
+                "relationships": {
+                  "maya": 1
+                },
+                "flags": {
+                  "launchBattle": true
+                },
+                "variables": {
+                  "playerMood": "composed"
+                }
+              }
+            },
+            {
+              "id": "dive_in",
+              "text": "Face the Tide trial head on.",
+              "effects": {
+                "relationships": {
+                  "maya": 2
+                },
+                "flags": {
+                  "launchBattle": true
+                }
+              }
+            },
+            {
+              "id": "ask",
+              "text": "Ask what she wants to see first.",
+              "effects": {
+                "relationships": {
+                  "maya": 1
+                },
+                "variables": {
+                  "playerMood": "curious"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "maya",
+          "text": "Then your focus is finally catching up to your heart. Good. That makes this worth testing.",
+          "conditions": [
+            {
+              "choice": "maya_choice",
+              "choiceEquals": "read_tide"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "maya",
+          "text": "Good. Resolve without focus is just another wave breaking too early.",
+          "conditions": [
+            {
+              "choice": "maya_choice",
+              "choiceEquals": "dive_in"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "maya",
+          "text": "Questions are fine. Just make sure the answer becomes movement before the tide turns.",
+          "conditions": [
+            {
+              "choice": "maya_choice",
+              "choiceEquals": "ask"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        }
+      ]
+    }
+  }
+}

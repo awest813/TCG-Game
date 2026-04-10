@@ -1,0 +1,129 @@
+{
+  "id": "demo-prologue",
+  "title": "Champion Circuit Prologue",
+  "startSceneId": "apartment_intro",
+  "scenes": {
+    "apartment_intro": {
+      "id": "apartment_intro",
+      "title": "Apartment Intro",
+      "steps": [
+        {
+          "type": "visual",
+          "background": "/sunset_apartments_bg.png",
+          "portrait": "/lucy_tutorial.png",
+          "bustLeft": "/avatar_player.png",
+          "bustRight": "/lucy_tutorial.png",
+          "focusSide": "right",
+          "transition": "fade"
+        },
+        {
+          "type": "audio",
+          "action": "play-bgm",
+          "track": "bgm_apartment_theme"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "lucy",
+          "text": "Morning, rookie. The city is waiting, and so is your first real route.",
+          "portrait": "/lucy_tutorial.png",
+          "bustLeft": "/avatar_player.png",
+          "bustRight": "/lucy_tutorial.png",
+          "focusSide": "right"
+        },
+        {
+          "type": "choice",
+          "id": "first_route_choice",
+          "prompt": "How do you want to open the day?",
+          "options": [
+            {
+              "id": "inspect_deck",
+              "text": "Review the starter deck.",
+              "effects": {
+                "relationships": {
+                  "lucy": 1
+                },
+                "flags": {
+                  "reviewedDeck": true
+                }
+              }
+            },
+            {
+              "id": "rush_out",
+              "text": "Head straight into the district.",
+              "effects": {
+                "variables": {
+                  "playerMood": "restless"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "lucy",
+          "text": "Good. A champion keeps their deck story clean before they ask it to win under pressure.",
+          "conditions": [
+            {
+              "choice": "first_route_choice",
+              "choiceEquals": "inspect_deck"
+            }
+          ],
+          "portrait": "/lucy_tutorial.png",
+          "bustLeft": "/avatar_player.png",
+          "bustRight": "/lucy_tutorial.png",
+          "focusSide": "right"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "lucy",
+          "text": "Impulsive, huh? Fine. Just make sure your deck can keep up with your feet.",
+          "conditions": [
+            {
+              "choice": "first_route_choice",
+              "choiceEquals": "rush_out"
+            }
+          ],
+          "portrait": "/lucy_tutorial.png",
+          "bustLeft": "/avatar_player.png",
+          "bustRight": "/lucy_tutorial.png",
+          "focusSide": "right"
+        },
+        {
+          "type": "trigger",
+          "event": "start_3d_combat",
+          "params": {
+            "enemy": "goblin"
+          },
+          "storeAs": "combatResult"
+        },
+        {
+          "type": "jump",
+          "targetSceneId": "post_combat"
+        }
+      ]
+    },
+    "post_combat": {
+      "id": "post_combat",
+      "title": "Post Combat",
+      "steps": [
+        {
+          "type": "dialogue",
+          "speakerId": "lucy",
+          "text": "Good. The narrative layer handed control to the 3D arena and got the result back intact.",
+          "portrait": "/lucy_tutorial.png",
+          "bustLeft": "/avatar_player.png",
+          "bustRight": "/lucy_tutorial.png",
+          "focusSide": "right"
+        },
+        {
+          "type": "state",
+          "patch": {
+            "flags": {
+              "onboardingComplete": true
+            }
+          }
+        }
+      ]
+    }
+  }
+}

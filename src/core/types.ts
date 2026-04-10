@@ -7,6 +7,7 @@ export type EffectType = 'damage' | 'heal' | 'draw' | 'discount' | 'buff';
 export type EffectTarget = 'active' | 'bench' | 'all' | 'self';
 export type EffectTrigger = 'onPlay' | 'onKO' | 'passive' | 'onEvolve';
 export type ProgressFlagValue = string | number | boolean | null;
+export type FactionId = 'CIRCUIT' | 'PULSE' | 'TIDE' | 'BLOOM' | 'NEON' | 'CROWN';
 
 export interface BattleModifier {
   type: 'STAT_BOOST' | 'COST_REDUCTION' | 'MANA_START';
@@ -81,6 +82,23 @@ export interface BioSyncStats {
   lastFed?: string;
 }
 
+export interface TrainerRelationship {
+  affinity: number;
+  rivalry: number;
+  respect: number;
+  lastResult?: 'WIN' | 'LOSS' | 'DRAW' | null;
+}
+
+export interface FactionReputation {
+  score: number;
+  rank: 'UNKNOWN' | 'KNOWN' | 'TRUSTED' | 'HONORED' | 'LEGEND';
+}
+
+export interface SocialState {
+  trainers: Record<string, TrainerRelationship>;
+  factions: Record<FactionId, FactionReputation>;
+}
+
 export interface PlayerProfile {
   name: string;
   currency: number;
@@ -101,6 +119,7 @@ export interface PlayerProfile {
     tournamentsWon: number;
     cardsCollected: number;
   };
+  social: SocialState;
   progress: {
     unlockedDistricts: string[];
     flags: Record<string, ProgressFlagValue>;
@@ -116,6 +135,16 @@ export interface ActiveTournament {
   status: 'ACTIVE' | 'WON' | 'LOST';
 }
 
+export interface VNSession {
+  scriptUrl: string;
+  title: string;
+  subtitle: string;
+  returnScene?: SceneType;
+  nextSceneOnComplete?: SceneType;
+  canvasId?: string;
+  sourceId?: string;
+}
+
 export interface NewGameConfig {
   name: string;
   starter: 'Pulse' | 'Bloom' | 'Tide';
@@ -128,6 +157,7 @@ export interface GameState {
   timeOfDay: TimeOfDay;
   currentQuest: string;
   activeTournament: ActiveTournament | null;
+  vnSession: VNSession | null;
 }
 
 export interface ShopItem {
@@ -153,4 +183,5 @@ export type SceneType =
   | 'TOURNAMENT'
   | 'TRANSIT'
   | 'SAVE_LOAD'
-  | 'PROFILE';
+  | 'PROFILE'
+  | 'VN_SCENE';

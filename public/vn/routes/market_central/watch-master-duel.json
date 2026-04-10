@@ -1,0 +1,23 @@
+{
+  "id": "watch-master-duel",
+  "title": "Watch Master Duel",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Public Match Feed",
+      "steps": [
+        { "type": "dialogue", "speakerId": "narrator", "text": "The square erupts each time a finisher lands. Even from the crowd, you can feel what the best duelists demand from a scene." },
+        {
+          "type": "choice",
+          "id": "master_duel_takeaway",
+          "prompt": "What do you take away from the match?",
+          "options": [
+            { "id": "tempo", "text": "Tempo wins crowds.", "effects": { "variables": { "playerMood": "aggressive" } } },
+            { "id": "presence", "text": "Presence wins before the cards do.", "effects": { "variables": { "playerMood": "dramatic" } } }
+          ]
+        }
+      ]
+    }
+  }
+}

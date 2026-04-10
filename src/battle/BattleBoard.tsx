@@ -2,16 +2,30 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useBattle } from './useBattle';
 import { useGame } from '../core/GameContext';
 import { Card } from '../core/types';
+import { getTournamentBracketSize, getTournamentOpponent, getTournamentRoundLabel, TOURNAMENT_TIERS } from '../core/TournamentManager';
+import { applyFactionReputationDelta, applyTrainerRelationshipDelta, getFactionById, getTrainerById, mergeSocialState } from '../data/trainers';
 import { getCardById, getCardPalette } from '../data/cards';
 import { BattleEntity } from './BattleEngine';
+import { NPCS } from '../npc/npcs';
 
 export const BattleBoard: React.FC = () => {
-  const { state, setScene } = useGame();
+  const { state, setScene, updateGameState, updateProfile } = useGame();
   const [showVS, setShowVS] = useState(true);
   const [hoveredCard, setHoveredCard] = useState<Card | null>(null);
+  const activeTournament = state.activeTournament;
+  const social = mergeSocialState(state.profile.social);
+  const tournamentTier = activeTournament ? TOURNAMENT_TIERS.find((entry) => entry.id === activeTournament.tierId) : null;
+  const opponentId = activeTournament?.currentOpponentId ?? 'kaizen';
+  const opponent = NPCS.find((entry) => entry.id === opponentId);
+  const trainer = getTrainerById(opponentId);
+  const faction = trainer ? getFactionById(trainer.factionId) : null;
+  const opponentName = opponent?.name ?? 'KAIZEN';
+  const opponentAvatar = trainer?.avatarPath ?? (opponentId === 'kaizen' ? '/avatar_kaizen.png' : '/avatar_player.png');
+  const playerDeck = useMemo(() => [...state.profile.inventory.deck], [state.profile.inventory.deck]);
+  const opponentDeck = useMemo(() => [...(trainer?.deck ?? ['ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'quick-transfer', 'ziprail'])], [trainer?.deck]);
   const { battleState, playCard, attack, endTurn } = useBattle(
-    state.profile.inventory.deck,
-    ['ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'quick-transfer', 'ziprail']
+    playerDeck,
+    opponentDeck
   );
 
   useEffect(() => {
@@ -38,8 +52,86 @@ export const BattleBoard: React.FC = () => {
     }
   }, [activeField]);
 
+  const handleVictoryExit = () => {
+    if (!activeTournament || !tournamentTier) {
+      setScene('DISTRICT_EXPLORE');
+      return;
+    }
+
+    const nextWins = activeTournament.wins + 1;
+    const officialBracketSize = getTournamentBracketSize(activeTournament.tierId);
+
+    if (nextWins >= officialBracketSize && activeTournament.tierId !== 'crown-unlimited') {
+      const finalReward = Math.floor(tournamentTier.baseReward * (1 + nextWins * tournamentTier.rarityMultiplier));
+      const socialWithTrainer = trainer
+        ? applyTrainerRelationshipDelta(state.profile, trainer.id, { affinity: 1, rivalry: 1, respect: 2, lastResult: 'WIN' })
+        : social;
+      const socialWithFaction = trainer
+        ? applyFactionReputationDelta({ ...state.profile, social: socialWithTrainer }, trainer.factionId, 5)
+        : socialWithTrainer;
+      updateProfile({
+        currency: state.profile.currency + finalReward,
+        stats: {
+          ...state.profile.stats,
+          wins: state.profile.stats.wins + 1,
+          tournamentsWon: state.profile.stats.tournamentsWon + 1
+        },
+        social: socialWithFaction
+      });
+      updateGameState({ activeTournament: null, currentQuest: `${tournamentTier.name} conquered. The city is watching now.` });
+      setScene('TOURNAMENT');
+      return;
+    }
+
+    const socialWithTrainer = trainer
+      ? applyTrainerRelationshipDelta(state.profile, trainer.id, { affinity: 1, rivalry: 1, respect: 1, lastResult: 'WIN' })
+      : social;
+    const socialWithFaction = trainer
+      ? applyFactionReputationDelta({ ...state.profile, social: socialWithTrainer }, trainer.factionId, 2)
+      : socialWithTrainer;
+    updateProfile({
+      stats: {
+        ...state.profile.stats,
+        wins: state.profile.stats.wins + 1
+      },
+      social: socialWithFaction
+    });
+    updateGameState({
+      activeTournament: {
+        ...activeTournament,
+        wins: nextWins,
+        currentOpponentId: getTournamentOpponent(activeTournament.tierId, nextWins)
+      },
+      currentQuest: `Advance through ${tournamentTier.name} and prepare for the next bracket rival.`
+    });
+    setScene('TOURNAMENT');
+  };
+
+  const handleDefeatExit = () => {
+    if (activeTournament) {
+      const socialWithTrainer = trainer
+        ? applyTrainerRelationshipDelta(state.profile, trainer.id, { rivalry: 2, respect: 1, lastResult: 'LOSS' })
+        : social;
+      const socialWithFaction = trainer
+        ? applyFactionReputationDelta({ ...state.profile, social: socialWithTrainer }, trainer.factionId, 1)
+        : socialWithTrainer;
+      updateProfile({
+        stats: {
+          ...state.profile.stats,
+          losses: state.profile.stats.losses + 1
+        },
+        social: socialWithFaction
+      });
+      updateGameState({ activeTournament: null, currentQuest: 'Recover from the bracket loss and sharpen your route before the next tournament.' });
+      setScene('TOURNAMENT');
+      return;
+    }
+
+    setScene('MAIN_MENU');
+  };
+
   if (showVS) {
-    return <VSDisplay playerAvatar="/avatar_player.png" opponentAvatar="/avatar_kaizen.png" opponentName="KAIZEN" />;
+    return <VSDisplay playerAvatar="/avatar_player.png" opponentAvatar={opponentAvatar} opponentName={opponentName.toUpperCase()} />;
   }
 
   return (
@@ -69,11 +161,14 @@ export const BattleBoard: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '20px', alignItems: 'start', zIndex: 10 }}>
         <div className="glass-panel" style={{ padding: '18px 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(7,12,22,0.72)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <img src="/avatar_kaizen.png" alt="Kaizen" style={{ width: '72px', height: '72px', borderRadius: '20px', objectFit: 'cover', border: '2px solid var(--accent-magenta)' }} />
+            <img src={opponentAvatar} alt={opponentName} style={{ width: '72px', height: '72px', borderRadius: '20px', objectFit: 'cover', border: '2px solid var(--accent-magenta)' }} />
             <div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', letterSpacing: '0.24rem' }}>OPPONENT LINK</div>
-              <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--accent-magenta)' }}>KAIZEN</div>
-              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.66)' }}>Rank B / Combat seed active</div>
+              <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--accent-magenta)' }}>{opponentName.toUpperCase()}</div>
+              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.66)' }}>
+                {activeTournament && tournamentTier ? `${getTournamentRoundLabel(activeTournament.tierId, activeTournament.wins)} / ${tournamentTier.name}` : 'Rank B / Combat seed active'}
+              </div>
+              {faction && <div style={{ fontSize: '0.72rem', color: faction.accentColor, marginTop: '4px' }}>{faction.name.toUpperCase()}</div>}
             </div>
           </div>
           <BattleGauge label="FIELD STATE" value={activeField ? activeField.replace(/-/g, ' ').toUpperCase() : 'DEFAULT ARENA'} accent="var(--accent-yellow)" />
@@ -148,8 +243,8 @@ export const BattleBoard: React.FC = () => {
         </div>
       </div>
 
-      {battleState.winner === 'player' && <EndMatchModal title="VICTORY" color="var(--accent-cyan)" onExit={() => setScene('DISTRICT_EXPLORE')} />}
-      {battleState.winner === 'opponent' && <EndMatchModal title="DEFEAT" color="var(--accent-magenta)" onExit={() => setScene('MAIN_MENU')} />}
+      {battleState.winner === 'player' && <EndMatchModal title="VICTORY" color="var(--accent-cyan)" onExit={handleVictoryExit} />}
+      {battleState.winner === 'opponent' && <EndMatchModal title="DEFEAT" color="var(--accent-magenta)" onExit={handleDefeatExit} />}
 
       {hoveredCard && <CardInspector card={hoveredCard} />}
 

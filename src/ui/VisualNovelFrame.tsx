@@ -16,13 +16,15 @@ const SCENE_LABELS: Record<SceneType, { chapter: string; label: string; tone: st
   TOURNAMENT: { chapter: 'Circuit', label: 'Tournament Bracket', tone: 'High pressure' },
   TRANSIT: { chapter: 'Transit', label: 'Rail Map', tone: 'Route planning' },
   SAVE_LOAD: { chapter: 'Systems', label: 'Archive', tone: 'Persistence' },
-  PROFILE: { chapter: 'Systems', label: 'Profile', tone: 'Operator record' }
+  PROFILE: { chapter: 'Systems', label: 'Profile', tone: 'Operator record' },
+  VN_SCENE: { chapter: 'Route', label: 'Visual Novel Scene', tone: 'Scripted dialogue' }
 };
 
 export const VisualNovelFrame: React.FC = () => {
   const { state } = useGame();
   const profile = state.profile;
   const sceneMeta = SCENE_LABELS[state.currentScene];
+  const displayLabel = state.currentScene === 'VN_SCENE' && state.vnSession ? state.vnSession.title : sceneMeta.label;
   const districtProfile = getDistrictProfile(state.location);
   const districtChampion = getDistrictChampion(state.location);
 
@@ -48,7 +50,7 @@ export const VisualNovelFrame: React.FC = () => {
       <div className="vn-frame-top">
         <div className="vn-frame-topline">
           <span className="vn-frame-chip">{sceneMeta.chapter}</span>
-          <span className="vn-frame-title">{sceneMeta.label}</span>
+          <span className="vn-frame-title">{displayLabel}</span>
         </div>
         <div className="vn-frame-topline">
           <span className="vn-frame-micro">Operator {profile.name.toUpperCase()}</span>

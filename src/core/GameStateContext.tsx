@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GameContext } from './GameContext';
 import { GameState, NewGameConfig, PlayerProfile, SceneType, TimeOfDay } from './types';
+import { createDefaultSocialState, mergeSocialState } from '../data/trainers';
 
 const INITIAL_QUEST = 'Tutorial: Talk to Maya in your Apartment';
 
@@ -67,6 +68,7 @@ const createProfile = (config?: NewGameConfig): PlayerProfile => {
       tournamentsWon: 0,
       cardsCollected: loadout.collection.length
     },
+    social: createDefaultSocialState(),
     progress: {
       unlockedDistricts: ['APARTMENT', 'SUNSET_TERMINAL'],
       flags: {
@@ -87,7 +89,36 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
     location: 'APARTMENT',
     timeOfDay: 'MORNING',
     currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore Sunset Terminal' : INITIAL_QUEST,
-    activeTournament: null
+    activeTournament: null,
+    vnSession: null
+  };
+};
+
+const normalizeProfile = (profile: PlayerProfile): PlayerProfile => {
+  const starter = typeof profile.progress?.flags?.onboardingStarter === 'string' ? profile.progress.flags.onboardingStarter : 'Pulse';
+  const starterLoadout = STARTER_LOADOUTS[starter as NewGameConfig['starter']] ?? STARTER_LOADOUTS.Pulse;
+
+  return {
+    ...profile,
+    inventory: {
+      cards: profile.inventory?.cards ?? [...starterLoadout.collection],
+      packs: profile.inventory?.packs ?? [...starterLoadout.packs],
+      deck: profile.inventory?.deck ?? [...starterLoadout.deck],
+      items: profile.inventory?.items ?? ['Basic Holo-Sleeve']
+    },
+    stats: {
+      wins: profile.stats?.wins ?? 0,
+      losses: profile.stats?.losses ?? 0,
+      tournamentsWon: profile.stats?.tournamentsWon ?? 0,
+      cardsCollected: profile.stats?.cardsCollected ?? profile.inventory?.cards?.length ?? starterLoadout.collection.length
+    },
+    social: mergeSocialState(profile.social),
+    progress: {
+      unlockedDistricts: profile.progress?.unlockedDistricts ?? ['APARTMENT', 'SUNSET_TERMINAL'],
+      flags: profile.progress?.flags ?? { onboardingStarter: starter, onboardingComplete: false },
+      storyProgress: profile.progress?.storyProgress ?? 0,
+      chapter: profile.progress?.chapter ?? 1
+    }
   };
 };
 
@@ -108,7 +139,8 @@ const isSceneType = (value: unknown): value is SceneType =>
     'TOURNAMENT',
     'TRANSIT',
     'SAVE_LOAD',
-    'PROFILE'
+    'PROFILE',
+    'VN_SCENE'
   ].includes(String(value));
 
 const isGameState = (value: unknown): value is GameState => {
@@ -133,7 +165,38 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProfile = (update: Partial<PlayerProfile>) => {
     setState((prev) => ({
       ...prev,
-      profile: { ...prev.profile, ...update }
+      profile: {
+        ...prev.profile,
+        ...update,
+        inventory: update.inventory
+          ? { ...prev.profile.inventory, ...update.inventory }
+          : prev.profile.inventory,
+        stats: update.stats
+          ? { ...prev.profile.stats, ...update.stats }
+          : prev.profile.stats,
+        social: update.social
+          ? {
+              trainers: {
+                ...prev.profile.social.trainers,
+                ...update.social.trainers
+              },
+              factions: {
+                ...prev.profile.social.factions,
+                ...update.social.factions
+              }
+            }
+          : prev.profile.social,
+        progress: update.progress
+          ? {
+              ...prev.profile.progress,
+              ...update.progress,
+              unlockedDistricts: update.progress.unlockedDistricts ?? prev.profile.progress.unlockedDistricts,
+              flags: update.progress.flags
+                ? { ...prev.profile.progress.flags, ...update.progress.flags }
+                : prev.profile.progress.flags
+            }
+          : prev.profile.progress
+      }
     }));
   };
 
@@ -158,7 +221,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (saved) {
       const parsed: unknown = JSON.parse(saved);
       if (isGameState(parsed)) {
-        setState(parsed);
+        setState({
+          ...parsed,
+          profile: normalizeProfile(parsed.profile)
+        });
         return true;
       }
     }

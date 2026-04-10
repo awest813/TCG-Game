@@ -1,0 +1,123 @@
+{
+  "id": "valerious-route",
+  "title": "Valerious // Garden Prestige",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Garden Prestige",
+      "steps": [
+        {
+          "type": "visual",
+          "background": "/redwood_heights_bg.png",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left",
+          "transition": "fade"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "valerious",
+          "text": "Every leaf in Redwood Heights survives by earning its place in the sun. Why should a challenger be any different?",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "choice",
+          "id": "valerious_choice",
+          "prompt": "How do you answer the Bloom elite?",
+          "options": [
+            {
+              "id": "speak_of_growth",
+              "text": "Tell him growth means returning stronger each time he cuts you down.",
+              "conditions": [
+                {
+                  "relationship": "valerious",
+                  "min": 2
+                }
+              ],
+              "effects": {
+                "relationships": {
+                  "valerious": 1
+                },
+                "flags": {
+                  "launchBattle": true
+                },
+                "variables": {
+                  "playerMood": "measured"
+                }
+              }
+            },
+            {
+              "id": "prove",
+              "text": "Prove yourself in battle.",
+              "effects": {
+                "relationships": {
+                  "valerious": 2
+                },
+                "flags": {
+                  "launchBattle": true
+                }
+              }
+            },
+            {
+              "id": "observe",
+              "text": "Ask to see the garden's logic first.",
+              "effects": {
+                "relationships": {
+                  "valerious": 1
+                },
+                "variables": {
+                  "playerMood": "measured"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "valerious",
+          "text": "A disciplined answer. Perhaps you've learned that elegance is also a weapon.",
+          "conditions": [
+            {
+              "choice": "valerious_choice",
+              "choiceEquals": "speak_of_growth"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "valerious",
+          "text": "Then let us see whether your deck can bloom under pressure.",
+          "conditions": [
+            {
+              "choice": "valerious_choice",
+              "choiceEquals": "prove"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "valerious",
+          "text": "Observation is not cowardice. It becomes weakness only when it never turns into action.",
+          "conditions": [
+            {
+              "choice": "valerious_choice",
+              "choiceEquals": "observe"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        }
+      ]
+    }
+  }
+}

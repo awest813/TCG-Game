@@ -1,0 +1,128 @@
+{
+  "id": "zeno-route",
+  "title": "Zeno // Crown Final",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Crown Final",
+      "steps": [
+        {
+          "type": "visual",
+          "background": "/civic_crown_bg.png",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center",
+          "transition": "fade"
+        },
+        {
+          "type": "audio",
+          "action": "play-bgm",
+          "track": "bgm_crown_final"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "zeno",
+          "text": "You have climbed far enough to stand beneath the Crown. Now speak like someone ready to carry its weight.",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        },
+        {
+          "type": "choice",
+          "id": "zeno_choice",
+          "prompt": "What kind of challenger stands before the champion?",
+          "options": [
+            {
+              "id": "carry_the_city",
+              "text": "One who has learned what this city asks from champions.",
+              "conditions": [
+                {
+                  "relationship": "zeno",
+                  "min": 2
+                }
+              ],
+              "effects": {
+                "relationships": {
+                  "zeno": 1
+                },
+                "flags": {
+                  "launchBattle": true
+                },
+                "variables": {
+                  "playerMood": "resolved"
+                }
+              }
+            },
+            {
+              "id": "crown",
+              "text": "One ready to fight for the title.",
+              "effects": {
+                "relationships": {
+                  "zeno": 2
+                },
+                "flags": {
+                  "launchBattle": true
+                }
+              }
+            },
+            {
+              "id": "breathe",
+              "text": "One who still respects the stage.",
+              "effects": {
+                "relationships": {
+                  "zeno": 1
+                },
+                "variables": {
+                  "playerMood": "resolved"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "zeno",
+          "text": "Then maybe you are finally ready to wear more than ambition. Step forward.",
+          "conditions": [
+            {
+              "choice": "zeno_choice",
+              "choiceEquals": "carry_the_city"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "zeno",
+          "text": "Then step forward. The city has waited long enough.",
+          "conditions": [
+            {
+              "choice": "zeno_choice",
+              "choiceEquals": "crown"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "zeno",
+          "text": "Respect is good. The best champions learn when to turn it into command.",
+          "conditions": [
+            {
+              "choice": "zeno_choice",
+              "choiceEquals": "breathe"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        }
+      ]
+    }
+  }
+}

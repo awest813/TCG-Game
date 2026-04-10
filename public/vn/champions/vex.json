@@ -1,0 +1,123 @@
+{
+  "id": "vex-route",
+  "title": "Vex // Pulse Clash",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Velocity Clash",
+      "steps": [
+        {
+          "type": "visual",
+          "background": "/market_arcade_bg.png",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left",
+          "transition": "fade"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "vex",
+          "text": "You can tell everything about a duelist from their first two moves. So make yours fast.",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "choice",
+          "id": "vex_choice",
+          "prompt": "How do you answer the Pulse master?",
+          "options": [
+            {
+              "id": "match_his_speed",
+              "text": "Tell him you came to outrun him, not just keep up.",
+              "conditions": [
+                {
+                  "relationship": "vex",
+                  "min": 2
+                }
+              ],
+              "effects": {
+                "relationships": {
+                  "vex": 1
+                },
+                "flags": {
+                  "launchBattle": true
+                },
+                "variables": {
+                  "playerMood": "electric"
+                }
+              }
+            },
+            {
+              "id": "race",
+              "text": "Challenge him immediately.",
+              "effects": {
+                "relationships": {
+                  "vex": 2
+                },
+                "flags": {
+                  "launchBattle": true
+                }
+              }
+            },
+            {
+              "id": "study",
+              "text": "Study the arena first.",
+              "effects": {
+                "relationships": {
+                  "vex": 1
+                },
+                "variables": {
+                  "playerMood": "focused"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "vex",
+          "text": "Finally. Somebody in this city understands that confidence is also a tempo play.",
+          "conditions": [
+            {
+              "choice": "vex_choice",
+              "choiceEquals": "match_his_speed"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "vex",
+          "text": "Either way, keep up. I don't slow down for anyone.",
+          "conditions": [
+            {
+              "choice": "vex_choice",
+              "choiceEquals": "race"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "vex",
+          "text": "Planning is fine. Just don't think so long that the duel finishes without you.",
+          "conditions": [
+            {
+              "choice": "vex_choice",
+              "choiceEquals": "study"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "left"
+        }
+      ]
+    }
+  }
+}

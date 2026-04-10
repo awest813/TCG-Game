@@ -1,0 +1,15 @@
+{
+  "id": "check-medal-count",
+  "title": "Medal Count",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Circuit Progress",
+      "steps": [
+        { "type": "dialogue", "speakerId": "system", "text": "Your case is still light, but that only means the story has room to grow." },
+        { "type": "dialogue", "speakerId": "system", "text": "One district at a time. One rival at a time. That is how the Crown starts to feel reachable." }
+      ]
+    }
+  }
+}

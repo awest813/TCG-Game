@@ -8,6 +8,10 @@ export const useBattle = (pDeck: string[], oDeck: string[], modifiers: BattleMod
     BattleEngine.createInitialState(pDeck, oDeck, modifiers)
   );
 
+  useEffect(() => {
+    setBattleState(BattleEngine.createInitialState(pDeck, oDeck, modifiers));
+  }, [modifiers, oDeck, pDeck]);
+
   const playCard = useCallback((cardId: string) => {
     const card = CARD_POOL.find(c => c.id === cardId);
     if (!card) return;

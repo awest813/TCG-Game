@@ -1,0 +1,15 @@
+{
+  "id": "show-medals-to-guard",
+  "title": "Show Medals To Guard",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Gate Check",
+      "steps": [
+        { "type": "dialogue", "speakerId": "guard", "text": "The Crown does not open for noise. It opens for proof." },
+        { "type": "dialogue", "speakerId": "narrator", "text": "For a second, the whole road feels ceremonial. Not because you are done, but because you have earned the right to keep walking." }
+      ]
+    }
+  }
+}

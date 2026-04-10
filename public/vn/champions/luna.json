@@ -1,0 +1,123 @@
+{
+  "id": "luna-route",
+  "title": "Luna // Neon Stage",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Stage Lights",
+      "steps": [
+        {
+          "type": "visual",
+          "background": "/neon_mission_tileset.png",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center",
+          "transition": "fade"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "luna",
+          "text": "You don't just duel in Neon Mission. You perform, and the city decides if your heart is worth the spotlight.",
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        },
+        {
+          "type": "choice",
+          "id": "luna_choice",
+          "prompt": "How do you step onto Luna's stage?",
+          "options": [
+            {
+              "id": "remember_the_crowd",
+              "text": "Tell her you came back to give the crowd a better encore.",
+              "conditions": [
+                {
+                  "relationship": "luna",
+                  "min": 2
+                }
+              ],
+              "effects": {
+                "relationships": {
+                  "luna": 1
+                },
+                "flags": {
+                  "launchBattle": true
+                },
+                "variables": {
+                  "playerMood": "radiant"
+                }
+              }
+            },
+            {
+              "id": "perform",
+              "text": "Meet her with full confidence.",
+              "effects": {
+                "relationships": {
+                  "luna": 2
+                },
+                "flags": {
+                  "launchBattle": true
+                }
+              }
+            },
+            {
+              "id": "listen",
+              "text": "Watch the room and feel the rhythm first.",
+              "effects": {
+                "relationships": {
+                  "luna": 1
+                },
+                "variables": {
+                  "playerMood": "electric"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "luna",
+          "text": "Now that's a line worth a spotlight. Don't waste it when the duel starts.",
+          "conditions": [
+            {
+              "choice": "luna_choice",
+              "choiceEquals": "remember_the_crowd"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "luna",
+          "text": "Then give the crowd something real to remember.",
+          "conditions": [
+            {
+              "choice": "luna_choice",
+              "choiceEquals": "perform"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "luna",
+          "text": "Good instinct. The best performers hear the room before they ask it to love them.",
+          "conditions": [
+            {
+              "choice": "luna_choice",
+              "choiceEquals": "listen"
+            }
+          ],
+          "portrait": "/avatar_player.png",
+          "bustLeft": "/avatar_player.png",
+          "focusSide": "center"
+        }
+      ]
+    }
+  }
+}

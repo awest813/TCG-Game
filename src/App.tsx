@@ -54,6 +54,11 @@ const Profile = React.lazy(async () => {
   return { default: module.Profile };
 });
 
+const VNScene = React.lazy(async () => {
+  const module = await import('./ui/VNScene');
+  return { default: module.VNScene };
+});
+
 const SceneLoadingFallback: React.FC = () => (
   <div
     className="fade-in"
@@ -111,6 +116,8 @@ const App: React.FC = () => {
         return <TransitStation />;
       case 'PROFILE':
         return <Profile />;
+      case 'VN_SCENE':
+        return <VNScene />;
       default:
         return <MainMenu />;
     }

@@ -1,0 +1,87 @@
+{
+  "id": "demo-prologue",
+  "title": "Champion Circuit Prologue",
+  "startSceneId": "apartment_intro",
+  "scenes": {
+    "apartment_intro": {
+      "id": "apartment_intro",
+      "title": "Apartment Intro",
+      "steps": [
+        {
+          "type": "visual",
+          "background": "/apt_bedroom_bg.png",
+          "transition": "fade"
+        },
+        {
+          "type": "audio",
+          "action": "play-bgm",
+          "track": "bgm_apartment_theme"
+        },
+        {
+          "type": "dialogue",
+          "speakerId": "lucy",
+          "text": "Morning, rookie. The city is waiting, and so is your first real route."
+        },
+        {
+          "type": "choice",
+          "id": "first_route_choice",
+          "prompt": "How do you want to open the day?",
+          "options": [
+            {
+              "id": "inspect_deck",
+              "text": "Review the starter deck.",
+              "effects": {
+                "relationships": {
+                  "lucy": 1
+                },
+                "flags": {
+                  "reviewedDeck": true
+                }
+              }
+            },
+            {
+              "id": "rush_out",
+              "text": "Head straight into the district.",
+              "effects": {
+                "variables": {
+                  "playerMood": "restless"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "trigger",
+          "event": "start_3d_combat",
+          "params": {
+            "enemy": "goblin"
+          },
+          "storeAs": "combatResult"
+        },
+        {
+          "type": "jump",
+          "targetSceneId": "post_combat"
+        }
+      ]
+    },
+    "post_combat": {
+      "id": "post_combat",
+      "title": "Post Combat",
+      "steps": [
+        {
+          "type": "dialogue",
+          "speakerId": "lucy",
+          "text": "Good. The narrative layer handed control to the 3D arena and got the result back intact."
+        },
+        {
+          "type": "state",
+          "patch": {
+            "flags": {
+              "onboardingComplete": true
+            }
+          }
+        }
+      ]
+    }
+  }
+}

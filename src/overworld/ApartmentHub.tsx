@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGame } from '../core/GameContext';
-import { TutorialGuide } from '../ui/TutorialGuide';
+import { VNRunner } from '../ui/VNRunner';
+import { VNEngineState } from '../engine/types';
+import { createApartmentOnboardingSession } from '../visual-novel/scriptRegistry';
 
 export const ApartmentHub: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { state, setScene, saveGame, advanceTime, updateProfile } = useGame();
+  const { state, setScene, saveGame, advanceTime, updateProfile, updateGameState } = useGame();
   const [showWakeUp, setShowWakeUp] = useState(state.timeOfDay === 'MORNING');
   const [statusText, setStatusText] = useState('Apartment systems online.');
   const needsOnboarding = !state.profile.progress.flags.onboardingComplete;
   const starter = state.profile.progress.flags.onboardingStarter as string | undefined;
+  const canvasId = 'apartment-babylon-canvas';
+  const onboardingSession = createApartmentOnboardingSession(starter, canvasId);
 
   useEffect(() => {
     if (!canvasRef.current) return undefined;
@@ -128,7 +132,7 @@ export const ApartmentHub: React.FC = () => {
 
   return (
     <div className="apartment-container fade-in" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', outline: 'none' }} />
+      <canvas id={canvasId} ref={canvasRef} style={{ width: '100%', height: '100%', outline: 'none' }} />
 
       <div className="ui-overlay" style={{ position: 'absolute', top: '40px', left: '40px', pointerEvents: 'none', display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <h1 className="glow-text" style={{ fontSize: '3rem', margin: 0 }}>APARTMENT</h1>
@@ -172,35 +176,59 @@ export const ApartmentHub: React.FC = () => {
       )}
 
       {needsOnboarding && (
-        <TutorialGuide
-          title="Lucy // Rookie Link Coach"
-          subtitle="FIRST SESSION GUIDE"
-          message={`Welcome home, ${state.profile.name}. I tuned your ${starter ?? 'starter'} loadout and left the sync terminal hot. First thing: open the terminal so I can walk you through the deck you just picked.`}
-          objective="Use the TERMINAL button or the glowing desk terminal to inspect your starter deck."
-          actions={[
-            {
-              label: 'OPEN TERMINAL',
-              onClick: () => {
-                setStatusText('Lucy routed you to the sync terminal.');
-                setScene('DECK_EDITOR');
-              }
-            },
-            {
-              label: 'SKIP INTRO',
-              variant: 'secondary',
-              onClick: () =>
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'end', justifyContent: 'center', pointerEvents: 'none', zIndex: 140 }}>
+          <div style={{ pointerEvents: 'auto' }}>
+            <VNRunner
+              scriptUrl={onboardingSession.scriptUrl}
+              canvasId={canvasId}
+              title={onboardingSession.title}
+              subtitle={onboardingSession.subtitle}
+              onStateSync={(vnState: VNEngineState) => {
+                const reviewedDeck = Boolean(vnState.flags.reviewedDeck);
+                const combatResolved = Boolean(vnState.pluginResults.start_3d_combat);
+                const playerMood = typeof vnState.variables.playerMood === 'string' ? vnState.variables.playerMood : state.profile.progress.flags.playerMood ?? null;
+
                 updateProfile({
                   progress: {
                     ...state.profile.progress,
                     flags: {
                       ...state.profile.progress.flags,
-                      onboardingComplete: true
+                      reviewedDeck,
+                      combatResolved,
+                      playerMood
                     }
                   }
-                })
-            }
-          ]}
-        />
+                });
+
+                updateGameState({
+                  currentQuest: reviewedDeck
+                    ? 'Open the terminal and tune your first deck.'
+                    : 'Choose how to start the day and listen to Lucy.'
+                });
+
+                if (combatResolved) {
+                  setStatusText('Babylon plugin handoff complete. Narrative link restored.');
+                }
+              }}
+              onComplete={(vnState: VNEngineState) => {
+                updateProfile({
+                  progress: {
+                    ...state.profile.progress,
+                    flags: {
+                      ...state.profile.progress.flags,
+                      onboardingComplete: true,
+                      reviewedDeck: Boolean(vnState.flags.reviewedDeck),
+                      combatResolved: Boolean(vnState.pluginResults.start_3d_combat)
+                    }
+                  }
+                });
+
+                setStatusText('Lucy completed the onboarding route.');
+                setScene(vnState.flags.reviewedDeck ? 'DECK_EDITOR' : 'DISTRICT_EXPLORE');
+              }}
+            />
+          </div>
+        </div>
       )}
 
       <style>{`

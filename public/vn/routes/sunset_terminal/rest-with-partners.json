@@ -1,0 +1,26 @@
+{
+  "id": "rest-with-partners",
+  "title": "Rest With Partners",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Quiet Apartment",
+      "steps": [
+        { "type": "visual", "background": "/apt_bedroom_bg.png", "transition": "fade" },
+        { "type": "audio", "action": "play-bgm", "track": "bgm_evening_rest" },
+        { "type": "dialogue", "speakerId": "narrator", "text": "The apartment finally goes quiet enough for you to hear your own breathing." },
+        {
+          "type": "choice",
+          "id": "rest_choice",
+          "prompt": "How do you spend the downtime?",
+          "options": [
+            { "id": "sleep", "text": "Rest and move the day forward.", "effects": { "flags": { "advanceTime": true }, "variables": { "currentQuest": "A new time block has opened. Check the district again." } } },
+            { "id": "reflect", "text": "Reflect on the next duel.", "effects": { "relationships": { "lucy": 1 }, "variables": { "playerMood": "grounded" } } }
+          ]
+        },
+        { "type": "dialogue", "speakerId": "narrator", "text": "Even a future champion needs a scene where the city fades into the background." }
+      ]
+    }
+  }
+}

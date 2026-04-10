@@ -1,0 +1,24 @@
+{
+  "id": "challenge-elite-four",
+  "title": "Challenge Elite Four",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Final Bracket",
+      "steps": [
+        { "type": "dialogue", "speakerId": "narrator", "text": "The Hall quiets in the way only important places can. Even the air feels ranked." },
+        {
+          "type": "choice",
+          "id": "elite_four_choice",
+          "prompt": "Are you ready to enter the final bracket?",
+          "options": [
+            { "id": "enter", "text": "Open the final bracket.", "effects": { "variables": { "currentQuest": "Survive the Elite Four bracket." } } },
+            { "id": "focus", "text": "Take one breath before the doors open.", "effects": { "variables": { "playerMood": "resolved" } } }
+          ]
+        },
+        { "type": "dialogue", "speakerId": "system", "text": "Tournament uplink accepted. The final bracket is standing by." }
+      ]
+    }
+  }
+}

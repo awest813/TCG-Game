@@ -1,0 +1,24 @@
+{
+  "id": "battle-street-master",
+  "title": "Street Master Challenge",
+  "startSceneId": "opening",
+  "scenes": {
+    "opening": {
+      "id": "opening",
+      "title": "Neon Showdown",
+      "steps": [
+        { "type": "visual", "background": "/neon_mission_bg.png", "transition": "zoom" },
+        { "type": "dialogue", "speakerId": "crowd", "text": "The arcade lights dim just enough to frame the arena. Everyone here wants a spectacle." },
+        {
+          "type": "choice",
+          "id": "street_master_choice",
+          "prompt": "Do you give them one?",
+          "options": [
+            { "id": "yes", "text": "Step in and own the stage.", "effects": { "flags": { "launchBattle": true }, "variables": { "currentQuest": "Win the Neon Mission showdown." } } },
+            { "id": "wait", "text": "Watch the room for one more beat.", "effects": { "variables": { "playerMood": "charged" } } }
+          ]
+        }
+      ]
+    }
+  }
+}

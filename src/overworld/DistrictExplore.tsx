@@ -1,19 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { DISTRICT_LOCATIONS, LocationAction } from '../data/locations';
-import { NPCS, NPC } from '../npc/npcs';
+import { NPCS } from '../npc/npcs';
 import { SystemMenu } from '../ui/SystemMenu';
 import { SceneType } from '../core/types';
-import { VNDialogueOverlay } from '../ui/VNDialogueOverlay';
-import { createNpcBeat } from '../visual-novel/types';
+import { createActionSession, createChampionSession } from '../visual-novel/scriptRegistry';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
 import '../styles/SceneVisuals.css';
 
 export const DistrictExplore: React.FC = () => {
-  const { state, setScene, advanceTime } = useGame();
+  const { state, setScene, updateGameState } = useGame();
   const [currentLocId, setCurrentLocId] = useState<string | null>(null);
-  const [activeDialogue, setActiveDialogue] = useState<{ npc: NPC; text: string } | null>(null);
-  const [typedText, setTypedText] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [statusText, setStatusText] = useState('District link stable.');
@@ -41,21 +38,7 @@ export const DistrictExplore: React.FC = () => {
 
   useEffect(() => {
     setCurrentLocId(districtScenes[0]?.id ?? null);
-    setActiveDialogue(null);
   }, [state.location, districtScenes]);
-
-  useEffect(() => {
-    if (!activeDialogue) return undefined;
-
-    setTypedText('');
-    let i = 0;
-    const interval = window.setInterval(() => {
-      setTypedText(activeDialogue.text.slice(0, i + 1));
-      i += 1;
-      if (i >= activeDialogue.text.length) window.clearInterval(interval);
-    }, 24);
-    return () => window.clearInterval(interval);
-  }, [activeDialogue]);
 
   useEffect(() => {
     if (!statusText) return undefined;
@@ -69,12 +52,6 @@ export const DistrictExplore: React.FC = () => {
     if (!targetId) return null;
     if (jumpMap[targetId]) return jumpMap[targetId];
     return targetId.replace(/-/g, '_').toUpperCase() as SceneType;
-  };
-
-  const advanceTimeLabel = () => {
-    if (state.timeOfDay === 'MORNING') return 'AFTERNOON';
-    if (state.timeOfDay === 'AFTERNOON') return 'EVENING';
-    return 'MORNING';
   };
 
   const handleAction = (action: LocationAction) => {
@@ -97,16 +74,23 @@ export const DistrictExplore: React.FC = () => {
     }
 
     if (action.type === 'TRAVEL') {
+      updateGameState({
+        vnSession: createActionSession(state.location, currentLoc.id, action.label, 'TRAVEL', state.timeOfDay)
+      });
       setStatusText('Opening Neo-Rail route planner...');
-      setScene('TRANSIT');
+      setScene('VN_SCENE');
       return;
     }
 
     if (action.type === 'TALK') {
       const npc = NPCS.find((entry) => entry.id === action.targetId);
       if (npc) {
-        setActiveDialogue({ npc, text: npc.dialogue[state.timeOfDay] || 'Duel with me!' });
-        setStatusText(`${npc.name} connected.`);
+        const session = createChampionSession(npc.id, state.timeOfDay);
+        if (session) {
+          updateGameState({ vnSession: session });
+          setStatusText(`${npc.name} route opened.`);
+          setScene('VN_SCENE');
+        }
       }
       return;
     }
@@ -118,20 +102,28 @@ export const DistrictExplore: React.FC = () => {
     }
 
     if (action.type === 'DUEL') {
+      updateGameState({
+        vnSession: createActionSession(state.location, currentLoc.id, action.label, 'DUEL', state.timeOfDay)
+      });
       setStatusText('Sync battle queued.');
-      setScene('BATTLE');
+      setScene('VN_SCENE');
       return;
     }
 
     if (action.label.toLowerCase().includes('rest')) {
-      const nextTime = advanceTimeLabel();
-      advanceTime();
-      setStatusText(`Schedule advanced to ${nextTime}.`);
+      updateGameState({
+        vnSession: createActionSession(state.location, currentLoc.id, action.label, 'EVENT', state.timeOfDay)
+      });
+      setStatusText('Personal event route opened.');
+      setScene('VN_SCENE');
       return;
     }
 
-    setStatusText('Tournament uplink engaged.');
-    setScene('TOURNAMENT');
+    updateGameState({
+      vnSession: createActionSession(state.location, currentLoc.id, action.label, 'EVENT', state.timeOfDay)
+    });
+    setStatusText('Event route engaged.');
+    setScene('VN_SCENE');
   };
 
   if (!currentLoc) return <div style={{ background: 'black', height: '100vh' }}>INITIALIZING METRO RELAY...</div>;
@@ -163,7 +155,7 @@ export const DistrictExplore: React.FC = () => {
         </div>
       </div>
 
-      {!activeDialogue && districtProfile && (
+      {districtProfile && (
         <div
           className="glass-panel fade-in"
           style={{
@@ -209,7 +201,7 @@ export const DistrictExplore: React.FC = () => {
         </div>
       )}
 
-      {!activeDialogue && (
+      {(
         <div className="district-nav-status glass-panel">
           <div className="district-nav-status-label">ROUTE STATUS</div>
           <div className="district-nav-status-value">{statusText || 'Standing by.'}</div>
@@ -221,7 +213,7 @@ export const DistrictExplore: React.FC = () => {
         </div>
       )}
 
-      {!activeDialogue && (
+      {(
         <div style={{ position: 'absolute', right: 60, bottom: 60, zIndex: 10, display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'flex-end' }}>
           {currentLoc.actions.map((action, index) => (
             <button key={`${action.label}-${index}`} className="champion-button" style={{ minWidth: '320px', minHeight: '74px', background: 'rgba(5,5,15,0.9)' }} onClick={() => handleAction(action)}>
@@ -238,7 +230,7 @@ export const DistrictExplore: React.FC = () => {
         </div>
       )}
 
-      {!activeDialogue && (
+      {(
         <div className="glass-panel fade-in" style={{ position: 'absolute', left: 60, bottom: 60, width: '450px', padding: '30px', zIndex: 10, background: 'rgba(5,5,15,0.7)', borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
           <div style={{ fontSize: '0.6rem', color: 'var(--accent-cyan)', marginBottom: '10px', letterSpacing: '4px' }}>CIRCUIT_SCOUTER //</div>
           <p style={{ margin: 0, fontSize: '1rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.6, fontStyle: 'italic', fontWeight: 300 }}>"{currentLoc.description}"</p>
@@ -252,21 +244,6 @@ export const DistrictExplore: React.FC = () => {
             </div>
           )}
         </div>
-      )}
-
-      {activeDialogue && (
-        <VNDialogueOverlay
-          beat={createNpcBeat(activeDialogue.npc, state.timeOfDay)}
-          typedText={typedText}
-          onDismiss={() => setActiveDialogue(null)}
-          onAction={(actionId) => {
-            if (actionId === 'DUEL') {
-              setScene('BATTLE');
-              return;
-            }
-            setActiveDialogue(null);
-          }}
-        />
       )}
 
       {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}

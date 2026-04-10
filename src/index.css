@@ -823,6 +823,14 @@ input {
   position: relative;
 }
 
+.vn-runner-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(125, 215, 221, 0.04), transparent 28%, rgba(207, 101, 71, 0.06) 100%);
+  pointer-events: none;
+}
+
 .tutorial-guide-panel::before {
   content: '';
   position: absolute;
@@ -861,6 +869,117 @@ input {
   line-height: 1.65;
   color: var(--text-secondary);
   max-width: 780px;
+}
+
+.vn-runner-stage {
+  position: relative;
+  min-height: 280px;
+  margin-top: 18px;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid rgba(244, 221, 190, 0.12);
+  background:
+    radial-gradient(circle at 50% 20%, rgba(125, 215, 221, 0.16), transparent 30%),
+    linear-gradient(180deg, rgba(20, 14, 17, 0.92), rgba(10, 7, 9, 0.98));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.vn-runner-stage-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(9, 7, 9, 0.14), rgba(9, 7, 9, 0.76)),
+    linear-gradient(90deg, rgba(9, 7, 9, 0.68), transparent 24%, transparent 76%, rgba(9, 7, 9, 0.68));
+}
+
+.vn-runner-stage-grid {
+  position: relative;
+  z-index: 1;
+  min-height: 280px;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.9fr) minmax(160px, 0.7fr) minmax(180px, 0.9fr);
+  gap: 18px;
+  align-items: end;
+}
+
+.vn-runner-bust,
+.vn-runner-center-portrait {
+  position: relative;
+  min-height: 228px;
+  border-radius: 24px;
+  border: 1px solid rgba(244, 221, 190, 0.14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  overflow: hidden;
+  transition: transform 0.24s ease, opacity 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+}
+
+.vn-runner-bust.empty {
+  opacity: 0.55;
+}
+
+.vn-runner-bust.focus,
+.vn-runner-center-portrait.focus {
+  transform: translateY(-8px);
+  border-color: rgba(240, 198, 124, 0.44);
+  box-shadow: 0 18px 38px rgba(240, 198, 124, 0.14);
+}
+
+.vn-runner-bust img,
+.vn-runner-center-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vn-runner-bust::after,
+.vn-runner-center-portrait::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 50%;
+  background: linear-gradient(180deg, transparent, rgba(9, 7, 9, 0.88));
+  pointer-events: none;
+}
+
+.vn-runner-bust-fallback,
+.vn-runner-stage-copy {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.vn-runner-bust-fallback span,
+.vn-runner-stage-kicker {
+  font-size: 0.72rem;
+  letter-spacing: 0.22rem;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+}
+
+.vn-runner-stage-copy {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: radial-gradient(circle at 50% 24%, rgba(240, 198, 124, 0.14), transparent 34%);
+}
+
+.vn-runner-stage-title {
+  margin-top: 0.85rem;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.vn-runner-portrait-column {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .tutorial-guide-objective {
@@ -997,6 +1116,11 @@ input {
   .vn-dialogue-shell,
   .tutorial-guide-panel {
     grid-template-columns: 1fr;
+  }
+
+  .vn-runner-stage-grid {
+    grid-template-columns: 1fr;
+    min-height: unset;
   }
 
   .vn-frame-top,
