@@ -1,4 +1,4 @@
-import { SceneType, GameState } from "./types";
+import { GameState } from "./types";
 
 export interface Quest {
     id: string;

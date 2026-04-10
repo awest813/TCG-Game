@@ -3,6 +3,10 @@ export type CreatureType = 'Current' | 'Bloom' | 'Tide' | 'Pulse' | 'Alloy' | 'V
 export type Rarity = 'common' | 'uncommon' | 'rare';
 export type CardSet = 'METRO_PULSE' | 'NEON_ECHO' | 'GARDEN_SHIFT' | 'PROMO' | 'BAYLINE_CURRENT' | 'CROWN_CIRCUIT';
 export type TimeOfDay = 'MORNING' | 'AFTERNOON' | 'EVENING';
+export type EffectType = 'damage' | 'heal' | 'draw' | 'discount' | 'buff';
+export type EffectTarget = 'active' | 'bench' | 'all' | 'self';
+export type EffectTrigger = 'onPlay' | 'onKO' | 'passive' | 'onEvolve';
+export type ProgressFlagValue = string | number | boolean | null;
 
 export interface BattleModifier {
   type: 'STAT_BOOST' | 'COST_REDUCTION' | 'MANA_START';
@@ -11,10 +15,10 @@ export interface BattleModifier {
 }
 
 export interface EffectDef {
-  type: string;
+  type: EffectType;
   value?: number;
-  target?: 'active' | 'bench' | 'all' | 'self';
-  trigger?: 'onPlay' | 'onKO' | 'passive' | 'onEvolve';
+  target?: EffectTarget;
+  trigger?: EffectTrigger;
 }
 
 export interface BaseCard {
@@ -99,10 +103,17 @@ export interface PlayerProfile {
   };
   progress: {
     unlockedDistricts: string[];
-    flags: Record<string, any>;
+    flags: Record<string, ProgressFlagValue>;
     storyProgress: number;
     chapter?: number;
   };
+}
+
+export interface ActiveTournament {
+  tierId: string;
+  wins: number;
+  currentOpponentId: string;
+  status: 'ACTIVE' | 'WON' | 'LOST';
 }
 
 export interface NewGameConfig {
@@ -116,7 +127,7 @@ export interface GameState {
   location: string;
   timeOfDay: TimeOfDay;
   currentQuest: string;
-  activeTournament: any;
+  activeTournament: ActiveTournament | null;
 }
 
 export interface ShopItem {

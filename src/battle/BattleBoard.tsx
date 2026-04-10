@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useBattle } from './useBattle';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 import { Card } from '../core/types';
 import { getCardById, getCardPalette } from '../data/cards';
+import { BattleEntity } from './BattleEngine';
 
 export const BattleBoard: React.FC = () => {
   const { state, setScene } = useGame();
@@ -170,8 +171,8 @@ export const BattleBoard: React.FC = () => {
 const FieldRow: React.FC<{
   title: string;
   side: 'player' | 'opponent';
-  active: any;
-  bench: (any | null)[];
+  active: BattleEntity | null;
+  bench: (BattleEntity | null)[];
   onHover: (id: string) => void;
   onLeave: () => void;
   onAttack?: () => void;
@@ -189,7 +190,7 @@ const FieldRow: React.FC<{
   </div>
 );
 
-const EntityStack: React.FC<{ entities: (any | null)[]; side: 'player' | 'opponent'; onHover: (id: string) => void; onLeave: () => void }> = ({ entities, side, onHover, onLeave }) => (
+const EntityStack: React.FC<{ entities: (BattleEntity | null)[]; side: 'player' | 'opponent'; onHover: (id: string) => void; onLeave: () => void }> = ({ entities, side, onHover, onLeave }) => (
   <div style={{ display: 'flex', gap: '14px' }}>
     {entities.map((entity, index) => (
       <BattleSlot key={index} entity={entity} side={side} onHover={onHover} onLeave={onLeave} />
@@ -229,7 +230,7 @@ const VSDisplay: React.FC<{ playerAvatar: string; opponentAvatar: string; oppone
 );
 
 const BattleSlot: React.FC<{
-  entity: any;
+  entity: BattleEntity | null;
   isActive?: boolean;
   side: 'player' | 'opponent';
   onClick?: () => void;

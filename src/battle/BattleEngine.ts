@@ -37,6 +37,8 @@ export interface BattleState {
   field?: string | null;
 }
 
+type CardPoolHost = typeof globalThis & { __cardPool?: Card[] };
+
 export class BattleEngine {
   static createInitialState(playerDeck: string[], opponentDeck: string[], modifiers: BattleModifier[] = []): BattleState {
     const shuffle = (array: string[]) => [...array].sort(() => Math.random() - 0.5);
@@ -100,7 +102,7 @@ export class BattleEngine {
   }
 
   private static getCardFromState(state: BattleState, id: string): Card | undefined {
-    const pool = ((globalThis as any).__cardPool as Card[] | undefined) ?? CARD_POOL;
+    const pool = (globalThis as CardPoolHost).__cardPool ?? CARD_POOL;
     void state;
     return pool.find((card) => card.id === id);
   }
@@ -137,7 +139,8 @@ export class BattleEngine {
   }
 
   private static findBestBenchTarget(side: BattleSide) {
-    return side.bench.filter(Boolean).sort((a, b) => (a!.currentHealth / a!.maxHealth) - (b!.currentHealth / b!.maxHealth))[0] ?? null;
+    const occupiedBench = side.bench.filter((entity): entity is BattleEntity => entity !== null);
+    return occupiedBench.sort((a, b) => (a.currentHealth / a.maxHealth) - (b.currentHealth / b.maxHealth))[0] ?? null;
   }
 
   private static applyFieldModifiers(state: BattleState) {
@@ -373,7 +376,7 @@ export class BattleEngine {
   }
 
   static runAI(state: BattleState, cardPool: Card[]): BattleState {
-    (globalThis as any).__cardPool = cardPool;
+    (globalThis as CardPoolHost).__cardPool = cardPool;
     let working = JSON.parse(JSON.stringify(state)) as BattleState;
 
     const supportCards = working.opponent.hand.filter((id) => {

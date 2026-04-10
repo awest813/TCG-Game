@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 import { DISTRICT_LOCATIONS, LocationAction } from '../data/locations';
 import { NPCS, NPC } from '../npc/npcs';
 import { SystemMenu } from '../ui/SystemMenu';
 import { SceneType } from '../core/types';
+import { VNDialogueOverlay } from '../ui/VNDialogueOverlay';
+import { createNpcBeat } from '../visual-novel/types';
+import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
 import '../styles/SceneVisuals.css';
 
 export const DistrictExplore: React.FC = () => {
@@ -15,7 +18,13 @@ export const DistrictExplore: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [statusText, setStatusText] = useState('District link stable.');
 
-  const districtScenes = DISTRICT_LOCATIONS[state.location as keyof typeof DISTRICT_LOCATIONS] || [];
+  const districtScenes = useMemo(() => DISTRICT_LOCATIONS[state.location] ?? [], [state.location]);
+  const districtProfile = useMemo(() => getDistrictProfile(state.location), [state.location]);
+  const districtChampion = useMemo(() => getDistrictChampion(state.location), [state.location]);
+  const availableNpcCast = useMemo(
+    () => NPCS.filter((npc) => npc.location === state.location && npc.activeTimes.includes(state.timeOfDay)),
+    [state.location, state.timeOfDay]
+  );
 
   const jumpMap = useMemo<Record<string, SceneType>>(
     () => ({
@@ -133,7 +142,7 @@ export const DistrictExplore: React.FC = () => {
         <div className="alive-background" style={{ backgroundImage: `url(${currentLoc.backgroundImage})` }} />
         <div className="data-overlay" />
         <div className="particle-field">
-          {[...Array(20)].map((_, index) => (
+          {Array.from({ length: 20 }).map((_, index) => (
             <div
               key={index}
               className="data-particle"
@@ -153,6 +162,52 @@ export const DistrictExplore: React.FC = () => {
           <div style={{ fontWeight: 'bold', color: 'var(--accent-yellow)', fontSize: '1.2rem' }}>{state.timeOfDay}</div>
         </div>
       </div>
+
+      {!activeDialogue && districtProfile && (
+        <div
+          className="glass-panel fade-in"
+          style={{
+            position: 'absolute',
+            top: 132,
+            right: 40,
+            zIndex: 10,
+            width: 'min(420px, calc(100vw - 80px))',
+            padding: '18px 22px',
+            background: 'rgba(13,10,12,0.82)',
+            borderTop: `3px solid ${districtProfile.crestColor}`
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', alignItems: 'start' }}>
+            <div>
+              <div style={{ fontSize: '0.62rem', color: districtProfile.crestColor, letterSpacing: '0.18rem', textTransform: 'uppercase' }}>
+                {districtProfile.arcTitle}
+              </div>
+              <div style={{ marginTop: '6px', fontSize: '1.18rem', fontWeight: 800 }}>{districtProfile.travelLabel}</div>
+            </div>
+            <div style={{ padding: '0.4rem 0.65rem', borderRadius: '999px', border: `1px solid ${districtProfile.crestColor}`, color: districtProfile.crestColor, fontSize: '0.68rem' }}>
+              {districtProfile.crest}
+            </div>
+          </div>
+          <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{districtProfile.slogan}</div>
+          <div style={{ marginTop: '14px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {availableNpcCast.map((npc) => (
+              <div
+                key={npc.id}
+                style={{
+                  padding: '0.45rem 0.75rem',
+                  borderRadius: '999px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  fontSize: '0.74rem',
+                  letterSpacing: '0.08rem'
+                }}
+              >
+                {npc.name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {!activeDialogue && (
         <div className="district-nav-status glass-panel">
@@ -187,25 +242,31 @@ export const DistrictExplore: React.FC = () => {
         <div className="glass-panel fade-in" style={{ position: 'absolute', left: 60, bottom: 60, width: '450px', padding: '30px', zIndex: 10, background: 'rgba(5,5,15,0.7)', borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
           <div style={{ fontSize: '0.6rem', color: 'var(--accent-cyan)', marginBottom: '10px', letterSpacing: '4px' }}>CIRCUIT_SCOUTER //</div>
           <p style={{ margin: 0, fontSize: '1rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.6, fontStyle: 'italic', fontWeight: 300 }}>"{currentLoc.description}"</p>
+          {districtChampion && (
+            <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ fontSize: '0.62rem', color: 'var(--accent-yellow)', letterSpacing: '0.16rem', textTransform: 'uppercase' }}>Champion Presence</div>
+              <div style={{ marginTop: '6px', fontWeight: 700 }}>{districtChampion.name} // {districtChampion.role}</div>
+              <div style={{ marginTop: '4px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                {districtProfile?.signatureStyle}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {activeDialogue && (
-        <div className="dialogue-overlay fade-in" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px' }}>
-          <div style={{ position: 'relative', width: '100%', maxWidth: '900px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
-            <div className="dialogue-box" style={{ width: '100%', minHeight: '220px' }} onClick={() => setActiveDialogue(null)}>
-              <div className="dialogue-name-tag" style={{ background: activeDialogue.npc.avatarColor }}>
-                {activeDialogue.npc.name.toUpperCase()} // {activeDialogue.npc.role.toUpperCase()}
-              </div>
-              <div className="typing-text" style={{ fontSize: '1.8rem' }}>{typedText}</div>
-              <div style={{ position: 'absolute', right: 30, bottom: 20, fontSize: '0.7rem', color: 'var(--accent-cyan)', animation: 'pulse 1s infinite' }}>[ CLICK TO ADVANCE ]</div>
-            </div>
-            <div style={{ display: 'flex', gap: '20px' }}>
-              {activeDialogue.npc.deck && <button className="neo-button primary" style={{ width: '250px' }} onClick={() => setScene('BATTLE')}>CHALLENGE TO DUEL</button>}
-              <button className="neo-button" style={{ width: '150px' }} onClick={() => setActiveDialogue(null)}>END CONVERSATION</button>
-            </div>
-          </div>
-        </div>
+        <VNDialogueOverlay
+          beat={createNpcBeat(activeDialogue.npc, state.timeOfDay)}
+          typedText={typedText}
+          onDismiss={() => setActiveDialogue(null)}
+          onAction={(actionId) => {
+            if (actionId === 'DUEL') {
+              setScene('BATTLE');
+              return;
+            }
+            setActiveDialogue(null);
+          }}
+        />
       )}
 
       {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}

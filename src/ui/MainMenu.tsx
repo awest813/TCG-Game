@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 import { NewGameConfig } from '../core/types';
 import { SystemMenu } from './SystemMenu';
 
@@ -81,46 +81,52 @@ export const MainMenu: React.FC = () => {
 
       <div className="main-menu-layout">
         <section className="main-menu-copy">
-          <div className="main-menu-kicker">Neo Street League Protocol</div>
+          <div className="main-menu-kicker">Metro Chronicle // Visual Novel Edition</div>
           <h1 className="glow-text main-menu-title">NEO SF</h1>
           <div className="main-menu-subtitle-row">
             <div className="main-menu-rule" />
-            <div className="main-menu-subtitle">Champion Circuit</div>
+            <div className="main-menu-subtitle">Champion Circuit Chronicle</div>
           </div>
           <p className="main-menu-description">
-            Build your deck, push through district brackets, and climb from apartment scrims to citywide title matches.
+            A city of clubs, trains, rivals, and late-night card battles. Step into the frame as a new duelist and let every menu, route, and conversation play like a chapter scene.
           </p>
+          <div className="glass-morphism" style={{ marginTop: '1.4rem', padding: '1rem 1.2rem', maxWidth: '34rem' }}>
+            <div style={{ fontSize: '0.68rem', letterSpacing: '0.18rem', color: 'var(--accent-yellow)', textTransform: 'uppercase' }}>Opening Voiceover</div>
+            <div style={{ marginTop: '0.55rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
+              The apartment lights hum. The terminal waits. Somewhere beyond Sunset Terminal, the rest of the city is already moving.
+            </div>
+          </div>
 
           <div className="main-menu-actions">
             <button className="champion-button champion-button-primary" onClick={() => setShowOnboarding(true)}>
               <span className="btn-number">01</span>
               <span className="btn-copy">
-                <span className="btn-text">NEW CAREER</span>
-                <span className="btn-caption">Choose your codename, starter partner, and your first route into the league.</span>
+                <span className="btn-text">Begin Chapter One</span>
+                <span className="btn-caption">Choose your codename, starter partner, and the tone of your first route through the league.</span>
               </span>
             </button>
 
             <button className="champion-button" onClick={handleContinue} disabled={!hasSaveData}>
               <span className="btn-number">02</span>
               <span className="btn-copy">
-                <span className="btn-text">CONTINUE LINK</span>
-                <span className="btn-caption">{hasSaveData ? 'Resume your last synced run.' : 'No local save detected yet.'}</span>
+                <span className="btn-text">Resume Chronicle</span>
+                <span className="btn-caption">{hasSaveData ? 'Re-enter your last scene exactly where the thread was left.' : 'No local save detected yet.'}</span>
               </span>
             </button>
 
             <button className="champion-button champion-button-ghost" onClick={() => setShowSettings(true)}>
               <span className="btn-number">03</span>
               <span className="btn-copy">
-                <span className="btn-text">SETTINGS</span>
-                <span className="btn-caption">Adjust presentation, controls, and sync preferences.</span>
+                <span className="btn-text">Presentation</span>
+                <span className="btn-caption">Adjust framing, sync preferences, and system behavior before the scene begins.</span>
               </span>
             </button>
 
             <button className="champion-button champion-button-ghost" onClick={() => setShowAbout((value) => !value)}>
               <span className="btn-number">04</span>
               <span className="btn-copy">
-                <span className="btn-text">{showAbout ? 'HIDE DOSSIER' : 'ABOUT'}</span>
-                <span className="btn-caption">Preview the game pitch and what a first session looks like.</span>
+                <span className="btn-text">{showAbout ? 'Hide Dossier' : 'Open Dossier'}</span>
+                <span className="btn-caption">Preview the premise, the opening pace, and the shape of the career arc.</span>
               </span>
             </button>
           </div>
@@ -131,31 +137,35 @@ export const MainMenu: React.FC = () => {
         </section>
 
         <aside className="main-menu-panel glass-panel">
-          <div className="menu-panel-eyebrow">Operator Feed</div>
+          <div className="menu-panel-eyebrow">Scene Companion</div>
           <div className="menu-panel-metric">
-            <span>Career State</span>
+            <span>Story State</span>
             <strong>{hasSaveData ? 'SYNC READY' : 'FRESH START'}</strong>
           </div>
           <div className="menu-panel-metric">
-            <span>First Session</span>
-            <strong>Deck Setup / Apartment Intro</strong>
+            <span>Opening Chapter</span>
+            <strong>Apartment / Terminal / First Route</strong>
           </div>
           <div className="menu-panel-metric">
-            <span>Debug Console</span>
+            <span>Shortcut Console</span>
             <strong>Press `</strong>
+          </div>
+          <div className="menu-panel-metric">
+            <span>Presentation Layer</span>
+            <strong>VN FRAME ACTIVE</strong>
           </div>
 
           {showAbout && (
             <div className="menu-about-card">
-              <h2>New Player Flow</h2>
-              <p>New careers now begin with a guided setup instead of dropping straight into the apartment with no context.</p>
-              <p>You pick a codename, choose a starter style, and get a clear expectation for the first few minutes of play.</p>
+              <h2>What Changed</h2>
+              <p>The project now enters through a more theatrical visual-novel presentation instead of a flat utility menu.</p>
+              <p>New careers begin with a chapter setup, guided onboarding, and a stronger sense of scene framing before combat and systems open up.</p>
             </div>
           )}
 
           <div className="main-menu-footer">
             <div className="glass-morphism build-chip">{buildLabel}</div>
-            <div className="menu-footer-note">New Career opens a guided setup with starter recommendations and a cleaner first landing.</div>
+            <div className="menu-footer-note">This build leans into framing, scene presence, and dialogue-forward presentation while keeping the card game core intact.</div>
           </div>
         </aside>
       </div>
@@ -166,7 +176,7 @@ export const MainMenu: React.FC = () => {
             <div className="onboarding-header">
               <div>
                 <div className="system-menu-kicker">New Career Setup</div>
-                <h2 className="glow-text system-menu-title">START CLEAN</h2>
+                <h2 className="glow-text system-menu-title">Cast The Lead</h2>
               </div>
               <button onClick={() => setShowOnboarding(false)} className="system-menu-close" aria-label="Close new game setup">
                 X
@@ -183,11 +193,11 @@ export const MainMenu: React.FC = () => {
                     placeholder="Enter your player name"
                     className="onboarding-input"
                   />
-                  <div className="system-setting-note">This is how rivals and menus will refer to you at the start of the career.</div>
+                  <div className="system-setting-note">Rivals, route banners, and chapter overlays will use this name from the first scene onward.</div>
                 </div>
 
                 <div className="system-setting-card">
-                  <div className="setting-label">STARTER SYNC STYLE</div>
+                  <div className="setting-label">Starter Sync Style</div>
                   <div className="starter-grid">
                     {STARTER_OPTIONS.map((option) => (
                       <button
@@ -218,16 +228,16 @@ export const MainMenu: React.FC = () => {
                 <div className="system-setting-card onboarding-brief">
                   <div className="setting-label">FIRST SESSION PREVIEW</div>
                   <h3>{selectedStarter.title}</h3>
-                  <p>You will begin in your apartment with {selectedStarter.partner} as your lead partner, a starter deck tuned for {selectedStarter.id.toLowerCase()} play, and a tutorial quest that points you toward your first useful action.</p>
+                  <p>You will begin in your apartment with {selectedStarter.partner} as your lead partner, a starter deck tuned for {selectedStarter.id.toLowerCase()} play, and a tutorial sequence that now reads like the opening act of a visual novel route.</p>
                   <div className="onboarding-steps">
-                    <div>1. Review your deck and starter plan.</div>
+                    <div>1. Review your deck and your scene objective.</div>
                     <div>2. Move from the apartment into your first district route.</div>
-                    <div>3. Learn the battle rhythm with a deck that matches your chosen style.</div>
+                    <div>3. Learn the battle rhythm with a starter that matches your preferred pacing.</div>
                   </div>
                 </div>
 
                 <button className="champion-button champion-button-primary compact" onClick={handleCreateCareer} style={{ color: 'black' }}>
-                  CREATE CAREER
+                  ENTER THE CITY
                 </button>
               </aside>
             </div>

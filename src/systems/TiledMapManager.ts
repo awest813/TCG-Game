@@ -1,13 +1,13 @@
-import { Scene, MeshBuilder, StandardMaterial, Texture, Vector3, Color3, MultiMaterial, SubMesh, Mesh, VertexData } from "@babylonjs/core";
-import { TiledMapJSON, TiledLayer, TiledTileset } from "../core/tiledTypes";
+import { Scene, StandardMaterial, Texture, Color3, Mesh, VertexData } from "@babylonjs/core";
+import { TiledMapJSON, TiledLayer } from "../core/tiledTypes";
 
 export class TiledMapManager {
-    static async renderMap(map: TiledMapJSON, scene: Scene, assetsPath: string): Promise<Mesh[]> {
+    static renderMap(map: TiledMapJSON, scene: Scene, assetsPath: string): Mesh[] {
         const meshes: Mesh[] = [];
 
         for (const layer of map.layers) {
             if (layer.type === "tilelayer" && layer.data) {
-                const layerMesh = await this.renderTileLayer(layer, map, scene, assetsPath);
+                const layerMesh = this.renderTileLayer(layer, map, scene, assetsPath);
                 if (layerMesh) meshes.push(layerMesh);
             }
         }
@@ -15,11 +15,10 @@ export class TiledMapManager {
         return meshes;
     }
 
-    private static async renderTileLayer(layer: TiledLayer, map: TiledMapJSON, scene: Scene, assetsPath: string): Promise<Mesh | null> {
+    private static renderTileLayer(layer: TiledLayer, map: TiledMapJSON, scene: Scene, assetsPath: string): Mesh | null {
         if (!layer.data) return null;
 
         const { width, height, data } = layer;
-        const { tilewidth, tileheight } = map;
 
         // For simplicity in Phase 1, we assume one tileset for now
         // A more robust implementation would check GIDs against firstgid

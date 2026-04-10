@@ -5,7 +5,7 @@ export type TrackId = 'TITLE' | 'TOWN' | 'BATTLE' | 'CHAMPION' | 'VICTORY' | 'SH
 
 class AudioManager {
     private currentTrack: HTMLAudioElement | null = null;
-    private isMuted: boolean = false;
+    private isMuted = false;
 
     // Track definitions (mock URLs)
     private tracks: Record<TrackId, string> = {

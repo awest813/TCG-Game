@@ -1,10 +1,11 @@
 import React from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
+import { SceneType } from '../core/types';
 
 export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { setScene, updateProfile } = useGame();
 
-    const scenes = [
+    const scenes: SceneType[] = [
         'MAIN_MENU', 'APARTMENT', 'DISTRICT_EXPLORE', 
         'DECK_EDITOR', 'STORE', 'TOURNAMENT', 
         'TRANSIT', 'PROFILE', 'BATTLE'
@@ -26,7 +27,7 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 {scenes.map(s => (
                     <button key={s} className="neo-button" 
                         style={{ fontSize: '0.7rem' }}
-                        onClick={() => { setScene(s as any); onClose(); }}>
+                        onClick={() => { setScene(s); onClose(); }}>
                         JUMP_TO: {s}
                     </button>
                 ))}

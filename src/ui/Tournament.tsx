@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useGame } from '../core/GameStateContext';
-import { TOURNAMENT_TIERS, TournamentTier, ActiveTournament } from '../core/TournamentManager';
+import React from 'react';
+import { useGame } from '../core/GameContext';
+import { TOURNAMENT_TIERS, TournamentTier } from '../core/TournamentManager';
 import { NPCS } from '../npc/npcs';
+import { ActiveTournament } from '../core/types';
 
 export const Tournament: React.FC = () => {
   const { state, updateGameState, updateProfile, setScene } = useGame();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 import { CARD_POOL, getCardById, getCardPalette } from '../data/cards';
 
 export const PackOpening: React.FC = () => {

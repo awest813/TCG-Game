@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 
 export const Profile: React.FC = () => {
     const { state, setScene } = useGame();

@@ -57,9 +57,3 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
     }
 ];
 
-export interface ActiveTournament {
-    tierId: string;
-    wins: number;
-    currentOpponentId: string;
-    status: 'ACTIVE' | 'WON' | 'LOST';
-}

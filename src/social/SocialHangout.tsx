@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 
 export const SocialHangout: React.FC = () => {
   const { state, setScene, updateProfile } = useGame();

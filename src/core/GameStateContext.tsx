@@ -1,16 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { useState } from 'react';
+import { GameContext } from './GameContext';
 import { GameState, NewGameConfig, PlayerProfile, SceneType, TimeOfDay } from './types';
-
-interface GameContextType {
-  state: GameState;
-  setScene: (scene: SceneType) => void;
-  updateProfile: (update: Partial<PlayerProfile>) => void;
-  updateGameState: (update: Partial<GameState>) => void;
-  advanceTime: () => void;
-  saveGame: () => void;
-  loadGame: () => boolean;
-  resetGame: (config?: NewGameConfig) => void;
-}
 
 const INITIAL_QUEST = 'Tutorial: Talk to Maya in your Apartment';
 
@@ -101,7 +91,37 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
   };
 };
 
-const GameContext = createContext<GameContextType | undefined>(undefined);
+const isTimeOfDay = (value: unknown): value is TimeOfDay =>
+  value === 'MORNING' || value === 'AFTERNOON' || value === 'EVENING';
+
+const isSceneType = (value: unknown): value is SceneType =>
+  [
+    'MAIN_MENU',
+    'APARTMENT',
+    'DISTRICT_EXPLORE',
+    'DECK_EDITOR',
+    'PACK_OPENING',
+    'STORE',
+    'BATTLE',
+    'REWARD',
+    'SOCIAL',
+    'TOURNAMENT',
+    'TRANSIT',
+    'SAVE_LOAD',
+    'PROFILE'
+  ].includes(String(value));
+
+const isGameState = (value: unknown): value is GameState => {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<GameState>;
+  return (
+    !!candidate.profile &&
+    typeof candidate.location === 'string' &&
+    typeof candidate.currentQuest === 'string' &&
+    isSceneType(candidate.currentScene) &&
+    isTimeOfDay(candidate.timeOfDay)
+  );
+};
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<GameState>(createInitialState());
@@ -136,8 +156,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loadGame = () => {
     const saved = localStorage.getItem('neo_sf_save');
     if (saved) {
-      setState(JSON.parse(saved));
-      return true;
+      const parsed: unknown = JSON.parse(saved);
+      if (isGameState(parsed)) {
+        setState(parsed);
+        return true;
+      }
     }
     return false;
   };
@@ -147,10 +170,4 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return <GameContext.Provider value={{ state, setScene, updateProfile, updateGameState, advanceTime, saveGame, loadGame, resetGame }}>{children}</GameContext.Provider>;
-};
-
-export const useGame = () => {
-  const context = useContext(GameContext);
-  if (!context) throw new Error('useGame must be used within GameProvider');
-  return context;
 };

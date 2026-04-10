@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 import { NPCS } from '../npc/npcs';
+import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
 
 type DistrictNode = {
   id: string;
@@ -12,6 +13,15 @@ type DistrictNode = {
   events: boolean;
 };
 
+const ALL_DISTRICTS: DistrictNode[] = [
+  { id: 'SUNSET_TERMINAL', name: 'Sunset Terminal', description: 'Home territory. Casual duels and local energy.', color: '#00f2ff', pos: { x: '25%', y: '65%' }, shops: true, events: true },
+  { id: 'MARKET_CENTRAL', name: 'Market Central', description: "The city's major trade artery. High-volume card exchange.", color: '#ffea00', pos: { x: '45%', y: '48%' }, shops: true, events: false },
+  { id: 'NEON_MISSION', name: 'Neon Mission', description: 'Flashy arcade culture. Fast-paced combo duels.', color: '#ff00ea', pos: { x: '68%', y: '35%' }, shops: false, events: true },
+  { id: 'BAYLINE_WHARF', name: 'Bayline Wharf', description: 'Atmospheric waterfront. Elite Tide trials.', color: '#00aaff', pos: { x: '48%', y: '78%' }, shops: true, events: true },
+  { id: 'REDWOOD_HEIGHTS', name: 'Redwood Heights', description: 'Luxury rooftop gardens. Prestige duels.', color: '#7a00ff', pos: { x: '28%', y: '25%' }, shops: false, events: false },
+  { id: 'CIVIC_CROWN', name: 'Civic Crown', description: 'The pinnacle. Sanctioned league grand finals.', color: '#ffffff', pos: { x: '82%', y: '18%' }, shops: true, events: true }
+];
+
 export const TransitStation: React.FC = () => {
   const { state, setScene, updateGameState } = useGame();
   const [hovered, setHovered] = useState<string | null>(null);
@@ -19,17 +29,10 @@ export const TransitStation: React.FC = () => {
   const [routeStatus, setRouteStatus] = useState('Select a district node to view route intel.');
   const [isClosing, setIsClosing] = useState(false);
 
-  const allDistricts: DistrictNode[] = [
-    { id: 'SUNSET_TERMINAL', name: 'Sunset Terminal', description: 'Home territory. Casual duels and local energy.', color: '#00f2ff', pos: { x: '25%', y: '65%' }, shops: true, events: true },
-    { id: 'MARKET_CENTRAL', name: 'Market Central', description: "The city's major trade artery. High-volume card exchange.", color: '#ffea00', pos: { x: '45%', y: '48%' }, shops: true, events: false },
-    { id: 'NEON_MISSION', name: 'Neon Mission', description: 'Flashy arcade culture. Fast-paced combo duels.', color: '#ff00ea', pos: { x: '68%', y: '35%' }, shops: false, events: true },
-    { id: 'BAYLINE_WHARF', name: 'Bayline Wharf', description: 'Atmospheric waterfront. Elite Tide trials.', color: '#00aaff', pos: { x: '48%', y: '78%' }, shops: true, events: true },
-    { id: 'REDWOOD_HEIGHTS', name: 'Redwood Heights', description: 'Luxury rooftop gardens. Prestige duels.', color: '#7a00ff', pos: { x: '28%', y: '25%' }, shops: false, events: false },
-    { id: 'CIVIC_CROWN', name: 'Civic Crown', description: 'The pinnacle. Sanctioned league grand finals.', color: '#ffffff', pos: { x: '82%', y: '18%' }, shops: true, events: true }
-  ];
-
   const unlocked = state.profile.progress.unlockedDistricts;
-  const activeDistrict = useMemo(() => allDistricts.find((district) => district.id === selected) ?? null, [allDistricts, selected]);
+  const activeDistrict = useMemo(() => ALL_DISTRICTS.find((district) => district.id === selected) ?? null, [selected]);
+  const activeDistrictProfile = useMemo(() => (selected ? getDistrictProfile(selected) : null), [selected]);
+  const activeDistrictChampion = useMemo(() => (selected ? getDistrictChampion(selected) : null), [selected]);
 
   const getNPCsInDistrict = (id: string) => NPCS.filter((npc) => npc.location === id && npc.activeTimes.includes(state.timeOfDay));
 
@@ -83,9 +86,52 @@ export const TransitStation: React.FC = () => {
         <button className="neo-button" onClick={() => setScene('APARTMENT')}>RETURN HOME</button>
       </div>
 
+      {activeDistrict && activeDistrictProfile && (
+        <div
+          className="glass-panel fade-in"
+          style={{
+            position: 'absolute',
+            top: '182px',
+            left: '40px',
+            width: 'min(420px, calc(100vw - 80px))',
+            zIndex: 85,
+            padding: '20px 22px',
+            background: 'rgba(13,10,12,0.82)',
+            borderTop: `3px solid ${activeDistrict.color}`
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', alignItems: 'start' }}>
+            <div>
+              <div style={{ fontSize: '0.65rem', letterSpacing: '0.18rem', color: activeDistrictProfile.crestColor, textTransform: 'uppercase' }}>
+                {activeDistrictProfile.arcTitle}
+              </div>
+              <div style={{ marginTop: '6px', fontSize: '1.35rem', fontWeight: 800 }}>{activeDistrict.name}</div>
+            </div>
+            <div style={{ padding: '0.45rem 0.7rem', borderRadius: '999px', border: `1px solid ${activeDistrictProfile.crestColor}`, color: activeDistrictProfile.crestColor, fontSize: '0.68rem', letterSpacing: '0.12rem' }}>
+              {activeDistrictProfile.crest}
+            </div>
+          </div>
+
+          <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{activeDistrictProfile.slogan}</div>
+
+          <div style={{ marginTop: '14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+            <div>
+              <div className="transit-status-label">STYLE</div>
+              <div className="transit-status-value" style={{ fontSize: '0.9rem' }}>{activeDistrictProfile.signatureStyle}</div>
+            </div>
+            <div>
+              <div className="transit-status-label">CHAMPION</div>
+              <div className="transit-status-value" style={{ fontSize: '0.9rem' }}>
+                {activeDistrictChampion ? activeDistrictChampion.name : 'Unknown'}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ height: '100%', width: '100%', position: 'relative' }}>
         <div className="transit-grid-lines" />
-        {allDistricts.map((district) => {
+        {ALL_DISTRICTS.map((district) => {
           const hasAccess = unlocked.includes(district.id);
           const districtNPCs = getNPCsInDistrict(district.id);
           const isSelected = selected === district.id;
@@ -155,6 +201,12 @@ export const TransitStation: React.FC = () => {
               <div style={{ padding: '5px 15px', background: 'rgba(255,255,255,0.1)', borderRadius: '20px', fontSize: '0.7rem' }}>CHAPTER {state.profile.progress.chapter}</div>
             </div>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.2rem', lineHeight: '1.5', maxWidth: '800px' }}>{activeDistrict.description}</p>
+            {activeDistrictProfile && (
+              <div style={{ marginTop: '18px', padding: '14px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ fontSize: '0.64rem', color: activeDistrictProfile.crestColor, letterSpacing: '0.18rem', textTransform: 'uppercase' }}>VN Route Dossier</div>
+                <div style={{ marginTop: '8px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{activeDistrictProfile.atmosphere}</div>
+              </div>
+            )}
             <div style={{ display: 'flex', gap: '30px', marginTop: '30px' }}>
               <div className="map-stat">
                 <span className="stat-label">RESIDENT NPCS</span>
@@ -164,6 +216,12 @@ export const TransitStation: React.FC = () => {
                 <span className="stat-label">FACILITIES</span>
                 <span className="stat-value">{[...(activeDistrict.shops ? ['Shop'] : []), ...(activeDistrict.events ? ['Arena'] : [])].join(' / ') || 'Residential'}</span>
               </div>
+              {activeDistrictChampion && (
+                <div className="map-stat">
+                  <span className="stat-label">RIVAL TO WATCH</span>
+                  <span className="stat-value">{activeDistrictChampion.name}</span>
+                </div>
+              )}
             </div>
           </div>
 

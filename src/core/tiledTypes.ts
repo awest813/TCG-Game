@@ -17,7 +17,7 @@ export interface TiledObject {
     y: number;
     width: number;
     height: number;
-    properties?: { name: string; value: any }[];
+    properties?: { name: string; value: string | number | boolean }[];
 }
 
 export interface TiledTileset {

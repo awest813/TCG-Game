@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 import { Card } from '../core/types';
 import { getCardById, getCardPalette } from '../data/cards';
 import { TutorialGuide } from '../ui/TutorialGuide';

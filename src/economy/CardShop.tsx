@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 import { ShopItem } from '../core/types';
 
 const SHOP_INVENTORY: ShopItem[] = [
@@ -21,7 +21,7 @@ export const CardShop: React.FC = () => {
         }
 
         const newCurrency = profile.currency - item.cost;
-        let newInventory = { ...profile.inventory };
+        const newInventory = { ...profile.inventory };
 
         if (item.type === 'PACK') {
             newInventory.packs = [...newInventory.packs, item.targetId];

@@ -1,5 +1,3 @@
-import { CreatureType } from "../core/types";
-
 export interface NPC {
     id: string;
     name: string;

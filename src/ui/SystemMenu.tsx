@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useGame } from '../core/GameStateContext';
+import { useGame } from '../core/GameContext';
 
 export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { saveGame, setScene } = useGame();
@@ -9,6 +9,11 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [screenShake, setScreenShake] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return 'Unknown error';
+  };
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -23,14 +28,14 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((error) => {
-        setFeedback(`Fullscreen failed: ${error.message}`);
+      void document.documentElement.requestFullscreen().catch((error: unknown) => {
+        setFeedback(`Fullscreen failed: ${getErrorMessage(error)}`);
       });
       return;
     }
 
     if (document.exitFullscreen) {
-      document.exitFullscreen();
+      void document.exitFullscreen();
     }
   };
 
