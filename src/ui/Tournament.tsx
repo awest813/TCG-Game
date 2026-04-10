@@ -13,11 +13,20 @@ import {
 import { ActiveTournament } from '../core/types';
 import { getTrainerById, mergeSocialState } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
+import { audioManager } from '../core/AudioManager';
 
 export const Tournament: React.FC = () => {
   const { state, updateGameState, updateProfile, setScene } = useGame();
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
+
+  React.useEffect(() => {
+    if (!activeTourney) {
+      audioManager.playBGM('TOWN');
+    } else {
+      audioManager.playBGM('TOURNAMENT_LOBBY');
+    }
+  }, [activeTourney]);
 
   const renderStars = (count: number) => {
     return (
@@ -45,6 +54,7 @@ export const Tournament: React.FC = () => {
       currentOpponentId: getTournamentOpponent(tier.id, 0),
       status: 'ACTIVE'
     };
+    audioManager.playSFX('select');
     updateGameState({ activeTournament: newActive });
   };
 
@@ -190,7 +200,7 @@ export const Tournament: React.FC = () => {
           </div>
 
           <div style={{ marginTop: '46px', textAlign: 'center' }}>
-            <button className="neo-button" onClick={() => setScene('DISTRICT_EXPLORE')}>
+            <button className="neo-button" onClick={() => { audioManager.playSFX('back'); setScene('DISTRICT_EXPLORE'); }}>
               RETURN TO STREETS
             </button>
           </div>
@@ -209,6 +219,22 @@ export const Tournament: React.FC = () => {
   const banter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, relationshipScore, activeTourney.wins);
   const roundLabel = getTournamentRoundLabel(tier.id, activeTourney.wins);
   const opponentMeta = getOpponentMeta(activeTourney.currentOpponentId);
+
+  React.useEffect(() => {
+    // Speak announcer and rival dialogue when the round starts/loads
+    const timer = setTimeout(() => {
+      audioManager.speak(banter.intro, 'announcer');
+      
+      const rivalTimer = setTimeout(() => {
+        const npc = NPCS.find(n => n.id === activeTourney.currentOpponentId);
+        audioManager.speak(banter.rival, npc?.archetype ?? 'rival');
+      }, 4000); // Wait for announcer to finish roughly
+      
+      return () => clearTimeout(rivalTimer);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [activeTourney.currentOpponentId, activeTourney.wins]);
 
   return (
     <div
@@ -338,10 +364,10 @@ export const Tournament: React.FC = () => {
               </div>
             </div>
 
-            <button className="neo-button primary" style={{ width: '100%', height: '58px' }} onClick={() => setScene('BATTLE')}>
+            <button className="neo-button primary" style={{ width: '100%', height: '58px' }} onClick={() => { audioManager.playSFX('enter_battle'); setScene('BATTLE'); }}>
               INITIATE SYNC BATTLE
             </button>
-            <button className="neo-button" onClick={cashOut}>
+            <button className="neo-button" onClick={() => { audioManager.playSFX('withdraw'); cashOut(); }}>
               WITHDRAW & CASH OUT
             </button>
           </div>
