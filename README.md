@@ -1,25 +1,28 @@
 # NEO SF: Master Circuit
 **The Definitive Urban Creature Card RPG**
 
-Welcome to **Neo SF**, a world where your cards aren't just data—they're your partners. Rise from the **Sunset Sync-Den** to the **Hall of Champions**! Battle through the 8 Great Clubs, earn your Medals, and prove your bond is the strongest in the Master Circuit.
+Welcome to **Neo SF**, a world where your cards aren't just data—they're your partners. Rise from the **Sunset Terminal** to the **Crown Hall**! Battle through the Great Districts, earn your Grand Medals, and prove your bond is the strongest in the Master Circuit.
 
 ---
 
 ## 🌆 The Master Experience
 
 ### 🎴 Tactical Sync-Combat
-- **Heart of the Circuit**: Manage your Sync Energy to unleash devastating creature combos.
-- **Cinematic Duels**: High-fidelity holographic battleboards with "Postcard Polish" visuals including camera zoom and digital particle fields.
-- **Archetype Synergy**: Master the unique styles of **Tide**, **Pulse**, **Bloom**, and **Veil** type creatures.
+- **Heart of the Circuit**: Manage your Sync Energy across a full turn structure—deploy creatures, play support cards, and unleash attacks with strategic depth.
+- **Cinematic Duels**: High-fidelity holographic battleboards powered by **Babylon.js 3D**, featuring Ken Burns camera effects and digital particle fields.
+- **Archetype Synergy**: Master all six creature types — **Pulse**, **Bloom**, **Tide**, **Alloy**, **Veil**, and **Current** — each with unique keywords and a weakness cycle that rewards smart team-building.
+- **Evolution Chains**: Evolve your creatures mid-battle—transform Ziprail into Rail Bastion and swing the momentum in an instant.
 
 ### 🏆 The Road to Champion
-- **Club & Medal System**: Conquer the 8 Great Clubs (Sunset, Bayline, Market, Neon, Redwood) and collect the **Grand Medals** to enter the **Civic Crown Grand Finals**.
-- **Endless Gauntlet**: High-stakes, infinite tournament play in the **Unlimited Crown Gauntlet**. How many wins can you stack before your sync breaks?
-- **Card-Master Boutique**: A high-end shopping experience for acquiring rare booster packs, powerful singles, and legendary card cosmetics.
+- **District & Medal System**: Explore 6 living Districts — **Sunset Terminal**, **Bayline Wharf**, **Market Central**, **Neon Mission**, **Redwood Heights**, and **Crown Hall** — and collect **Grand Medals** to enter the Civic Crown Grand Finals.
+- **Five Tournament Tiers**: Climb from the Rookie Sync-Den through Regional Circuits to the **Unlimited Crown Gauntlet** — an infinite, high-stakes ladder that only ends when your sync breaks.
+- **Card-Master Boutique**: A high-end shopping experience for acquiring rare booster packs (Metro Pulse, Neural Veil), powerful singles, and legendary card cosmetics.
+- **60-Card Deck Builder**: Filter by archetype, search by name, and fine-tune your strategy with live deck stats (average cost, creature/support ratio).
 
 ### 🆔 Pro-Duelist Features
-- **Social IDs**: A rich profile system tracking your **XP**, **Level**, **Medal Collection**, and career win/loss stats.
-- **Visual Novel Immersion**: Animated dialogue with typing effects and unique NPC branding for an authentic "Classic Card RPG" feel.
+- **Social IDs**: A rich three-tab profile tracking your **XP**, **Level**, **Medal Collection**, career win/loss record, and faction reputation across the six Circuit Factions.
+- **Visual Novel Immersion**: A fully scriptable, plugin-driven VN engine with animated dialogue, branching choices, conditional flags, and per-district atmospheric transitions.
+- **Time-of-Day System**: NPCs appear at different locations across three daily periods (Morning / Afternoon / Evening), making the city feel alive.
 - **Music Manager**: Dynamic BGM that shifts as you travel from the quiet Wharf to the roaring Grand Stadium.
 
 ---
@@ -28,14 +31,17 @@ Welcome to **Neo SF**, a world where your cards aren't just data—they're your 
 
 1. **Install**: `npm install`
 2. **Sync**: `npm run dev`
-3. **Begin**: Start a "New Career" to enter the Rookie Sync-Den and meet your first partners!
+3. **Begin**: Start a "New Career", choose your starter archetype (Pulse / Bloom / Tide), and enter the Rookie Sync-Den to meet your first partners!
 
 ---
 
 ## 🛠️ Tech Stack
-- **Engine**: React + TypeScript + Vite
-- **Visuals**: Vanilla CSS (Ken Burns Effects + Data Particles)
-- **Audio**: Custom Audio Logic Layer
+- **Framework**: React 18 + TypeScript + Vite
+- **3D Rendering**: Babylon.js 6 (Apartment Hub, Battle Arena)
+- **Styling**: Tailwind CSS + Vanilla CSS (Ken Burns Effects, Data Particles)
+- **Narrative Engine**: Custom plugin-driven VN Engine (JSON scripts, branching conditions, EventBus)
+- **Persistence**: localStorage (auto save / load)
+- **Audio**: Custom AudioManager (BGM + SFX + Text-to-Speech announcements)
 
 ---
 
