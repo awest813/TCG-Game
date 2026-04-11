@@ -10,9 +10,10 @@
         {
           "type": "visual",
           "background": "/bayline_wharf_bg.png",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left",
+          "bustRight": "/portrait_maya.svg",
+          "focusSide": "right",
           "transition": "fade"
         },
         {
@@ -24,9 +25,10 @@
           "type": "dialogue",
           "speakerId": "maya",
           "text": "Listen to the harbor before you answer me. Strong duelists learn the rhythm beneath the noise.",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_maya.svg",
+          "focusSide": "right"
         },
         {
           "type": "choice",
@@ -90,9 +92,10 @@
               "choiceEquals": "read_tide"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_maya.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -104,9 +107,10 @@
               "choiceEquals": "dive_in"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_maya.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -118,9 +122,10 @@
               "choiceEquals": "ask"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_maya.svg",
+          "focusSide": "right"
         }
       ]
     }

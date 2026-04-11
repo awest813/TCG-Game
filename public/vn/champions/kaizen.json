@@ -10,9 +10,9 @@
         {
           "type": "visual",
           "background": "/sunset_terminal_bg.png",
-          "portrait": "/avatar_kaizen.png",
+          "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/avatar_kaizen.png",
+          "bustRight": "/portrait_kaizen.svg",
           "focusSide": "right",
           "transition": "fade"
         },
@@ -25,9 +25,9 @@
           "type": "dialogue",
           "speakerId": "kaizen",
           "text": "You made it. Good. Sunset Terminal feels too small when we are both standing still.",
-          "portrait": "/avatar_kaizen.png",
+          "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/avatar_kaizen.png",
+          "bustRight": "/portrait_kaizen.svg",
           "focusSide": "right"
         },
         {
@@ -37,7 +37,7 @@
           "options": [
             {
               "id": "sync",
-              "text": "Tell him you still remember his rhythm from the last duel.",
+              "text": "Tell her you still remember her rhythm from the last duel.",
               "conditions": [
                 {
                   "relationship": "kaizen",
@@ -70,7 +70,7 @@
             },
             {
               "id": "wait",
-              "text": "Tell him you need a moment.",
+              "text": "Tell her you need a moment.",
               "effects": {
                 "relationships": {
                   "kaizen": 1
@@ -92,9 +92,9 @@
               "choiceEquals": "sync"
             }
           ],
-          "portrait": "/avatar_kaizen.png",
+          "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/avatar_kaizen.png",
+          "bustRight": "/portrait_kaizen.svg",
           "focusSide": "right"
         },
         {
@@ -107,9 +107,9 @@
               "choiceEquals": "accept"
             }
           ],
-          "portrait": "/avatar_kaizen.png",
+          "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/avatar_kaizen.png",
+          "bustRight": "/portrait_kaizen.svg",
           "focusSide": "right"
         },
         {
@@ -122,9 +122,9 @@
               "choiceEquals": "wait"
             }
           ],
-          "portrait": "/avatar_kaizen.png",
+          "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/avatar_kaizen.png",
+          "bustRight": "/portrait_kaizen.svg",
           "focusSide": "right"
         }
       ]

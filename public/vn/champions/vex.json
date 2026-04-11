@@ -10,18 +10,20 @@
         {
           "type": "visual",
           "background": "/market_arcade_bg.png",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_vex.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left",
+          "bustRight": "/portrait_vex.svg",
+          "focusSide": "right",
           "transition": "fade"
         },
         {
           "type": "dialogue",
           "speakerId": "vex",
           "text": "You can tell everything about a duelist from their first two moves. So make yours fast.",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_vex.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_vex.svg",
+          "focusSide": "right"
         },
         {
           "type": "choice",
@@ -30,7 +32,7 @@
           "options": [
             {
               "id": "match_his_speed",
-              "text": "Tell him you came to outrun him, not just keep up.",
+              "text": "Tell her you came to outrun her, not just keep up.",
               "conditions": [
                 {
                   "relationship": "vex",
@@ -51,7 +53,7 @@
             },
             {
               "id": "race",
-              "text": "Challenge him immediately.",
+              "text": "Challenge her immediately.",
               "effects": {
                 "relationships": {
                   "vex": 2
@@ -85,9 +87,10 @@
               "choiceEquals": "match_his_speed"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_vex.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_vex.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -99,9 +102,10 @@
               "choiceEquals": "race"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_vex.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_vex.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -113,9 +117,10 @@
               "choiceEquals": "study"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_vex.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_vex.svg",
+          "focusSide": "right"
         }
       ]
     }

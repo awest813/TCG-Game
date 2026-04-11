@@ -8,9 +8,12 @@ export interface TrainerRecord {
   homeDistrict: string;
   deck: string[];
   avatarPath?: string;
+  portraitPath?: string;
   accentColor: string;
   signatureField?: string;
   summary: string;
+  personality?: string;
+  specialty?: string;
 }
 
 export interface FactionRecord {
@@ -38,9 +41,12 @@ export const TRAINERS: TrainerRecord[] = [
     homeDistrict: 'SUNSET_TERMINAL',
     deck: ['signalmite', 'ziprail', 'mosshop', 'wharfin', 'quick-transfer', 'rooftop-remedy'],
     avatarPath: '/lucy_tutorial.png',
+    portraitPath: '/portrait_lucy.svg',
     accentColor: '#f0c67c',
     signatureField: 'neon-grid',
-    summary: 'Your handler for the early circuit, equal parts mentor, producer, and pressure valve.'
+    summary: 'Your handler for the early circuit, equal parts mentor, producer, and pressure valve.',
+    personality: 'Warm and direct. She remembers every duel you two have watched together and quotes them back at you when you need to hear it.',
+    specialty: 'Balanced tempo — she reads the board before the board reads her.'
   },
   {
     id: 'kaizen',
@@ -50,9 +56,12 @@ export const TRAINERS: TrainerRecord[] = [
     homeDistrict: 'SUNSET_TERMINAL',
     deck: ['ziprail', 'ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'signal-boost', 'quick-transfer', 'neon-grid'],
     avatarPath: '/avatar_kaizen.png',
+    portraitPath: '/portrait_kaizen.svg',
     accentColor: '#cf6547',
     signatureField: 'neon-grid',
-    summary: 'Your headline rival, all acceleration and nerve, obsessed with proving the city has room for only one rising ace.'
+    summary: 'Your headline rival, all acceleration and nerve, obsessed with proving the city has room for only one rising ace.',
+    personality: 'Fierce and competitive, but honest about it. Respects hard-won wins. Hates getting outpaced.',
+    specialty: 'Blitz aggression — she overwhelms before you can stabilize.'
   },
   {
     id: 'maya',
@@ -61,9 +70,12 @@ export const TRAINERS: TrainerRecord[] = [
     factionId: 'TIDE',
     homeDistrict: 'BAYLINE_WHARF',
     deck: ['wharfin', 'mist-glider', 'coral-guard', 'wave-rider', 'tsunami-core', 'system-refresh', 'rooftop-remedy', 'tidal-nexus'],
+    portraitPath: '/portrait_maya.svg',
     accentColor: '#76b7ff',
     signatureField: 'tidal-nexus',
-    summary: 'A control specialist who treats every duel like a tide chart and every mistake like drift.'
+    summary: 'A control specialist who treats every duel like a tide chart and every mistake like drift.',
+    personality: 'Measured and observant. Speaks in long, unhurried sentences. Every question she asks is a test.',
+    specialty: 'Tide control — patience turned into inevitability.'
   },
   {
     id: 'vex',
@@ -72,9 +84,12 @@ export const TRAINERS: TrainerRecord[] = [
     factionId: 'PULSE',
     homeDistrict: 'MARKET_CENTRAL',
     deck: ['ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'shield-drone', 'quick-transfer', 'overclock', 'neon-grid'],
+    portraitPath: '/portrait_vex.svg',
     accentColor: '#7dd7dd',
     signatureField: 'neon-grid',
-    summary: 'A speed tyrant whose favorite tactic is making the match feel decided before the board catches up.'
+    summary: 'A speed tyrant whose favorite tactic is making the match feel decided before the board catches up.',
+    personality: 'Sharp and efficient. No wasted words, no wasted moves. Finds hesitation offensive.',
+    specialty: 'Pure velocity — the board state shifts before opponents react.'
   },
   {
     id: 'luna',
@@ -83,9 +98,12 @@ export const TRAINERS: TrainerRecord[] = [
     factionId: 'NEON',
     homeDistrict: 'NEON_MISSION',
     deck: ['seedling-bot', 'solar-rose', 'bloom-monarch', 'mirror-phantom', 'neon-striker', 'system-refresh', 'signal-boost', 'void-rift'],
+    portraitPath: '/portrait_luna.svg',
     accentColor: '#cf6547',
     signatureField: 'void-rift',
-    summary: 'A showrunner duelist who frames every game like a live set and every opponent like a scene partner.'
+    summary: 'A showrunner duelist who frames every game like a live set and every opponent like a scene partner.',
+    personality: 'Theatrical and magnetic. She makes every duel feel like a performance — and she wrote the setlist.',
+    specialty: 'Disruption and flair — she destabilizes while staying beautiful about it.'
   },
   {
     id: 'valerious',
@@ -94,9 +112,12 @@ export const TRAINERS: TrainerRecord[] = [
     factionId: 'BLOOM',
     homeDistrict: 'REDWOOD_HEIGHTS',
     deck: ['mosshop', 'verdajack', 'solar-rose', 'bloom-monarch', 'fortress-walker', 'rooftop-remedy', 'system-refresh', 'garden-haze'],
+    portraitPath: '/portrait_valerious.svg',
     accentColor: '#8effa7',
     signatureField: 'garden-haze',
-    summary: 'An aristocratic grinder who turns sustain, board presence, and composure into a very personal kind of threat.'
+    summary: 'An aristocratic grinder who turns sustain, board presence, and composure into a very personal kind of threat.',
+    personality: 'Composed and quietly formidable. She has seen every strategy before and finds panic beneath her.',
+    specialty: 'Attrition bloom — outlasting until victory is the only remaining outcome.'
   },
   {
     id: 'zeno',
@@ -105,9 +126,12 @@ export const TRAINERS: TrainerRecord[] = [
     factionId: 'CROWN',
     homeDistrict: 'CIVIC_CROWN',
     deck: ['omega-link', 'royal-bloom', 'tsunami-core', 'stream-ace', 'mirror-phantom', 'alloy-foundry', 'recursion-loop', 'master-rank-medal'],
+    portraitPath: '/portrait_zeno.svg',
     accentColor: '#f0c67c',
     signatureField: 'alloy-foundry',
-    summary: 'The reigning apex champion, built from prestige, composure, and a deck that feels engineered to punish impatience.'
+    summary: 'The reigning apex champion, built from prestige, composure, and a deck that feels engineered to punish impatience.',
+    personality: 'Serenely authoritative. She does not need to raise her voice. The record speaks.',
+    specialty: 'Adaptive mastery — her deck shifts to reflect exactly what you are not prepared for.'
   }
 ];
 
