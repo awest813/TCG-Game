@@ -305,10 +305,47 @@ const EndMatchModal: React.FC<{ title: string; color: string; onExit: any }> = (
 const CardInspector: React.FC<{ card: Card }> = ({ card }) => {
     const pal = getCardPalette(card);
     return (
-        <div style={{ position: 'fixed', right: '40px', top: '40px', width: '280px', padding: '24px', background: pal.panel, border: `2px solid ${pal.accent}`, borderRadius: '20px', zIndex: 500 }}>
-             <h3 style={{ fontSize: '1.5rem' }}>{card.name.toUpperCase()}</h3>
-             <div style={{ margin: '12px 0', fontSize: '0.85rem' }}>{card.rulesText?.[0]}</div>
-             <div style={{ fontWeight: 900 }}>{card.attack} / {card.health}</div>
+        <div style={{ position: 'fixed', right: '40px', top: '40px', width: '300px', padding: '24px', background: pal.panel, border: `2px solid ${pal.accent}`, borderRadius: '20px', zIndex: 500 }}>
+             <h3 style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{card.name.toUpperCase()}</h3>
+             {card.weakness && (
+               <div style={{ fontSize: '0.65rem', color: 'var(--accent-magenta)', marginBottom: '8px', letterSpacing: '0.1rem' }}>
+                 WEAKNESS: {card.weakness.toUpperCase()} +10
+               </div>
+             )}
+             {card.retreatCost !== undefined && (
+               <div style={{ fontSize: '0.65rem', opacity: 0.55, marginBottom: '10px' }}>
+                 RETREAT COST: {card.retreatCost}
+               </div>
+             )}
+             {card.abilities && card.abilities.length > 0 && (
+               <div style={{ marginBottom: '10px' }}>
+                 {card.abilities.map((ab, i) => (
+                   <div key={i} style={{ marginBottom: '6px', padding: '6px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                     <div style={{ fontSize: '0.7rem', fontWeight: 700, color: pal.accent }}>{ab.name.toUpperCase()}</div>
+                     <div style={{ fontSize: '0.65rem', opacity: 0.8, marginTop: '2px' }}>{ab.effect}</div>
+                   </div>
+                 ))}
+               </div>
+             )}
+             {card.attacks && card.attacks.length > 0 ? (
+               <div>
+                 {card.attacks.map((atk, i) => (
+                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px', padding: '6px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                     <div>
+                       <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>{atk.name.toUpperCase()}</div>
+                       {atk.effect && <div style={{ fontSize: '0.6rem', opacity: 0.7, marginTop: '2px' }}>{atk.effect}</div>}
+                     </div>
+                     <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '8px' }}>
+                       <div style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--accent-yellow)' }}>{atk.damage}</div>
+                       <div style={{ fontSize: '0.55rem', opacity: 0.55 }}>{atk.cost} EN</div>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div style={{ margin: '12px 0', fontSize: '0.85rem' }}>{card.rulesText?.[0]}</div>
+             )}
+             {!card.attacks && <div style={{ fontWeight: 900, marginTop: '8px' }}>{card.attack} ATK / {card.health} HP</div>}
         </div>
     );
 };

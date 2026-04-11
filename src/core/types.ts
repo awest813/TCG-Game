@@ -23,6 +23,30 @@ export interface EffectDef {
   trigger?: EffectTrigger;
 }
 
+/** A named attack a creature can perform, inspired by the Pokémon TCG Pocket card schema. */
+export interface AttackDef {
+  /** Display name of the attack. */
+  name: string;
+  /** Base damage dealt by this attack. */
+  damage: number;
+  /** Sync-energy (mana) required to use this attack. */
+  cost: number;
+  /** Optional flavour/rules text describing an additional effect. */
+  effect?: string;
+  /** Optional structured effect applied when this attack is resolved. */
+  effectDef?: EffectDef;
+}
+
+/** A passive or triggered ability separate from attacks, inspired by the Pokémon TCG Pocket card schema. */
+export interface AbilityDef {
+  /** Display name of the ability. */
+  name: string;
+  /** Rules text describing the ability. */
+  effect: string;
+  /** Optional structured effect for engine resolution. */
+  effectDef?: EffectDef;
+}
+
 export interface BaseCard {
   id: string;
   name: string;
@@ -35,6 +59,7 @@ export interface BaseCard {
   tags?: string[];
   image?: string;
   creatureType?: CreatureType;
+  /** Legacy flat attack value. Prefer `attacks[0].damage` when `attacks` is defined. */
   attack?: number;
   health?: number;
   evolutionFrom?: string;
@@ -44,6 +69,14 @@ export interface BaseCard {
   onPlayEffects?: EffectDef[];
   onKOEffects?: EffectDef[];
   effect?: EffectDef[];
+  /** Named attacks this creature can perform. The first entry is used as the default attack in battle. */
+  attacks?: AttackDef[];
+  /** Passive or triggered abilities separate from attacks. */
+  abilities?: AbilityDef[];
+  /** The type this creature is weak against (takes +10 bonus damage from that type). */
+  weakness?: CreatureType;
+  /** Sync-energy cost to retreat this creature to the bench. */
+  retreatCost?: number;
 }
 
 export interface CreatureCard extends BaseCard {
