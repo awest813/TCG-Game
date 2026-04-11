@@ -10,18 +10,20 @@
         {
           "type": "visual",
           "background": "/redwood_heights_bg.png",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_valerious.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left",
+          "bustRight": "/portrait_valerious.svg",
+          "focusSide": "right",
           "transition": "fade"
         },
         {
           "type": "dialogue",
           "speakerId": "valerious",
           "text": "Every leaf in Redwood Heights survives by earning its place in the sun. Why should a challenger be any different?",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_valerious.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_valerious.svg",
+          "focusSide": "right"
         },
         {
           "type": "choice",
@@ -30,7 +32,7 @@
           "options": [
             {
               "id": "speak_of_growth",
-              "text": "Tell him growth means returning stronger each time he cuts you down.",
+              "text": "Tell her growth means returning stronger each time she cuts you down.",
               "conditions": [
                 {
                   "relationship": "valerious",
@@ -85,9 +87,10 @@
               "choiceEquals": "speak_of_growth"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_valerious.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_valerious.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -99,9 +102,10 @@
               "choiceEquals": "prove"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_valerious.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_valerious.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -113,9 +117,10 @@
               "choiceEquals": "observe"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_valerious.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "left"
+          "bustRight": "/portrait_valerious.svg",
+          "focusSide": "right"
         }
       ]
     }

@@ -10,8 +10,9 @@
         {
           "type": "visual",
           "background": "/neon_mission_tileset.png",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_luna.svg",
           "bustLeft": "/avatar_player.png",
+          "bustRight": "/portrait_luna.svg",
           "focusSide": "center",
           "transition": "fade"
         },
@@ -19,9 +20,10 @@
           "type": "dialogue",
           "speakerId": "luna",
           "text": "You don't just duel in Neon Mission. You perform, and the city decides if your heart is worth the spotlight.",
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_luna.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "center"
+          "bustRight": "/portrait_luna.svg",
+          "focusSide": "right"
         },
         {
           "type": "choice",
@@ -85,9 +87,10 @@
               "choiceEquals": "remember_the_crowd"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_luna.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "center"
+          "bustRight": "/portrait_luna.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -99,9 +102,10 @@
               "choiceEquals": "perform"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_luna.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "center"
+          "bustRight": "/portrait_luna.svg",
+          "focusSide": "right"
         },
         {
           "type": "dialogue",
@@ -113,9 +117,10 @@
               "choiceEquals": "listen"
             }
           ],
-          "portrait": "/avatar_player.png",
+          "portrait": "/portrait_luna.svg",
           "bustLeft": "/avatar_player.png",
-          "focusSide": "center"
+          "bustRight": "/portrait_luna.svg",
+          "focusSide": "right"
         }
       ]
     }

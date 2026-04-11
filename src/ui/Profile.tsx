@@ -109,19 +109,40 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
 
     <SonsotyoPanel>
       <SonsotyoKicker>Known Contacts</SonsotyoKicker>
-      <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
+      <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
         {TRAINERS.map((trainer) => {
           const relationship = social.trainers[trainer.id];
           const faction = getFactionById(trainer.factionId);
           return (
-            <div key={trainer.id} className="glass-panel sonsotyo-panel" style={{ padding: '16px', borderLeft: `3px solid ${faction.accentColor}` }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '1rem' }}>{trainer.name}</div>
-              <div className="sonsotyo-caption" style={{ marginTop: '6px' }}>{trainer.title}</div>
-              <div style={{ marginTop: '12px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                <span style={{ color: 'var(--accent-primary)' }}>AFF {relationship.affinity}</span>
-                <span style={{ color: 'var(--accent-secondary)' }}>RIV {relationship.rivalry}</span>
-                <span style={{ color: 'var(--accent-yellow)' }}>RES {relationship.respect}</span>
+            <div key={trainer.id} className="glass-panel sonsotyo-panel" style={{ padding: '0', borderLeft: `3px solid ${faction.accentColor}`, overflow: 'hidden' }}>
+              <div style={{ display: 'flex', gap: '0' }}>
+                {trainer.portraitPath && (
+                  <div style={{ width: '80px', minWidth: '80px', background: 'rgba(0,0,0,0.4)', overflow: 'hidden', flexShrink: 0 }}>
+                    <img
+                      src={trainer.portraitPath}
+                      alt={trainer.name}
+                      style={{ width: '80px', height: '108px', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                    />
+                  </div>
+                )}
+                <div style={{ padding: '14px 14px 14px 12px', flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', color: faction.accentColor }}>{trainer.name}</div>
+                  <div className="sonsotyo-caption" style={{ marginTop: '3px' }}>{trainer.title}</div>
+                  {trainer.specialty && (
+                    <div className="sonsotyo-caption" style={{ marginTop: '6px', opacity: 0.65, fontSize: '0.7rem', lineHeight: 1.4 }}>{trainer.specialty}</div>
+                  )}
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--accent-primary)' }}>AFF {relationship.affinity}</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--accent-secondary)' }}>RIV {relationship.rivalry}</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--accent-yellow)' }}>RES {relationship.respect}</span>
+                  </div>
+                </div>
               </div>
+              {trainer.personality && (
+                <div style={{ padding: '8px 14px 10px', borderTop: `1px solid rgba(255,255,255,0.06)`, fontSize: '0.7rem', opacity: 0.55, lineHeight: 1.5 }}>
+                  {trainer.personality}
+                </div>
+              )}
             </div>
           );
         })}

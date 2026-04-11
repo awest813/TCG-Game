@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="200" height="300">
+  <defs>
+    <radialGradient id="bg_lucy" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#2a1f08"/>
+      <stop offset="100%" stop-color="#0d0906"/>
+    </radialGradient>
+    <radialGradient id="skin_lucy" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#f5d4a8"/>
+      <stop offset="100%" stop-color="#e8b87a"/>
+    </radialGradient>
+    <linearGradient id="hair_lucy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8a830"/>
+      <stop offset="60%" stop-color="#c47a12"/>
+      <stop offset="100%" stop-color="#8a4e00"/>
+    </linearGradient>
+    <filter id="glow_lucy">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="200" height="300" fill="url(#bg_lucy)"/>
+  <!-- Warm ambient glow -->
+  <ellipse cx="100" cy="120" rx="80" ry="90" fill="#f0c67c" opacity="0.06"/>
+
+  <!-- Faction accent bar -->
+  <rect x="0" y="0" width="200" height="3" fill="#f0c67c" opacity="0.8"/>
+
+  <!-- Body / shoulders -->
+  <path d="M 30 300 Q 40 240 60 220 Q 80 205 100 203 Q 120 205 140 220 Q 160 240 170 300 Z" fill="#1a1206"/>
+  <!-- Jacket/collar -->
+  <path d="M 60 220 Q 80 212 100 210 Q 120 212 140 220 L 135 240 Q 115 230 100 228 Q 85 230 65 240 Z" fill="#c47a12"/>
+  <path d="M 90 210 L 100 228 L 110 210" fill="#f0c67c" opacity="0.6"/>
+  <!-- Shirt layer -->
+  <path d="M 65 240 Q 85 232 100 230 Q 115 232 135 240 L 130 265 Q 110 258 100 256 Q 90 258 70 265 Z" fill="#0d0906"/>
+
+  <!-- Neck -->
+  <path d="M 88 195 Q 88 215 88 220 L 112 220 Q 112 215 112 195 Z" fill="url(#skin_lucy)"/>
+
+  <!-- Head base -->
+  <ellipse cx="100" cy="160" rx="44" ry="48" fill="url(#skin_lucy)"/>
+
+  <!-- Hair - back layer -->
+  <path d="M 60 140 Q 55 120 58 100 Q 62 75 80 62 Q 100 50 120 62 Q 138 75 142 100 Q 145 120 140 140 Z" fill="#8a4e00"/>
+  <!-- Hair top/main -->
+  <path d="M 62 145 Q 58 120 60 95 Q 64 68 82 56 Q 100 46 118 56 Q 136 68 140 95 Q 142 120 138 145 Q 120 132 100 130 Q 80 132 62 145 Z" fill="url(#hair_lucy)"/>
+  <!-- Hair fringe/bangs -->
+  <path d="M 68 120 Q 70 105 78 98 Q 85 93 92 96 Q 96 98 94 106 Q 90 112 85 115 Z" fill="#e8a830"/>
+  <path d="M 95 118 Q 96 103 103 99 Q 109 97 111 104 Q 111 111 107 117 Z" fill="#d4921e"/>
+  <path d="M 108 115 Q 112 102 120 100 Q 128 100 130 108 Q 130 115 124 120 Z" fill="#e8a830"/>
+  <!-- Side hair strands -->
+  <path d="M 60 145 Q 54 160 56 180 Q 58 195 64 205 Q 60 190 62 175 Q 64 160 68 150 Z" fill="#c47a12"/>
+  <path d="M 140 145 Q 146 160 144 180 Q 142 195 136 205 Q 140 190 138 175 Q 136 160 132 150 Z" fill="#c47a12"/>
+  <!-- Hair shine -->
+  <ellipse cx="95" cy="78" rx="12" ry="6" fill="#f5d070" opacity="0.35" transform="rotate(-15 95 78)"/>
+
+  <!-- Face features -->
+  <!-- Eyebrows -->
+  <path d="M 76 132 Q 83 128 90 130" stroke="#6b3800" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M 110 130 Q 117 128 124 132" stroke="#6b3800" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- Eyes -->
+  <!-- Left eye -->
+  <ellipse cx="84" cy="142" rx="10" ry="9" fill="#1a0f00"/>
+  <ellipse cx="84" cy="142" rx="9" ry="8" fill="#c87820"/>
+  <ellipse cx="84" cy="142" rx="6" ry="6" fill="#7a4400"/>
+  <ellipse cx="84" cy="142" rx="3.5" ry="3.5" fill="#0a0600"/>
+  <ellipse cx="81" cy="139" rx="2" ry="1.5" fill="white" opacity="0.9"/>
+  <path d="M 74 136 Q 84 132 94 136 L 94 142 Q 84 138 74 142 Z" fill="#2a1a00" opacity="0.5"/>
+  <!-- Right eye -->
+  <ellipse cx="116" cy="142" rx="10" ry="9" fill="#1a0f00"/>
+  <ellipse cx="116" cy="142" rx="9" ry="8" fill="#c87820"/>
+  <ellipse cx="116" cy="142" rx="6" ry="6" fill="#7a4400"/>
+  <ellipse cx="116" cy="142" rx="3.5" ry="3.5" fill="#0a0600"/>
+  <ellipse cx="113" cy="139" rx="2" ry="1.5" fill="white" opacity="0.9"/>
+  <path d="M 106 136 Q 116 132 126 136 L 126 142 Q 116 138 106 142 Z" fill="#2a1a00" opacity="0.5"/>
+  <!-- Eyelashes -->
+  <path d="M 74 136 Q 79 130 84 132 Q 89 130 94 136" stroke="#1a0800" stroke-width="1.5" fill="none"/>
+  <path d="M 106 136 Q 111 130 116 132 Q 121 130 126 136" stroke="#1a0800" stroke-width="1.5" fill="none"/>
+
+  <!-- Nose -->
+  <path d="M 98 155 Q 100 158 102 155" stroke="#c49070" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+  <!-- Mouth - warm smile -->
+  <path d="M 89 168 Q 94 165 100 166 Q 106 165 111 168" stroke="#c07050" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 91 170 Q 100 175 109 170" stroke="#e08860" stroke-width="1" fill="none" stroke-linecap="round"/>
+
+  <!-- Cheek blush -->
+  <ellipse cx="76" cy="158" rx="8" ry="5" fill="#f0907a" opacity="0.28"/>
+  <ellipse cx="124" cy="158" rx="8" ry="5" fill="#f0907a" opacity="0.28"/>
+
+  <!-- Ear -->
+  <ellipse cx="57" cy="155" rx="5" ry="7" fill="#e8b87a"/>
+  <ellipse cx="143" cy="155" rx="5" ry="7" fill="#e8b87a"/>
+
+  <!-- Name plate -->
+  <rect x="0" y="270" width="200" height="30" fill="#0d0906" opacity="0.9"/>
+  <rect x="0" y="270" width="200" height="1" fill="#f0c67c" opacity="0.6"/>
+  <text x="100" y="284" text-anchor="middle" font-family="monospace" font-size="9" fill="#f0c67c" letter-spacing="3">LUCY</text>
+  <text x="100" y="295" text-anchor="middle" font-family="monospace" font-size="7" fill="#998870" letter-spacing="2">CIRCUIT GUIDE</text>
+</svg>

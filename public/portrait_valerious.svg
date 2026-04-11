@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="200" height="300">
+  <defs>
+    <radialGradient id="bg_val" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#060e08"/>
+      <stop offset="100%" stop-color="#020604"/>
+    </radialGradient>
+    <radialGradient id="skin_val" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#f0dcc0"/>
+      <stop offset="100%" stop-color="#d8bea0"/>
+    </radialGradient>
+    <linearGradient id="hair_val" x1="10%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#68d88a"/>
+      <stop offset="40%" stop-color="#288848"/>
+      <stop offset="100%" stop-color="#082818"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="200" height="300" fill="url(#bg_val)"/>
+  <ellipse cx="100" cy="120" rx="78" ry="88" fill="#8effa7" opacity="0.05"/>
+  <!-- Leafy texture suggestion -->
+  <ellipse cx="30" cy="50" rx="18" ry="10" fill="#4a9860" opacity="0.08" transform="rotate(-30 30 50)"/>
+  <ellipse cx="170" cy="60" rx="16" ry="9" fill="#4a9860" opacity="0.07" transform="rotate(25 170 60)"/>
+
+  <!-- Faction accent bar -->
+  <rect x="0" y="0" width="200" height="3" fill="#8effa7" opacity="0.8"/>
+
+  <!-- Body - aristocratic high-collar formal -->
+  <path d="M 28 300 Q 42 236 66 214 Q 86 200 100 198 Q 114 200 134 214 Q 158 236 172 300 Z" fill="#060e08"/>
+  <!-- Formal jacket with ornate collar -->
+  <path d="M 66 214 Q 86 202 100 200 Q 114 202 134 214 L 128 238 Q 110 225 100 222 Q 90 225 72 238 Z" fill="#184830"/>
+  <!-- Gold trim on collar -->
+  <path d="M 66 214 Q 72 212 72 238" stroke="#8effa7" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <path d="M 134 214 Q 128 212 128 238" stroke="#8effa7" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <!-- Ornate brooch/button area -->
+  <path d="M 90 200 L 100 226 L 110 200" fill="#8effa7" opacity="0.35"/>
+  <ellipse cx="100" cy="208" rx="4" ry="4" fill="#8effa7" opacity="0.5"/>
+  <path d="M 72 238 Q 90 228 100 226 Q 110 228 128 238 L 122 264 Q 104 255 100 253 Q 96 255 78 264 Z" fill="#0a1e10"/>
+  <!-- Cravat/tie detail -->
+  <path d="M 94 200 Q 100 210 106 200 Q 103 215 100 218 Q 97 215 94 200 Z" fill="#6adc8a" opacity="0.4"/>
+
+  <!-- Neck -->
+  <path d="M 88 192 L 88 214 L 112 214 L 112 192 Z" fill="url(#skin_val)"/>
+
+  <!-- Head -->
+  <ellipse cx="100" cy="156" rx="43" ry="47" fill="url(#skin_val)"/>
+
+  <!-- Hair - long elegant, swept back with volume -->
+  <!-- Back hair layer -->
+  <path d="M 56 160 Q 48 195 50 248 Q 52 272 58 285 Q 50 260 52 225 Q 54 192 60 165 Z" fill="#082818"/>
+  <path d="M 144 160 Q 152 195 150 248 Q 148 272 142 285 Q 150 260 148 225 Q 146 192 140 165 Z" fill="#082818"/>
+  <!-- Main hair volume -->
+  <path d="M 58 148 Q 53 118 57 90 Q 63 62 82 50 Q 100 41 118 50 Q 137 62 143 90 Q 147 118 142 148 Q 124 132 100 130 Q 76 132 58 148 Z" fill="url(#hair_val)"/>
+  <!-- Side panels -->
+  <path d="M 58 148 Q 53 172 54 210 Q 55 242 60 262 Q 55 236 57 208 Q 59 180 63 158 Z" fill="#288848"/>
+  <path d="M 142 148 Q 147 172 146 210 Q 145 242 140 262 Q 145 236 143 208 Q 141 180 137 158 Z" fill="#288848"/>
+  <!-- Elegant swept bangs - more refined -->
+  <path d="M 62 140 Q 62 120 68 106 Q 74 92 82 88 Q 90 84 94 90 Q 97 96 92 108 Q 87 118 80 126 Q 70 134 64 140 Z" fill="#68d88a"/>
+  <!-- Center part hair -->
+  <path d="M 88 126 Q 92 106 100 100 Q 108 96 112 102 Q 114 110 110 122 Q 106 130 100 134 Z" fill="#4ab870"/>
+  <path d="M 110 126 Q 118 106 126 100 Q 133 96 136 104 Q 136 114 130 124 Q 124 130 116 132 Z" fill="#68d88a"/>
+  <!-- Hair shine - elegant -->
+  <ellipse cx="94" cy="70" rx="18" ry="7" fill="#a0f0b8" opacity="0.28" transform="rotate(-8 94 70)"/>
+  <!-- Decorative hair pin/accessory -->
+  <path d="M 124 100 Q 134 96 138 102 Q 140 108 136 112 Q 132 114 128 110" stroke="#8effa7" stroke-width="2" fill="none" opacity="0.7"/>
+  <ellipse cx="136" cy="100" rx="3" ry="3" fill="#8effa7" opacity="0.6"/>
+
+  <!-- Eyebrows - refined, arched gracefully -->
+  <path d="M 76 128 Q 85 124 93 127" stroke="#2a5030" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M 107 127 Q 115 124 124 128" stroke="#2a5030" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Eyes - deep emerald -->
+  <ellipse cx="85" cy="140" rx="11" ry="9" fill="#040e06"/>
+  <ellipse cx="85" cy="140" rx="10" ry="8" fill="#30a860"/>
+  <ellipse cx="85" cy="140" rx="7" ry="6.5" fill="#0e6830"/>
+  <ellipse cx="85" cy="140" rx="4" ry="4" fill="#020804"/>
+  <ellipse cx="82" cy="137" rx="2.2" ry="1.8" fill="white" opacity="0.9"/>
+  <ellipse cx="88" cy="143" rx="1" ry="1" fill="white" opacity="0.45"/>
+  <path d="M 74 132 Q 85 128 96 132" stroke="#1a3824" stroke-width="1.8" fill="none"/>
+  <path d="M 75 148 Q 85 151 95 148" stroke="#1a3824" stroke-width="0.9" fill="none"/>
+
+  <ellipse cx="115" cy="140" rx="11" ry="9" fill="#040e06"/>
+  <ellipse cx="115" cy="140" rx="10" ry="8" fill="#30a860"/>
+  <ellipse cx="115" cy="140" rx="7" ry="6.5" fill="#0e6830"/>
+  <ellipse cx="115" cy="140" rx="4" ry="4" fill="#020804"/>
+  <ellipse cx="112" cy="137" rx="2.2" ry="1.8" fill="white" opacity="0.9"/>
+  <ellipse cx="118" cy="143" rx="1" ry="1" fill="white" opacity="0.45"/>
+  <path d="M 104 132 Q 115 128 126 132" stroke="#1a3824" stroke-width="1.8" fill="none"/>
+  <path d="M 105 148 Q 115 151 125 148" stroke="#1a3824" stroke-width="0.9" fill="none"/>
+
+  <!-- Nose -->
+  <path d="M 97 155 Q 100 158 103 155" stroke="#b8988a" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+
+  <!-- Mouth - composed, slight aristocratic smile -->
+  <path d="M 88 168 Q 94 165 100 166 Q 106 165 112 168" stroke="#b07860" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <path d="M 90 170 Q 100 175 110 170" stroke="#c89070" stroke-width="0.8" fill="none"/>
+
+  <!-- Blush - very faint, elegant -->
+  <ellipse cx="74" cy="157" rx="8" ry="5" fill="#80e0a0" opacity="0.12"/>
+  <ellipse cx="126" cy="157" rx="8" ry="5" fill="#80e0a0" opacity="0.12"/>
+
+  <!-- Ears -->
+  <ellipse cx="58" cy="152" rx="5" ry="7" fill="#d8bea0"/>
+  <ellipse cx="142" cy="152" rx="5" ry="7" fill="#d8bea0"/>
+  <!-- Elegant earring - teardrop -->
+  <path d="M 58 159 Q 56 165 58 170 Q 60 165 58 159 Z" fill="#8effa7" opacity="0.7"/>
+  <path d="M 142 159 Q 140 165 142 170 Q 144 165 142 159 Z" fill="#8effa7" opacity="0.7"/>
+
+  <!-- Name plate -->
+  <rect x="0" y="270" width="200" height="30" fill="#020604" opacity="0.9"/>
+  <rect x="0" y="270" width="200" height="1" fill="#8effa7" opacity="0.7"/>
+  <text x="100" y="284" text-anchor="middle" font-family="monospace" font-size="9" fill="#8effa7" letter-spacing="2">VALERIOUS</text>
+  <text x="100" y="295" text-anchor="middle" font-family="monospace" font-size="7" fill="#508860" letter-spacing="2">BLOOM ELITE MASTER</text>
+</svg>
