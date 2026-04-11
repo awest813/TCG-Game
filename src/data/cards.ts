@@ -15,7 +15,12 @@ export const BASE_CARDS: Card[] = [
     keywords: ["Swift"],
     evolutionTo: ["rail-bastion"],
     set: "METRO_PULSE",
-    image: "/technomancer_card_art_1775865583853.png"
+    image: "/technomancer_card_art_1775865583853.png",
+    weakness: "Tide",
+    retreatCost: 1,
+    attacks: [
+      { name: "Rail Rush", damage: 20, cost: 1, effect: "Swift: Can attack the turn it is played." }
+    ]
   },
   {
     id: "voltlynx",
@@ -28,7 +33,13 @@ export const BASE_CARDS: Card[] = [
     health: 4,
     rulesText: ["On Play: Deal 1 damage to the enemy active."],
     onPlayEffects: [{ type: "damage", value: 1, target: "active" }],
-    set: "METRO_PULSE"
+    set: "METRO_PULSE",
+    weakness: "Tide",
+    retreatCost: 1,
+    attacks: [
+      { name: "Voltage Bite", damage: 30, cost: 1 },
+      { name: "Arc Surge", damage: 50, cost: 2, effect: "On Play: Deal 1 damage to the enemy active.", effectDef: { type: "damage", value: 1, target: "active" } }
+    ]
   },
   {
     id: "neon-striker",
@@ -41,7 +52,13 @@ export const BASE_CARDS: Card[] = [
     health: 3,
     rulesText: ["Boost: Deals +1 damage if you played another Pulse card this turn."],
     tags: ["Boost"],
-    set: "METRO_PULSE"
+    set: "METRO_PULSE",
+    weakness: "Tide",
+    retreatCost: 1,
+    attacks: [
+      { name: "Neon Jab", damage: 30, cost: 1 },
+      { name: "Circuit Slam", damage: 40, cost: 2, effect: "Boost: Deals 50 damage instead if you played another Pulse card this turn." }
+    ]
   },
   {
     id: "rail-bastion",
@@ -53,7 +70,16 @@ export const BASE_CARDS: Card[] = [
     attack: 5,
     health: 7,
     evolutionFrom: "ziprail",
-    rulesText: ["Evolves from Ziprail.", "Guard: Opponent must attack this creature first."]
+    rulesText: ["Evolves from Ziprail.", "Guard: Opponent must attack this creature first."],
+    weakness: "Tide",
+    retreatCost: 2,
+    attacks: [
+      { name: "Maglev Crash", damage: 60, cost: 2 },
+      { name: "Rail Cannon", damage: 90, cost: 4, effect: "Guard: Opponent must attack this creature first." }
+    ],
+    abilities: [
+      { name: "Guard Protocol", effect: "Opponent must attack this creature before targeting any other unit you control." }
+    ]
   },
   {
     id: "overdrive-fox",
@@ -65,7 +91,13 @@ export const BASE_CARDS: Card[] = [
     attack: 4,
     health: 4,
     rulesText: ["On Play: Your Active creature gains Swift this turn."],
-    onPlayEffects: [{ type: "buff", target: "active", trigger: "onPlay" }]
+    onPlayEffects: [{ type: "buff", target: "active", trigger: "onPlay" }],
+    weakness: "Tide",
+    retreatCost: 1,
+    attacks: [
+      { name: "Overdrive Dash", damage: 40, cost: 1 },
+      { name: "Fox Blitz", damage: 70, cost: 3, effect: "Your Active creature gains Swift this turn.", effectDef: { type: "buff", target: "active", trigger: "onPlay" } }
+    ]
   },
 
   // BLOOM (Sustain/Growth)
@@ -81,7 +113,15 @@ export const BASE_CARDS: Card[] = [
     rulesText: ["Regen: Heals 1 HP at the start of your turn."],
     keywords: ["Regen"],
     evolutionTo: ["lush-golem"],
-    image: "/biotech_nature_card_art_1775865596083.png"
+    image: "/biotech_nature_card_art_1775865596083.png",
+    weakness: "Pulse",
+    retreatCost: 1,
+    attacks: [
+      { name: "Spore Toss", damage: 10, cost: 1 }
+    ],
+    abilities: [
+      { name: "Regen", effect: "Heals 1 HP at the start of your turn.", effectDef: { type: "heal", value: 1, target: "self", trigger: "passive" } }
+    ]
   },
   {
     id: "verdajack",
@@ -93,7 +133,13 @@ export const BASE_CARDS: Card[] = [
     attack: 2,
     health: 5,
     rulesText: ["On Play: Heal 2 HP to a benched creature."],
-    onPlayEffects: [{ type: "heal", value: 2, target: "bench" }]
+    onPlayEffects: [{ type: "heal", value: 2, target: "bench" }],
+    weakness: "Pulse",
+    retreatCost: 1,
+    attacks: [
+      { name: "Vine Lash", damage: 20, cost: 1 },
+      { name: "Canopy Strike", damage: 40, cost: 2, effect: "Heal 2 HP to a benched creature.", effectDef: { type: "heal", value: 2, target: "bench" } }
+    ]
   },
   {
     id: "spore-scout",
@@ -104,7 +150,12 @@ export const BASE_CARDS: Card[] = [
     cost: 2,
     attack: 2,
     health: 3,
-    rulesText: ["On Play: Draw a Bloom creature from your deck."]
+    rulesText: ["On Play: Draw a Bloom creature from your deck."],
+    weakness: "Pulse",
+    retreatCost: 1,
+    attacks: [
+      { name: "Spore Cloud", damage: 20, cost: 1, effect: "Draw a Bloom creature from your deck.", effectDef: { type: "draw", value: 1 } }
+    ]
   },
   {
     id: "lush-golem",
@@ -116,7 +167,16 @@ export const BASE_CARDS: Card[] = [
     attack: 4,
     health: 12,
     evolutionFrom: "mosshop",
-    rulesText: ["Evolves from Mosshop.", "Regen 2: Heals 2 HP at start of turn."]
+    rulesText: ["Evolves from Mosshop.", "Regen 2: Heals 2 HP at start of turn."],
+    weakness: "Pulse",
+    retreatCost: 3,
+    attacks: [
+      { name: "Root Slam", damage: 50, cost: 2 },
+      { name: "Overgrowth", damage: 80, cost: 4, effect: "Heal 20 HP from this creature." }
+    ],
+    abilities: [
+      { name: "Regen 2", effect: "Heals 2 HP at the start of your turn.", effectDef: { type: "heal", value: 2, target: "self", trigger: "passive" } }
+    ]
   },
   {
     id: "bloom-whisper",
@@ -128,7 +188,15 @@ export const BASE_CARDS: Card[] = [
     attack: 3,
     health: 6,
     rulesText: ["Passive: Your Bloom evolutions cost 1 less mana."],
-    passiveEffects: [{ type: "discount", value: 1, trigger: "passive" }]
+    passiveEffects: [{ type: "discount", value: 1, trigger: "passive" }],
+    weakness: "Pulse",
+    retreatCost: 2,
+    attacks: [
+      { name: "Petal Blade", damage: 30, cost: 2 }
+    ],
+    abilities: [
+      { name: "Evolution Bloom", effect: "Your Bloom evolutions cost 1 less Sync-Energy.", effectDef: { type: "discount", value: 1, trigger: "passive" } }
+    ]
   },
 
   // TIDE (Control/Draw)
@@ -144,7 +212,12 @@ export const BASE_CARDS: Card[] = [
     rulesText: ["On Play: Draw 1 card."],
     onPlayEffects: [{ type: "draw", value: 1 }],
     evolutionTo: ["tidal-whale"],
-    image: "/tide_card_art_main_1775865821451.png"
+    image: "/tide_card_art_main_1775865821451.png",
+    weakness: "Alloy",
+    retreatCost: 1,
+    attacks: [
+      { name: "Wharf Splash", damage: 10, cost: 1, effect: "Draw 1 card.", effectDef: { type: "draw", value: 1 } }
+    ]
   },
   {
     id: "coral-guard",
@@ -155,7 +228,16 @@ export const BASE_CARDS: Card[] = [
     cost: 3,
     attack: 2,
     health: 7,
-    rulesText: ["Guard: Opponent must attack this creature first."]
+    rulesText: ["Guard: Opponent must attack this creature first."],
+    weakness: "Alloy",
+    retreatCost: 2,
+    attacks: [
+      { name: "Coral Crush", damage: 20, cost: 1 },
+      { name: "Tidal Wall", damage: 30, cost: 2, effect: "Guard: Opponent must attack this creature first." }
+    ],
+    abilities: [
+      { name: "Guard Current", effect: "Opponent must attack this creature before targeting any other unit you control." }
+    ]
   },
   {
     id: "mist-glider",
@@ -166,7 +248,13 @@ export const BASE_CARDS: Card[] = [
     cost: 2,
     attack: 2,
     health: 4,
-    rulesText: ["Evasive: 50% chance to dodge attacks."]
+    rulesText: ["Evasive: 50% chance to dodge attacks."],
+    weakness: "Alloy",
+    retreatCost: 1,
+    attacks: [
+      { name: "Mist Slash", damage: 20, cost: 1 },
+      { name: "Fog Dive", damage: 40, cost: 2, effect: "Evasive: 50% chance to dodge the next incoming attack." }
+    ]
   },
   {
     id: "tidal-whale",
@@ -178,7 +266,13 @@ export const BASE_CARDS: Card[] = [
     attack: 5,
     health: 15,
     evolutionFrom: "wharfin",
-    rulesText: ["Evolves from Wharfin.", "On Play: Return an enemy benched creature to their hand."]
+    rulesText: ["Evolves from Wharfin.", "On Play: Return an enemy benched creature to their hand."],
+    weakness: "Alloy",
+    retreatCost: 4,
+    attacks: [
+      { name: "Tidal Surge", damage: 60, cost: 3 },
+      { name: "Leviathan Crash", damage: 100, cost: 5, effect: "Return 1 enemy benched creature to the opponent's hand." }
+    ]
   },
 
   // ALLOY (Defense/Tank)
@@ -192,7 +286,12 @@ export const BASE_CARDS: Card[] = [
     attack: 1,
     health: 5,
     evolutionTo: ["alloy-titan"],
-    image: "/alloy_card_art_main_1775865833709.png"
+    image: "/alloy_card_art_main_1775865833709.png",
+    weakness: "Veil",
+    retreatCost: 1,
+    attacks: [
+      { name: "Micro Drill", damage: 10, cost: 1 }
+    ]
   },
   {
     id: "shield-beetle",
@@ -203,7 +302,16 @@ export const BASE_CARDS: Card[] = [
     cost: 3,
     attack: 2,
     health: 8,
-    rulesText: ["Armor 1: Reduces all incoming damage by 1."]
+    rulesText: ["Armor 1: Reduces all incoming damage by 1."],
+    weakness: "Veil",
+    retreatCost: 2,
+    attacks: [
+      { name: "Shell Bash", damage: 20, cost: 1 },
+      { name: "Buckler Strike", damage: 30, cost: 2, effect: "Armor 1: Reduces all incoming damage by 1 this turn." }
+    ],
+    abilities: [
+      { name: "Armor Plating", effect: "Reduces all incoming damage by 1 (minimum 1)." }
+    ]
   },
   {
     id: "alloy-titan",
@@ -215,7 +323,16 @@ export const BASE_CARDS: Card[] = [
     attack: 4,
     health: 14,
     evolutionFrom: "iron-mite",
-    rulesText: ["Evolves from Iron Mite.", "Counter: Deals 2 damage back when attacked."]
+    rulesText: ["Evolves from Iron Mite.", "Counter: Deals 2 damage back when attacked."],
+    weakness: "Veil",
+    retreatCost: 3,
+    attacks: [
+      { name: "Iron Fist", damage: 50, cost: 2 },
+      { name: "Titan Slam", damage: 80, cost: 4, effect: "Counter: Deals 2 damage back to the attacker the next time this creature is hit." }
+    ],
+    abilities: [
+      { name: "Counter Alloy", effect: "When this creature is attacked, deal 2 damage back to the attacker.", effectDef: { type: "damage", value: 2, target: "active" } }
+    ]
   },
 
   // VEIL (Disruption/Status)
@@ -228,7 +345,15 @@ export const BASE_CARDS: Card[] = [
     cost: 1,
     attack: 2,
     health: 2,
-    rulesText: ["On Play: Look at top 3 cards of your deck, put one on top."]
+    rulesText: ["On Play: Look at top 3 cards of your deck, put one on top."],
+    weakness: "Current",
+    retreatCost: 1,
+    attacks: [
+      { name: "Shadow Claw", damage: 20, cost: 1 }
+    ],
+    abilities: [
+      { name: "Veil Peek", effect: "On Play: Look at the top 3 cards of your deck and place one on top." }
+    ]
   },
   {
     id: "void-wisp",
@@ -239,7 +364,13 @@ export const BASE_CARDS: Card[] = [
     cost: 2,
     attack: 1,
     health: 4,
-    rulesText: ["On Play: Enemy active creature is Confused (50% to hit self)."]
+    rulesText: ["On Play: Enemy active creature is Confused (50% to hit self)."],
+    weakness: "Current",
+    retreatCost: 1,
+    attacks: [
+      { name: "Phantom Tap", damage: 10, cost: 1 },
+      { name: "Confusion Pulse", damage: 20, cost: 2, effect: "The defending creature is now Confused." }
+    ]
   },
   {
     id: "veil-reaper",
@@ -250,7 +381,13 @@ export const BASE_CARDS: Card[] = [
     cost: 4,
     attack: 6,
     health: 6,
-    rulesText: ["On Play: Discard a random card from enemy hand."]
+    rulesText: ["On Play: Discard a random card from enemy hand."],
+    weakness: "Current",
+    retreatCost: 2,
+    attacks: [
+      { name: "Reap Shadow", damage: 60, cost: 2 },
+      { name: "Soul Drain", damage: 90, cost: 4, effect: "Discard a random card from the opponent's hand." }
+    ]
   },
 
   // CURRENT (Mana/Support)
@@ -264,7 +401,11 @@ export const BASE_CARDS: Card[] = [
     attack: 1,
     health: 2,
     rulesText: ["On Play: Gain 1 temporary Mana this turn."],
-    image: "/current_card_art_main_1775865847401.png"
+    image: "/current_card_art_main_1775865847401.png",
+    weakness: "Bloom",
+    abilities: [
+      { name: "Mana Surge", effect: "On Play: Gain 1 Sync-Energy this turn." }
+    ]
   },
   {
     id: "battery-cat",
@@ -275,7 +416,16 @@ export const BASE_CARDS: Card[] = [
     cost: 2,
     attack: 2,
     health: 3,
-    rulesText: ["Passive: You start each turn with +1 Mana."]
+    rulesText: ["Passive: You start each turn with +1 Mana."],
+    weakness: "Bloom",
+    retreatCost: 1,
+    attacks: [
+      { name: "Static Scratch", damage: 20, cost: 1 },
+      { name: "Power Purr", damage: 30, cost: 2 }
+    ],
+    abilities: [
+      { name: "Charge Loop", effect: "Passive: You start each turn with +1 Sync-Energy.", effectDef: { type: "buff", value: 1, trigger: "passive" } }
+    ]
   },
 
   // SUPPORT CARDS

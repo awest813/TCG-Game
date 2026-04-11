@@ -19,6 +19,9 @@ export const Tournament: React.FC = () => {
   const { state, updateGameState, updateProfile, setScene } = useGame();
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
+  const currentOpponentRelScore = activeTourney
+    ? (state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0)
+    : 0;
 
   React.useEffect(() => {
     if (!activeTourney) {
@@ -27,6 +30,22 @@ export const Tournament: React.FC = () => {
       audioManager.playBGM('TOURNAMENT_LOBBY');
     }
   }, [activeTourney]);
+
+  React.useEffect(() => {
+    if (!activeTourney) return undefined;
+    const tier = TOURNAMENT_TIERS.find((e) => e.id === activeTourney.tierId);
+    if (!tier) return undefined;
+    const currentBanter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, currentOpponentRelScore, activeTourney.wins);
+    const timer = setTimeout(() => {
+      audioManager.speak(currentBanter.intro, 'announcer');
+      const rivalTimer = setTimeout(() => {
+        const npc = NPCS.find((n) => n.id === activeTourney.currentOpponentId);
+        audioManager.speak(currentBanter.rival, npc?.archetype ?? 'rival');
+        clearTimeout(rivalTimer);
+      }, 4000);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [activeTourney, currentOpponentRelScore]);
 
   const renderStars = (count: number) => {
     return (
@@ -219,22 +238,6 @@ export const Tournament: React.FC = () => {
   const banter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, relationshipScore, activeTourney.wins);
   const roundLabel = getTournamentRoundLabel(tier.id, activeTourney.wins);
   const opponentMeta = getOpponentMeta(activeTourney.currentOpponentId);
-
-  React.useEffect(() => {
-    // Speak announcer and rival dialogue when the round starts/loads
-    const timer = setTimeout(() => {
-      audioManager.speak(banter.intro, 'announcer');
-      
-      const rivalTimer = setTimeout(() => {
-        const npc = NPCS.find(n => n.id === activeTourney.currentOpponentId);
-        audioManager.speak(banter.rival, npc?.archetype ?? 'rival');
-      }, 4000); // Wait for announcer to finish roughly
-      
-      return () => clearTimeout(rivalTimer);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [activeTourney.currentOpponentId, activeTourney.wins]);
 
   return (
     <div

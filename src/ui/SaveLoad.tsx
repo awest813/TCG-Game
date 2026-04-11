@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../core/GameContext';
-import { GameState } from '../core/types';
 import { audioManager } from '../core/AudioManager';
 
 interface SaveSlot {
@@ -12,7 +11,7 @@ interface SaveSlot {
 }
 
 export const SaveLoad: React.FC = () => {
-    const { state, setScene, updateGameState, loadGame } = useGame();
+    const { state, setScene, loadGame } = useGame();
     const [slots, setSlots] = useState<SaveSlot[]>([]);
     const [status, setStatus] = useState<string | null>(null);
 
@@ -23,7 +22,7 @@ export const SaveLoad: React.FC = () => {
     const refreshSlots = () => {
         const metadataRaw = localStorage.getItem('neo_sf_slots');
         if (metadataRaw) {
-            setSlots(JSON.parse(metadataRaw));
+            setSlots(JSON.parse(metadataRaw) as SaveSlot[]);
         } else {
             setSlots([]);
         }
@@ -52,9 +51,8 @@ export const SaveLoad: React.FC = () => {
     const handleLoad = (id: number) => {
         const saved = localStorage.getItem(`neo_sf_save_${id}`);
         if (saved) {
-            const parsed = JSON.parse(saved);
-            // In a real app we'd validate here, but loadGame handles state sync
-            localStorage.setItem('neo_sf_save', saved); // Set as primary for the context to pick up
+            // loadGame() reads from neo_sf_save; set it as primary before calling
+            localStorage.setItem('neo_sf_save', saved);
             if (loadGame()) {
                 audioManager.playSFX('menu_open');
                 setStatus(`LINKRESTORED: Connecting to Instance ${id}`);

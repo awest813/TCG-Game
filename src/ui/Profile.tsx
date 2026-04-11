@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useGame } from '../core/GameContext';
 import { FACTIONS, getFactionById, TRAINERS, mergeSocialState } from '../data/trainers';
 import { getCardById, getCardPalette, CARD_POOL } from '../data/cards';
-import { Card, CreatureType } from '../core/types';
+import { Card, CreatureType, PlayerProfile, SocialState } from '../core/types';
 
 type ProfileTab = 'DOSSIER' | 'INVENTORY' | 'SYNC_ANALYTICS';
 
@@ -77,7 +77,7 @@ export const Profile: React.FC = () => {
   );
 };
 
-const DossierView: React.FC<{ profile: any; social: any }> = ({ profile, social }) => (
+const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = ({ profile, social }) => (
   <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '30px' }}>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div className="glass-panel" style={{ padding: '30px', textAlign: 'center', borderRight: '4px solid var(--accent-cyan)' }}>
@@ -174,7 +174,7 @@ const InventoryView: React.FC<{ cards: Card[]; progress: number }> = ({ cards, p
   );
 };
 
-const AnalyticsView: React.FC<{ stats: any }> = ({ stats }) => (
+const AnalyticsView: React.FC<{ stats: PlayerProfile['stats'] }> = ({ stats }) => (
   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '26px' }}>
     <div className="glass-panel" style={{ padding: '30px' }}>
       <h3 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '20px' }}>PERFORMANCE_METRICS</h3>
@@ -190,13 +190,12 @@ const AnalyticsView: React.FC<{ stats: any }> = ({ stats }) => (
       <h3 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '20px' }}>ARCHETYPE_RESONANCE</h3>
       <div style={{ display: 'grid', gap: '12px' }}>
         {Object.entries(stats.archetypeUsage).map(([type, value]) => {
-           const numValue = value as number;
-           const percent = Math.min(100, numValue * 5); // Just for visual growth
+           const percent = Math.min(100, value * 5); // Just for visual growth
            return (
              <div key={type}>
                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '6px' }}>
                  <span>{type.toUpperCase()}</span>
-                 <span>SYNC_LV {numValue}</span>
+                 <span>SYNC_LV {value}</span>
                </div>
                <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
                  <div style={{ height: '100%', width: `${percent}%`, background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }} />

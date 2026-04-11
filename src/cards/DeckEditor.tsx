@@ -73,7 +73,7 @@ export const DeckEditor: React.FC = () => {
               {['ALL', 'Pulse', 'Bloom', 'Tide', 'Alloy', 'Veil', 'Current', 'SUPPORT'].map(cat => (
                 <button
                   key={cat}
-                  onClick={() => { audioManager.playSFX('hover_soft'); setFilter(cat as any); }}
+                  onClick={() => { audioManager.playSFX('hover_soft'); setFilter(cat as CardTypeFilter); }}
                   style={{
                     padding: '10px 18px',
                     borderRadius: '8px',

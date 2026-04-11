@@ -108,6 +108,7 @@ export class BattleEngine {
   }
 
   private static createEntity(card: Card): BattleEntity {
+    const primaryAttack = card.attacks?.[0]?.damage ?? card.attack ?? 0;
     return {
       id: card.id,
       cardId: card.id,
@@ -115,8 +116,8 @@ export class BattleEngine {
       currentHealth: card.health ?? 0,
       maxHealth: card.health ?? 0,
       baseMaxHealth: card.health ?? 0,
-      attack: card.attack ?? 0,
-      baseAttack: card.attack ?? 0,
+      attack: primaryAttack,
+      baseAttack: primaryAttack,
       hasAttacked: false,
       canEvolve: false
     };
@@ -318,9 +319,19 @@ export class BattleEngine {
     }
     if (attacker.active.hasAttacked) return state;
 
-    defender.active.currentHealth -= attacker.active.attack;
+    const attackerCard = this.getCardFromState(newState, attacker.active.cardId);
+    const defenderCard = this.getCardFromState(newState, defender.active.cardId);
+
+    let damage = attacker.active.attack;
+    const isWeakness = defenderCard?.weakness && attackerCard?.creatureType && defenderCard.weakness === attackerCard.creatureType;
+    if (isWeakness) {
+      damage += 10;
+      newState.log.push(`Weakness! +10 bonus damage.`);
+    }
+
+    defender.active.currentHealth -= damage;
     attacker.active.hasAttacked = true;
-    newState.log.push(`${attackerSide === 'player' ? 'You' : 'Opponent'} attack for ${attacker.active.attack}.`);
+    newState.log.push(`${attackerSide === 'player' ? 'You' : 'Opponent'} attack for ${damage}${isWeakness ? ' (weakness)' : ''}.`);
 
     if (defender.active.currentHealth <= 0) {
       newState.log.push(`${attackerSide === 'player' ? 'Opponent' : 'Player'} unit KO'd!`);
