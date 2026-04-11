@@ -35,6 +35,16 @@ Welcome to **Neo SF**, a world where your cards aren't just data—they're your 
 
 ---
 
+## User playtest (hosts and testers)
+
+1. **Install and run**: `npm install`. For day-to-day iteration use `npm run dev`. For a build that matches production assets and minification, use **`npm run playtest`** (runs `build` then `vite preview` on **port 4173** with **`--host`** so phones or other machines on the LAN can open the printed URLs).
+2. **Suggested first session**: Main Menu → **New Career** → apartment hub → **Transit** (Lucy grid briefing + practice dock after you continue) → pick a district → **Board Train** → explore actions (shop, duel, deck terminal as available).
+3. **Audio**: many browsers block autoplay until there has been a **click or tap** on the page; if BGM is silent, interact once with the UI.
+4. **Saves**: progress is stored in **localStorage** under the key `neo_sf_save`. Clearing site data for this origin resets the career.
+5. **Debug overlay** (optional): the backtick key **\`** toggles a small dev scene-jump console. Skip it during feedback runs if you want a clean player path.
+
+---
+
 ## 🛠️ Tech Stack
 - **Framework**: React 18 + TypeScript + Vite
 - **3D Rendering**: Babylon.js 6 (Apartment Hub, Battle Arena)

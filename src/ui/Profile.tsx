@@ -204,13 +204,12 @@ const AnalyticsView: React.FC<{ stats: PlayerProfile['stats'] }> = ({ stats }) =
       <SonsotyoKicker>Archetype Resonance</SonsotyoKicker>
       <div style={{ marginTop: '16px', display: 'grid', gap: '14px' }}>
         {Object.entries(stats.archetypeUsage).map(([type, value]) => {
-          const numericValue = value as number;
-          const percent = Math.min(100, numericValue * 5);
+          const percent = Math.min(100, value * 5);
           return (
             <div key={type}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
                 <span>{type.toUpperCase()}</span>
-                <span className="sonsotyo-value">SYNC LV {numericValue}</span>
+                <span className="sonsotyo-value">SYNC LV {value}</span>
               </div>
               <div className="sonsotyo-progress">
                 <span style={{ width: `${percent}%` }} />

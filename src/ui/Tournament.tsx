@@ -22,6 +22,30 @@ export const Tournament: React.FC = () => {
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
 
+  const currentOpponentRelScore = activeTourney
+    ? (state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0)
+    : 0;
+
+  const startTournament = React.useCallback(
+    (tier: TournamentTier) => {
+      if (state.profile.currency < tier.entryFee) {
+        alert('Insufficient Credits for entry.');
+        return;
+      }
+
+      updateProfile({ currency: state.profile.currency - tier.entryFee });
+      const newActive: ActiveTournament = {
+        tierId: tier.id,
+        wins: 0,
+        currentOpponentId: getTournamentOpponent(tier.id, 0),
+        status: 'ACTIVE'
+      };
+      audioManager.playSFX('select');
+      updateGameState({ activeTournament: newActive });
+    },
+    [state.profile.currency, updateGameState, updateProfile]
+  );
+
   React.useEffect(() => {
     if (!pendingTierId || activeTourney) return;
     const tier = TOURNAMENT_TIERS.find((t) => t.id === pendingTierId);
@@ -30,10 +54,7 @@ export const Tournament: React.FC = () => {
       startTournament(tier);
       updateGameState({ pendingTournamentId: null });
     }
-  }, [pendingTierId, activeTourney]);
-  const currentOpponentRelScore = activeTourney
-    ? (state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0)
-    : 0;
+  }, [pendingTierId, activeTourney, startTournament, state.profile.currency, updateGameState]);
 
   React.useEffect(() => {
     if (!activeTourney) audioManager.playBGM('TOWN');
@@ -63,23 +84,6 @@ export const Tournament: React.FC = () => {
       ))}
     </div>
   );
-
-  const startTournament = (tier: TournamentTier) => {
-    if (state.profile.currency < tier.entryFee) {
-      alert('Insufficient Credits for entry.');
-      return;
-    }
-
-    updateProfile({ currency: state.profile.currency - tier.entryFee });
-    const newActive: ActiveTournament = {
-      tierId: tier.id,
-      wins: 0,
-      currentOpponentId: getTournamentOpponent(tier.id, 0),
-      status: 'ACTIVE'
-    };
-    audioManager.playSFX('select');
-    updateGameState({ activeTournament: newActive });
-  };
 
   const cashOut = () => {
     if (!activeTourney) return;
