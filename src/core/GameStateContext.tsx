@@ -66,7 +66,17 @@ const createProfile = (config?: NewGameConfig): PlayerProfile => {
       wins: 0,
       losses: 0,
       tournamentsWon: 0,
-      cardsCollected: loadout.collection.length
+      cardsCollected: loadout.collection.length,
+      playTime: 0,
+      winStreak: 0,
+      archetypeUsage: {
+        Pulse: 0,
+        Bloom: 0,
+        Tide: 0,
+        Alloy: 0,
+        Veil: 0,
+        Current: 0
+      }
     },
     social: createDefaultSocialState(),
     progress: {
@@ -90,7 +100,10 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
     timeOfDay: 'MORNING',
     currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore Sunset Terminal' : INITIAL_QUEST,
     activeTournament: null,
-    vnSession: null
+    vnSession: null,
+    visuals: {
+      presentationTier: 'HIGH'
+    }
   };
 };
 
@@ -110,7 +123,10 @@ const normalizeProfile = (profile: PlayerProfile): PlayerProfile => {
       wins: profile.stats?.wins ?? 0,
       losses: profile.stats?.losses ?? 0,
       tournamentsWon: profile.stats?.tournamentsWon ?? 0,
-      cardsCollected: profile.stats?.cardsCollected ?? profile.inventory?.cards?.length ?? starterLoadout.collection.length
+      cardsCollected: profile.stats?.cardsCollected ?? profile.inventory?.cards?.length ?? starterLoadout.collection.length,
+      playTime: profile.stats?.playTime ?? 0,
+      winStreak: profile.stats?.winStreak ?? 0,
+      archetypeUsage: profile.stats?.archetypeUsage ?? { Pulse: 0, Bloom: 0, Tide: 0, Alloy: 0, Veil: 0, Current: 0 }
     },
     social: mergeSocialState(profile.social),
     progress: {

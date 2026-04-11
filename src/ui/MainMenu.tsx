@@ -35,37 +35,28 @@ const STARTER_OPTIONS: Array<{
 ];
 
 export const MainMenu: React.FC = () => {
-  const { loadGame, resetGame } = useGame();
+  const { loadGame, resetGame, setScene } = useGame();
   const [showSettings, setShowSettings] = useState(false);
-  const [showAbout, setShowAbout] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [hasSaveData, setHasSaveData] = useState(false);
   const [playerName, setPlayerName] = useState('Neo Rookie');
   const [starter, setStarter] = useState<NewGameConfig['starter']>('Pulse');
 
-  const buildLabel = useMemo(() => 'BUILD v2.2.0 ALPHA', []);
-  const selectedStarter = STARTER_OPTIONS.find((option) => option.id === starter)!;
+  const selectedStarter = useMemo(() => STARTER_OPTIONS.find((option) => option.id === starter)!, [starter]);
 
   useEffect(() => {
     setHasSaveData(Boolean(localStorage.getItem('neo_sf_save')));
+    audioManager.playSFX('phone_boot');
   }, []);
-
-  useEffect(() => {
-    if (!statusMessage) return undefined;
-    const timeout = window.setTimeout(() => setStatusMessage(null), 3200);
-    return () => window.clearTimeout(timeout);
-  }, [statusMessage]);
 
   const handleContinue = () => {
     if (loadGame()) {
-      setStatusMessage('Link restored. Resuming your last session.');
+      setStatusMessage('LINK_SUCCESS: SESSION_RESTORED.');
       setHasSaveData(true);
       return;
     }
-
-    setStatusMessage('No synced save found yet. Start a new career to create one.');
-    setHasSaveData(false);
+    setStatusMessage('SYNC_ERROR: NO_DOCK_FOUND.');
   };
 
   const handleCreateCareer = () => {
@@ -77,189 +68,135 @@ export const MainMenu: React.FC = () => {
   };
 
   return (
-    <div className="main-menu-scene fade-in">
-      <div className="main-menu-backdrop" />
-      <img className="main-menu-avatar" src="/avatar_player.png" alt="Protagonist" />
+    <div className="main-menu-scene fade-in" style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '24px' }}>
+      
+      {/* Header Panel */}
+      <div className="glass-panel" style={{ padding: '24px 34px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div>
+           <div className="tech-label">LOCAL_SYNC_AUTH</div>
+           <h2 className="glow-text" style={{ fontSize: '2.4rem', fontWeight: 900, margin: '4px 0 0' }}>MAIN_CONCOURSE</h2>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+           <div className="tech-label" style={{ color: 'var(--accent-secondary)' }}>LIVE_NETWORK_ACTIVE</div>
+           <div style={{ fontSize: '0.8rem', opacity: 0.6, marginTop: '4px' }}>TERMINAL_ID: 104-SFX</div>
+        </div>
+      </div>
 
-      <div className="main-menu-layout">
-        <section className="main-menu-copy">
-          <div className="main-menu-kicker">Metro Chronicle // Visual Novel Edition</div>
-          <h1 className="glow-text main-menu-title">NEO SF</h1>
-          <div className="main-menu-subtitle-row">
-            <div className="main-menu-rule" />
-            <div className="main-menu-subtitle">Champion Circuit Chronicle</div>
-          </div>
-          <p className="main-menu-description">
-            A city of clubs, trains, rivals, and late-night card battles. Step into the frame as a new duelist and let every menu, route, and conversation play like a chapter scene.
-          </p>
-          <div className="glass-morphism" style={{ marginTop: '1.4rem', padding: '1rem 1.2rem', maxWidth: '34rem' }}>
-            <div style={{ fontSize: '0.68rem', letterSpacing: '0.18rem', color: 'var(--accent-yellow)', textTransform: 'uppercase' }}>Opening Voiceover</div>
-            <div style={{ marginTop: '0.55rem', lineHeight: 1.65, color: 'var(--text-secondary)' }}>
-              The apartment lights hum. The terminal waits. Somewhere beyond Sunset Terminal, the rest of the city is already moving.
+      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px' }}>
+        
+        {/* Navigation Grid using Glass-Bevel Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(2, 1fr)', gap: '18px' }}>
+          <MenuNode 
+            label="NEW_START" sub="INIT_RECRUIT" 
+            primary onClick={() => setShowOnboarding(true)} 
+            icon="+" 
+          />
+          <MenuNode 
+            label="CONTINUE" sub="RESTORE_LINK" 
+            disabled={!hasSaveData} onClick={handleContinue} 
+            icon=">>" 
+          />
+          <MenuNode 
+            label="ARCHIVE" sub="DATA_GALLERY" 
+            onClick={() => setScene('PROFILE')} 
+            icon="[V]" 
+          />
+          <MenuNode 
+            label="LOADOUT" sub="SYNC_CARDS" 
+            onClick={() => setScene('DECK_EDITOR')} 
+            icon="[D]" 
+          />
+          <MenuNode 
+            label="SYS_PREF" sub="GEAR_SYNC" 
+            onClick={() => setShowSettings(true)} 
+            icon="[C]" 
+          />
+          <MenuNode 
+            label="RECOVERY" sub="BACKUP_MNG" 
+            onClick={() => setScene('SAVE_LOAD')} 
+            icon="[S]" 
+          />
+        </div>
+
+        {/* Side Info Panel */}
+        <div className="glass-panel" style={{ padding: '28px', display: 'flex', flexDirection: 'column' }}>
+            <h3 className="tech-label" style={{ marginBottom: '20px', borderBottom: '1px solid var(--accent-primary)', paddingBottom: '10px' }}>OS_DIAGNOSTICS</h3>
+            
+            <div style={{ display: 'grid', gap: '16px' }}>
+                <DiagRow label="USER_ID" value={hasSaveData ? "REGISTERED" : "GUEST_LINK"} />
+                <DiagRow label="AREA" value="SUNSET_HUB" />
+                <DiagRow label="RESONANCE" value="STABLE" />
             </div>
-          </div>
 
-          <div className="main-menu-actions">
-            <button 
-              className="champion-button champion-button-primary" 
-              onMouseEnter={() => audioManager.playSFX('hover')}
-              onClick={() => { audioManager.playSFX('select'); setShowOnboarding(true); }}
-            >
-              <span className="btn-number">01</span>
-              <span className="btn-copy">
-                <span className="btn-text">Begin Chapter One</span>
-                <span className="btn-caption">Choose your codename, starter partner, and the tone of your first route through the league.</span>
-              </span>
-            </button>
-
-            <button 
-              className="champion-button" 
-              onMouseEnter={() => audioManager.playSFX('hover')}
-              onClick={() => { audioManager.playSFX('select'); handleContinue(); }} 
-              disabled={!hasSaveData}
-            >
-              <span className="btn-number">02</span>
-              <span className="btn-copy">
-                <span className="btn-text">Resume Chronicle</span>
-                <span className="btn-caption">{hasSaveData ? 'Re-enter your last scene exactly where the thread was left.' : 'No local save detected yet.'}</span>
-              </span>
-            </button>
-
-            <button 
-              className="champion-button champion-button-ghost" 
-              onMouseEnter={() => audioManager.playSFX('hover')}
-              onClick={() => { audioManager.playSFX('menu_open'); setShowSettings(true); }}
-            >
-              <span className="btn-number">03</span>
-              <span className="btn-copy">
-                <span className="btn-text">Presentation</span>
-                <span className="btn-caption">Adjust framing, sync preferences, and system behavior before the scene begins.</span>
-              </span>
-            </button>
-
-            <button 
-              className="champion-button champion-button-ghost" 
-              onMouseEnter={() => audioManager.playSFX('hover')}
-              onClick={() => { audioManager.playSFX('panel_toggle'); setShowAbout((value) => !value); }}
-            >
-              <span className="btn-number">04</span>
-              <span className="btn-copy">
-                <span className="btn-text">{showAbout ? 'Hide Dossier' : 'Open Dossier'}</span>
-                <span className="btn-caption">Preview the premise, the opening pace, and the shape of the career arc.</span>
-              </span>
-            </button>
-          </div>
-
-          <div className={`main-menu-status ${statusMessage ? 'visible' : ''}`} aria-live="polite">
-            {statusMessage ?? ' '}
-          </div>
-        </section>
-
-        <aside className="main-menu-panel glass-panel">
-          <div className="menu-panel-eyebrow">Scene Companion</div>
-          <div className="menu-panel-metric">
-            <span>Story State</span>
-            <strong>{hasSaveData ? 'SYNC READY' : 'FRESH START'}</strong>
-          </div>
-          <div className="menu-panel-metric">
-            <span>Opening Chapter</span>
-            <strong>Apartment / Terminal / First Route</strong>
-          </div>
-          <div className="menu-panel-metric">
-            <span>Shortcut Console</span>
-            <strong>Press `</strong>
-          </div>
-          <div className="menu-panel-metric">
-            <span>Presentation Layer</span>
-            <strong>VN FRAME ACTIVE</strong>
-          </div>
-
-          {showAbout && (
-            <div className="menu-about-card">
-              <h2>What Changed</h2>
-              <p>The project now enters through a more theatrical visual-novel presentation instead of a flat utility menu.</p>
-              <p>New careers begin with a chapter setup, guided onboarding, and a stronger sense of scene framing before combat and systems open up.</p>
+            <div className="glass-panel" style={{ marginTop: '30px', padding: '18px', fontSize: '0.85rem', color: 'var(--accent-primary)', background: 'rgba(0,0,0,0.5)', borderRadius: '12px' }}>
+                <span style={{ opacity: 0.5 }}>SIGNAL_READOUT:</span><br/>
+                {statusMessage ?? "AWAIT_INIT: SYSTEM STANDBY."}
             </div>
-          )}
 
-          <div className="main-menu-footer">
-            <div className="glass-morphism build-chip">{buildLabel}</div>
-            <div className="menu-footer-note">This build leans into framing, scene presence, and dialogue-forward presentation while keeping the card game core intact.</div>
-          </div>
-        </aside>
+            <div style={{ marginTop: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', marginBottom: '10px', opacity: 0.5 }}>
+                    <span>SYNC_STRENGTH</span>
+                    <span>94%</span>
+                </div>
+                <div className="glass-panel" style={{ height: '6px', background: 'rgba(0,0,0,0.4)', borderRadius: '3px', border: 'none' }}>
+                    <div style={{ width: '94%', height: '100%', background: 'var(--accent-primary)', boxShadow: '0 0 10px var(--accent-primary)' }} />
+                </div>
+            </div>
+        </div>
       </div>
 
       {showOnboarding && (
-        <div className="system-overlay fade-in" onClick={() => setShowOnboarding(false)}>
-          <div className="glass-panel onboarding-panel" onClick={(event) => event.stopPropagation()}>
-            <div className="onboarding-header">
+        <div className="system-overlay fade-in" style={{ padding: '60px' }} onClick={() => setShowOnboarding(false)}>
+          <div className="glass-panel" style={{ width: '880px', padding: '40px' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '36px' }}>
               <div>
-                <div className="system-menu-kicker">New Career Setup</div>
-                <h2 className="glow-text system-menu-title">Cast The Lead</h2>
+                <div className="tech-label">REGISTRATION_PROTOCOL</div>
+                <h2 className="glow-text" style={{ fontSize: '3rem', fontWeight: 900 }}>CREATE_DUELIST_ID</h2>
               </div>
-              <button onClick={() => { audioManager.playSFX('menu_close'); setShowOnboarding(false); }} className="system-menu-close" aria-label="Close new game setup">
-                X
-              </button>
+              <button onClick={() => setShowOnboarding(false)} className="neo-button" style={{ borderRadius: '12px' }}>CLOSE</button>
             </div>
 
-            <div className="onboarding-grid">
-              <section className="onboarding-primary">
-                <div className="system-setting-card">
-                  <div className="setting-label">CALLSIGN</div>
-                  <input
-                    value={playerName}
-                    onChange={(event) => setPlayerName(event.target.value)}
-                    placeholder="Enter your player name"
-                    className="onboarding-input"
-                  />
-                  <div className="system-setting-note">Rivals, route banners, and chapter overlays will use this name from the first scene onward.</div>
-                </div>
-
-                <div className="system-setting-card">
-                  <div className="setting-label">Starter Sync Style</div>
-                  <div className="starter-grid">
-                    {STARTER_OPTIONS.map((option) => (
-                      <button
-                        key={option.id}
-                        className={`starter-card ${starter === option.id ? 'active' : ''}`}
-                        onMouseEnter={() => audioManager.playSFX('hover_soft')}
-                        onClick={() => { audioManager.playSFX('starter_select'); setStarter(option.id); }}
-                      >
-                        <div className="starter-card-header">
-                          <div>
-                            <div className="starter-card-eyebrow">{option.partner}</div>
-                            <div className="starter-card-title">{option.title}</div>
-                          </div>
-                          <div className="starter-card-badge">{option.id}</div>
-                        </div>
-                        <div className="starter-card-summary">{option.summary}</div>
-                        <div className="starter-card-bullets">
-                          {option.bullets.map((bullet) => (
-                            <div key={bullet}>{bullet}</div>
-                          ))}
-                        </div>
-                      </button>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+              <div>
+                 <div style={{ marginBottom: '30px' }}>
+                    <div className="tech-label" style={{ color: 'var(--text-main)', marginBottom: '10px', opacity: 0.6 }}>CALLSIGN_ASSIGNMENT</div>
+                    <input 
+                        className="glass-panel"
+                        value={playerName}
+                        onChange={(e) => setPlayerName(e.target.value)}
+                        style={{ width: '100%', padding: '16px', border: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', background: 'rgba(0,0,0,0.3)', fontSize: '1.1rem', borderRadius: '12px' }}
+                    />
+                 </div>
+                 <div className="tech-label" style={{ color: 'var(--text-main)', marginBottom: '14px', opacity: 0.6 }}>PARTNER_LOADOUT_SYNC</div>
+                 <div style={{ display: 'grid', gap: '12px' }}>
+                    {STARTER_OPTIONS.map(opt => (
+                        <button 
+                            key={opt.id}
+                            className={`neo-button ${starter === opt.id ? 'primary' : ''}`}
+                            onClick={() => setStarter(opt.id)}
+                            style={{ justifyContent: 'space-between', borderRadius: '12px' }}
+                        >
+                            <span>{opt.title}</span>
+                            <span style={{ opacity: 0.6 }}>{opt.id.toUpperCase()}</span>
+                        </button>
                     ))}
-                  </div>
-                </div>
-              </section>
-
-              <aside className="onboarding-side">
-                <div className="system-setting-card onboarding-brief">
-                  <div className="setting-label">FIRST SESSION PREVIEW</div>
-                  <h3>{selectedStarter.title}</h3>
-                  <p>You will begin in your apartment with {selectedStarter.partner} as your lead partner, a starter deck tuned for {selectedStarter.id.toLowerCase()} play, and a tutorial sequence that now reads like the opening act of a visual novel route.</p>
-                  <div className="onboarding-steps">
-                    <div>1. Review your deck and your scene objective.</div>
-                    <div>2. Move from the apartment into your first district route.</div>
-                    <div>3. Learn the battle rhythm with a starter that matches your preferred pacing.</div>
-                  </div>
-                </div>
-
-                <button className="champion-button champion-button-primary compact" onClick={handleCreateCareer} style={{ color: 'black' }}>
-                  ENTER THE CITY
+                 </div>
+              </div>
+              
+              <div className="glass-panel" style={{ padding: '30px', background: 'rgba(0,0,0,0.4)', borderRadius: '20px' }}>
+                 <h4 style={{ color: 'var(--accent-primary)', fontSize: '1.2rem', marginBottom: '16px' }}>{selectedStarter.partner} LINK READY</h4>
+                 <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>{selectedStarter.summary}</p>
+                 <ul style={{ marginTop: '20px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', listStyle: 'none' }}>
+                    {selectedStarter.bullets.map(b => <li key={b} style={{ marginBottom: '8px' }}>- {b}</li>)}
+                 </ul>
+                 <button 
+                    className="neo-button primary" 
+                    onClick={handleCreateCareer}
+                    style={{ marginTop: '40px', width: '100%', justifyContent: 'center', height: '60px', fontSize: '0.9rem', borderRadius: '15px' }}
+                >
+                    INITIALIZE_SYNC_CYCLE
                 </button>
-              </aside>
+              </div>
             </div>
           </div>
         </div>
@@ -269,3 +206,25 @@ export const MainMenu: React.FC = () => {
     </div>
   );
 };
+
+const MenuNode: React.FC<{ label: string; sub: string; icon: string; primary?: boolean; disabled?: boolean; onClick: () => void }> = ({ label, sub, icon, primary, disabled, onClick }) => (
+    <button 
+        disabled={disabled}
+        onClick={() => { audioManager.playSFX('select'); onClick(); }}
+        className={`neo-button ${primary ? 'primary' : ''}`}
+        style={{ height: '100%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-between', padding: '24px', opacity: disabled ? 0.3 : 1, borderRadius: '20px' }}
+    >
+        <div style={{ fontSize: '1.5rem', fontWeight: 900, opacity: 0.8 }}>{icon}</div>
+        <div style={{ textAlign: 'left' }}>
+            <div style={{ fontWeight: 800, fontSize: '1.2rem' }}>{label}</div>
+            <div className="tech-label" style={{ opacity: 0.5, marginTop: '6px' }}>{sub}</div>
+        </div>
+    </button>
+);
+
+const DiagRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+        <span style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)' }}>{label}</span>
+        <span style={{ fontWeight: 800, color: 'var(--accent-primary)' }}>{value}</span>
+    </div>
+);

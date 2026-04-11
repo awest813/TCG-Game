@@ -14,7 +14,8 @@ export const BASE_CARDS: Card[] = [
     rulesText: ["Swift: Can attack the turn it is played."],
     keywords: ["Swift"],
     evolutionTo: ["rail-bastion"],
-    set: "METRO_PULSE"
+    set: "METRO_PULSE",
+    image: "/technomancer_card_art_1775865583853.png"
   },
   {
     id: "voltlynx",
@@ -79,7 +80,8 @@ export const BASE_CARDS: Card[] = [
     health: 4,
     rulesText: ["Regen: Heals 1 HP at the start of your turn."],
     keywords: ["Regen"],
-    evolutionTo: ["lush-golem"]
+    evolutionTo: ["lush-golem"],
+    image: "/biotech_nature_card_art_1775865596083.png"
   },
   {
     id: "verdajack",
@@ -141,7 +143,8 @@ export const BASE_CARDS: Card[] = [
     health: 3,
     rulesText: ["On Play: Draw 1 card."],
     onPlayEffects: [{ type: "draw", value: 1 }],
-    evolutionTo: ["tidal-whale"]
+    evolutionTo: ["tidal-whale"],
+    image: "/tide_card_art_main_1775865821451.png"
   },
   {
     id: "coral-guard",
@@ -188,7 +191,8 @@ export const BASE_CARDS: Card[] = [
     cost: 1,
     attack: 1,
     health: 5,
-    evolutionTo: ["alloy-titan"]
+    evolutionTo: ["alloy-titan"],
+    image: "/alloy_card_art_main_1775865833709.png"
   },
   {
     id: "shield-beetle",
@@ -259,7 +263,8 @@ export const BASE_CARDS: Card[] = [
     cost: 1,
     attack: 1,
     health: 2,
-    rulesText: ["On Play: Gain 1 temporary Mana this turn."]
+    rulesText: ["On Play: Gain 1 temporary Mana this turn."],
+    image: "/current_card_art_main_1775865847401.png"
   },
   {
     id: "battery-cat",
@@ -581,7 +586,8 @@ export const BASE_CARDS: Card[] = [
     rarity: "rare",
     cost: 4,
     rulesText: ["At the end of each turn, both players discard 1 card."],
-    set: "NEON_ECHO"
+    set: "NEON_ECHO",
+    image: "/void_monolith_card_art_1775865612429.png"
   },
   {
     id: "emergency-patch",

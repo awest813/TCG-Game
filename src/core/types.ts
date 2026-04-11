@@ -8,6 +8,7 @@ export type EffectTarget = 'active' | 'bench' | 'all' | 'self';
 export type EffectTrigger = 'onPlay' | 'onKO' | 'passive' | 'onEvolve';
 export type ProgressFlagValue = string | number | boolean | null;
 export type FactionId = 'CIRCUIT' | 'PULSE' | 'TIDE' | 'BLOOM' | 'NEON' | 'CROWN';
+export type PresentationTier = 'LOW' | 'MEDIUM' | 'HIGH' | 'ULTRA';
 
 export interface BattleModifier {
   type: 'STAT_BOOST' | 'COST_REDUCTION' | 'MANA_START';
@@ -118,6 +119,9 @@ export interface PlayerProfile {
     losses: number;
     tournamentsWon: number;
     cardsCollected: number;
+    playTime: number; // in minutes
+    winStreak: number;
+    archetypeUsage: Record<CreatureType, number>;
   };
   social: SocialState;
   progress: {
@@ -158,6 +162,9 @@ export interface GameState {
   currentQuest: string;
   activeTournament: ActiveTournament | null;
   vnSession: VNSession | null;
+  visuals: {
+    presentationTier: PresentationTier;
+  };
 }
 
 export interface ShopItem {

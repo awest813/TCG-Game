@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useGame } from '../core/GameContext';
 
 export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { saveGame, setScene } = useGame();
+  const { saveGame, setScene, state, updateGameState } = useGame();
 
   const [volume, setVolume] = useState(80);
   const [animSpeed, setAnimSpeed] = useState('NORMAL');
@@ -102,6 +102,28 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </button>
           </div>
 
+          <div className="system-setting-card" style={{ gridColumn: 'span 2' }}>
+            <div className="setting-label">PRESENTATION SYNC</div>
+            <div className="setting-toggle-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+              {(['LOW', 'MEDIUM', 'HIGH', 'ULTRA'] as const).map((t) => (
+                <button 
+                  key={t} 
+                  onClick={() => updateGameState({ visuals: { presentationTier: t } })} 
+                  className={`opt-btn ${state.visuals.presentationTier === t ? 'active' : ''}`}
+                  style={{ fontSize: '0.65rem' }}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+            <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.4)', marginTop: '10px', letterSpacing: '0.05rem' }}>
+              {state.visuals.presentationTier === 'LOW' && 'CORE_STABLE // MINIMAL_POST_PROCESSING'}
+              {state.visuals.presentationTier === 'MEDIUM' && 'BALANCED_SYNC // GLOW_ACTIVE'}
+              {state.visuals.presentationTier === 'HIGH' && 'HIGH_FIDELITY // BLOOM_PARTICLES_SYNC'}
+              {state.visuals.presentationTier === 'ULTRA' && 'PEAK_ATMOSPHERE // MAXIMUM_SERIALIZATION'}
+            </div>
+          </div>
+
           <div className="system-setting-card">
             <div className="setting-label">AUTO-SYNC</div>
             <button onClick={() => setAutoSave(!autoSave)} className={`opt-btn ${autoSave ? 'active' : ''}`}>
@@ -115,8 +137,8 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
         </div>
 
-        <div className="system-menu-feedback" aria-live="polite">
-          {feedback ?? 'Press ESC or click outside the panel to close.'}
+        <div className="system-menu-feedback" aria-live="polite" style={{ marginTop: '20px', color: 'var(--accent-yellow)', fontSize: '0.75rem', fontWeight: 700 }}>
+          {feedback ?? 'STATUS_READY // READY_FOR_SYNC'}
         </div>
 
         <div className="system-menu-actions">

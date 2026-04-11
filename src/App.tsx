@@ -3,6 +3,7 @@ import { useGame } from './core/GameContext';
 import { MainMenu } from './ui/MainMenu';
 import { DevConsole } from './ui/DevConsole';
 import { VisualNovelFrame } from './ui/VisualNovelFrame';
+import { PhoneFrame } from './ui/PhoneFrame';
 
 const ApartmentHub = React.lazy(async () => {
   const module = await import('./overworld/ApartmentHub');
@@ -59,23 +60,25 @@ const VNScene = React.lazy(async () => {
   return { default: module.VNScene };
 });
 
+const SaveLoad = React.lazy(async () => {
+  const module = await import('./ui/SaveLoad');
+  return { default: module.SaveLoad };
+});
+
 const SceneLoadingFallback: React.FC = () => (
   <div
     className="fade-in"
     style={{
-      height: '100vh',
+      height: '100%',
       display: 'grid',
       placeItems: 'center',
-      background:
-        'radial-gradient(circle at 50% 35%, rgba(240,198,124,0.12), transparent 24%), linear-gradient(180deg, rgba(10,8,11,0.96), rgba(8,6,9,1))'
+      background: '#050508'
     }}
   >
-    <div className="glass-panel" style={{ width: 'min(520px, calc(100vw - 40px))', padding: '28px 30px', textAlign: 'center' }}>
-      <div className="system-menu-kicker">Scene Transition</div>
-      <div className="glow-text" style={{ marginTop: '10px', fontSize: '2.6rem' }}>Loading Route</div>
-      <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-        Pulling the next scene into focus. Heavy systems now load only when their chapter is actually opened.
-      </div>
+    <div className="glass-panel" style={{ width: '400px', padding: '28px 30px', textAlign: 'center' }}>
+      <div style={{ fontSize: '0.6rem', color: 'var(--accent-primary)', letterSpacing: '0.3rem' }}>SYSTEM_BOOT</div>
+      <div style={{ margin: '14px 0', fontSize: '1.2rem', fontWeight: 900 }}>LOADING_DATA...</div>
+      <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>Retrieving sector packets.</div>
     </div>
   </div>
 );
@@ -118,19 +121,23 @@ const App: React.FC = () => {
         return <Profile />;
       case 'VN_SCENE':
         return <VNScene />;
+      case 'SAVE_LOAD':
+        return <SaveLoad />;
       default:
         return <MainMenu />;
     }
   };
 
   return (
-    <div className="app-container">
-      <Suspense fallback={<SceneLoadingFallback />}>
-        {renderScene()}
-      </Suspense>
-      <VisualNovelFrame />
-      {showDev && <DevConsole onClose={() => setShowDev(false)} />}
-    </div>
+    <PhoneFrame>
+        <div className="app-container" style={{ height: '100%' }}>
+          <Suspense fallback={<SceneLoadingFallback />}>
+            {renderScene()}
+          </Suspense>
+          <VisualNovelFrame />
+          {showDev && <DevConsole onClose={() => setShowDev(false)} />}
+        </div>
+    </PhoneFrame>
   );
 };
 
