@@ -3,6 +3,7 @@ import { useGame } from '../core/GameContext';
 import { VNRunner } from '../ui/VNRunner';
 import { VNEngineState } from '../engine/types';
 import { createApartmentOnboardingSession } from '../visual-novel/scriptRegistry';
+import '../styles/SonsotyoScenes.css';
 
 export const ApartmentHub: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,18 +22,7 @@ export const ApartmentHub: React.FC = () => {
     let cleanup: (() => void) | undefined;
 
     const bootApartmentScene = async () => {
-      const {
-        ArcRotateCamera,
-        Color3,
-        Engine,
-        GlowLayer,
-        HemisphericLight,
-        MeshBuilder,
-        Scene,
-        StandardMaterial,
-        Vector3
-      } = await import('@babylonjs/core');
-
+      const { ArcRotateCamera, Color3, Engine, GlowLayer, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } = await import('@babylonjs/core');
       if (!canvasRef.current || isDisposed) return;
 
       const engine = new Engine(canvasRef.current, true);
@@ -86,36 +76,26 @@ export const ApartmentHub: React.FC = () => {
       const windowMesh = MeshBuilder.CreatePlane('window', { width: 3, height: 2 }, scene);
       windowMesh.position.set(0, 3, 4.95);
       const winMat = new StandardMaterial('winMat', scene);
-      const winColors = {
-        MORNING: '#ffaa00',
-        AFTERNOON: '#00aaff',
-        EVENING: '#ff00aa'
-      } as const;
+      const winColors = { MORNING: '#ffaa00', AFTERNOON: '#00aaff', EVENING: '#ff00aa' } as const;
       winMat.emissiveColor = Color3.FromHexString(winColors[state.timeOfDay]);
       windowMesh.material = winMat;
 
       scene.onPointerDown = (_, pickResult) => {
         if (!pickResult.hit || !pickResult.pickedMesh) return;
-
         const name = pickResult.pickedMesh.name;
         if (name === 'terminal') {
           setStatusText('Opening sync terminal...');
           setScene('DECK_EDITOR');
         }
-
         if (name === 'bed' && confirm('Rest until next time block?')) {
           setStatusText('Advancing schedule...');
           advanceTime();
         }
       };
 
-      engine.runRenderLoop(() => {
-        scene.render();
-      });
-
+      engine.runRenderLoop(() => scene.render());
       const onResize = () => engine.resize();
       window.addEventListener('resize', onResize);
-
       cleanup = () => {
         window.removeEventListener('resize', onResize);
         engine.dispose();
@@ -131,47 +111,44 @@ export const ApartmentHub: React.FC = () => {
   }, [advanceTime, setScene, state.timeOfDay]);
 
   return (
-    <div className="apartment-container fade-in" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+    <div className="apartment-container sonsotyo-scene fade-in" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
       <canvas id={canvasId} ref={canvasRef} style={{ width: '100%', height: '100%', outline: 'none' }} />
+      <div className="sonsotyo-overlay" />
 
-      <div className="ui-overlay" style={{ position: 'absolute', top: '40px', left: '40px', pointerEvents: 'none', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <h1 className="glow-text" style={{ fontSize: '3rem', margin: 0 }}>APARTMENT</h1>
+      <div className="sonsotyo-content" style={{ position: 'absolute', inset: 0, padding: '34px', display: 'grid', gridTemplateColumns: '360px 1fr 120px', gridTemplateRows: '1fr auto', gap: '20px', pointerEvents: 'none' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', pointerEvents: 'auto' }}>
+          <div className="glass-panel sonsotyo-panel">
+            <div className="sonsotyo-kicker">Apartment Hub</div>
+            <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '2rem' }}>{state.timeOfDay}</div>
+            <div className="sonsotyo-copy" style={{ marginTop: '8px' }}>Sunset Heights / Sector 7</div>
+          </div>
 
-        <div className="glass-morphism" style={{ padding: '15px 30px', borderLeft: '5px solid var(--accent-magenta)' }}>
-          <div style={{ color: 'white', fontWeight: 'bold', fontSize: '1.2rem', letterSpacing: '2px' }}>{state.timeOfDay}</div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase' }}>Sunset Heights // Sector 7</div>
+          <div className="glass-panel sonsotyo-panel">
+            <div className="sonsotyo-kicker">Nav Feed</div>
+            <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.1rem' }}>{statusText}</div>
+          </div>
         </div>
 
-        <div className="glass-morphism" style={{ padding: '10px 20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }} />
-          <span style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>SYSTEMS NOMINAL</span>
+        <div />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-end', justifyContent: 'center', pointerEvents: 'auto' }}>
+          <button className="neo-button" onClick={() => { setStatusText('Opening deck terminal...'); setScene('DECK_EDITOR'); }}>Deck</button>
+          <button className="neo-button" onClick={() => setStatusText('Apartment route anchored.')}>Home</button>
+          <button className="neo-button primary" onClick={() => { setStatusText('Opening transit planner...'); setScene('TRANSIT'); }}>Transit</button>
         </div>
 
-        <div className="glass-morphism" style={{ padding: '12px 18px', maxWidth: '340px', pointerEvents: 'auto' }}>
-          <div style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', letterSpacing: '3px', marginBottom: '4px' }}>NAV_FEED</div>
-          <div style={{ fontSize: '0.9rem', lineHeight: 1.5 }}>{statusText}</div>
+        <div className="glass-panel sonsotyo-panel" style={{ gridColumn: '1 / span 2', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'auto' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button className="neo-button" onClick={() => { saveGame(); setStatusText('Progress encrypted and saved.'); }}>Save State</button>
+            <button className="neo-button" onClick={() => { setStatusText('Opening sync terminal...'); setScene('DECK_EDITOR'); }}>Terminal</button>
+          </div>
+          <button className="neo-button primary" onClick={() => { setStatusText('Opening transit planner...'); setScene('TRANSIT'); }}>Go To Metro Station</button>
         </div>
-      </div>
-
-      <div style={{ position: 'absolute', right: '40px', top: '50%', transform: 'translateY(-50%)', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <div className="sidebar-icon" onClick={() => { setStatusText('Opening deck terminal...'); setScene('DECK_EDITOR'); }}>DE</div>
-        <div className="sidebar-icon" onClick={() => setStatusText('Apartment route anchored.')}>HB</div>
-        <div className="sidebar-icon" onClick={() => { setStatusText('Opening transit planner...'); setScene('TRANSIT'); }}>TR</div>
-      </div>
-
-      <div className="bottom-nav glass-panel" style={{ position: 'absolute', bottom: '40px', left: '40px', right: '40px', padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: '100px' }}>
-        <div style={{ display: 'flex', gap: '20px' }}>
-          <button className="neo-button" onClick={() => { saveGame(); setStatusText('Progress encrypted and saved.'); }}>SAVE STATE</button>
-          <button className="neo-button" onClick={() => { setStatusText('Opening sync terminal...'); setScene('DECK_EDITOR'); }}>TERMINAL</button>
-        </div>
-        <button className="neo-button primary" onClick={() => { setStatusText('Opening transit planner...'); setScene('TRANSIT'); }} style={{ padding: '15px 40px' }}>
-          GO TO METRO STATION
-        </button>
       </div>
 
       {showWakeUp && (
         <div className="wake-up-overlay" style={{ position: 'fixed', inset: 0, background: 'black', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, opacity: 0, animation: 'fadeOut 2s forwards' }} onAnimationEnd={() => setShowWakeUp(false)}>
-          <h2 className="glow-text" style={{ fontSize: '3rem' }}>WAKE UP</h2>
+          <h2 className="sonsotyo-title" style={{ fontSize: '3rem' }}>Wake Up</h2>
         </div>
       )}
 
@@ -201,14 +178,10 @@ export const ApartmentHub: React.FC = () => {
                 });
 
                 updateGameState({
-                  currentQuest: reviewedDeck
-                    ? 'Open the terminal and tune your first deck.'
-                    : 'Choose how to start the day and listen to Lucy.'
+                  currentQuest: reviewedDeck ? 'Open the terminal and tune your first deck.' : 'Choose how to start the day and listen to Lucy.'
                 });
 
-                if (combatResolved) {
-                  setStatusText('Babylon plugin handoff complete. Narrative link restored.');
-                }
+                if (combatResolved) setStatusText('Babylon plugin handoff complete. Narrative link restored.');
               }}
               onComplete={(vnState: VNEngineState) => {
                 updateProfile({
@@ -236,6 +209,12 @@ export const ApartmentHub: React.FC = () => {
           0% { opacity: 1; pointer-events: all; }
           70% { opacity: 1; }
           100% { opacity: 0; pointer-events: none; }
+        }
+        @media (max-width: 900px) {
+          .apartment-container .sonsotyo-content {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr auto auto;
+          }
         }
       `}</style>
     </div>

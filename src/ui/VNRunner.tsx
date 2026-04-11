@@ -2,6 +2,7 @@ import React from 'react';
 import { Engine } from '../engine/Engine';
 import { BabylonCombatPlugin } from '../engine/plugins/BabylonCombatPlugin';
 import { NarrativeScript, NarrativeStep, VNEngineState } from '../engine/types';
+import '../styles/SonsotyoScenes.css';
 
 const isInteractiveStep = (step: NarrativeStep | null) =>
   step?.type === 'dialogue' || step?.type === 'choice';
@@ -197,7 +198,7 @@ export const VNRunner: React.FC<{
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', alignItems: 'start' }}>
               <div>
-                <div style={{ fontSize: '0.68rem', color: 'var(--accent-cyan)', letterSpacing: '0.24rem' }}>{subtitle}</div>
+                <div className="sonsotyo-kicker" style={{ color: 'var(--accent-primary)' }}>{subtitle}</div>
                 <h2 style={{ marginTop: '10px', fontSize: '2.2rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>{scriptTitle}</h2>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -246,7 +247,7 @@ export const VNRunner: React.FC<{
               </div>
             )}
 
-            <div className="tutorial-guide-message">
+            <div className="tutorial-guide-message" style={{ color: 'var(--text-bright)' }}>
               {currentStep.type === 'dialogue' && currentStep.text}
               {currentStep.type === 'choice' && currentStep.prompt}
             </div>

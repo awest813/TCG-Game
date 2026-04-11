@@ -1,25 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@500;800&family=Manrope:wght@400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Sora:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
   --bg-deep: #050508;
   --bg-phone-shell: #1a1a24;
-  
-  /* Hybrid Palette */
-  --accent-primary: #00f2ff; /* Cyber Cyan */
-  --accent-secondary: #ff3c00; /* Safety Orange */
-  --accent-yellow: #f0c67c;
-  
-  --text-main: #d1d5db;
+  --bg-dream: #0b1020;
+  --accent-primary: #7ef2ff;
+  --accent-secondary: #ff8ac6;
+  --accent-yellow: #ffe39a;
+  --accent-lavender: #b6b2ff;
+  --accent-ice: #dff7ff;
+  --text-main: #e5ebff;
   --text-bright: #ffffff;
-  
+  --text-secondary: rgba(229, 235, 255, 0.66);
   --font-mono: 'Space Mono', monospace;
-  --font-main: 'Manrope', sans-serif;
-  
-  /* Design Tokens */
-  --glass-bg: rgba(18, 18, 26, 0.72);
-  --glass-border: 1px solid rgba(0, 242, 255, 0.15);
-  --bevel-light: rgba(255, 255, 255, 0.18);
-  --bevel-dark: rgba(0, 0, 0, 0.4);
+  --font-main: 'Sora', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+  --glass-bg: rgba(18, 24, 42, 0.48);
+  --glass-strong: rgba(10, 14, 28, 0.74);
+  --glass-border: 1px solid rgba(223, 247, 255, 0.22);
+  --bevel-light: rgba(255, 255, 255, 0.22);
+  --bevel-dark: rgba(2, 6, 18, 0.45);
+  --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -31,80 +32,90 @@
 html, body, #root {
   width: 100%;
   height: 100%;
-  background: var(--bg-deep);
+  background:
+    radial-gradient(circle at top, rgba(126, 242, 255, 0.1), transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(255, 138, 198, 0.12), transparent 26%),
+    linear-gradient(180deg, #0b1020 0%, #060811 48%, #040507 100%);
   color: var(--text-main);
   font-family: var(--font-main);
   overflow: hidden;
 }
 
-/* THE MERGE: Glass Bevel */
 .glass-panel {
-  background: linear-gradient(135deg, rgba(20, 20, 30, 0.8), rgba(10, 10, 15, 0.85));
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, rgba(14, 19, 35, 0.86), rgba(7, 10, 18, 0.7));
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(223, 247, 255, 0.18);
   border-top: 1px solid var(--bevel-light);
   border-left: 1px solid var(--bevel-light);
   border-right: 2px solid var(--bevel-dark);
   border-bottom: 2px solid var(--bevel-dark);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,242,255,0.05);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 0 34px rgba(126,242,255,0.05);
   position: relative;
+  overflow: hidden;
 }
 
 .glass-panel::after {
-    content: '';
-    position: absolute;
-    top: 2px; left: 2px; right: 2px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.16), transparent 34%, transparent 62%, rgba(126,242,255,0.1));
+  pointer-events: none;
 }
 
-/* Beveled Buttons with Modern Blur */
 .neo-button {
-  background: rgba(42, 42, 53, 0.4);
-  backdrop-filter: blur(8px);
-  color: var(--text-main);
-  border: none;
-  padding: 12px 24px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+  backdrop-filter: blur(14px);
+  color: var(--text-bright);
+  border: 1px solid rgba(223, 247, 255, 0.22);
+  padding: 13px 24px;
   cursor: pointer;
   text-transform: uppercase;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: 0.15rem;
-  font-size: 0.75rem;
-  transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.18rem;
+  font-size: 0.72rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   display: flex;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid var(--bevel-light);
-  border-left: 1px solid var(--bevel-light);
-  border-right: 2px solid var(--bevel-dark);
-  border-bottom: 2px solid var(--bevel-dark);
+  justify-content: center;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
 .neo-button:hover {
-  background: rgba(0, 242, 255, 0.1);
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 20px rgba(0,242,255,0.2);
-  transform: translateY(-1px);
+  background: linear-gradient(180deg, rgba(126,242,255,0.2), rgba(255,255,255,0.08));
+  border-color: rgba(126, 242, 255, 0.42);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.34), 0 0 24px rgba(126,242,255,0.16);
+  transform: translateY(-2px);
 }
 
 .neo-button.primary {
-  background: linear-gradient(135deg, var(--accent-primary), #4defff);
-  color: #000;
-  border-top: 1px solid rgba(255,255,255,0.5);
-  border-left: 1px solid rgba(255,255,255,0.5);
-  border-right: 2px solid rgba(0,0,0,0.3);
-  border-bottom: 2px solid rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, rgba(126, 242, 255, 0.92), rgba(255, 138, 198, 0.86));
+  color: #04101a;
+  border-color: rgba(255,255,255,0.38);
+  box-shadow: 0 16px 40px rgba(126, 242, 255, 0.24);
 }
 
-/* CRT & Scanline Overlays */
+.neo-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .scanlines {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0, rgba(0, 0, 0, 0.08) 1px, transparent 1px, transparent 3px);
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 3px),
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16));
   pointer-events: none;
   z-index: 100;
-  opacity: 0.4;
+  opacity: 0.22;
 }
 
 @keyframes flicker {
@@ -117,77 +128,82 @@ html, body, #root {
   animation: flicker 0.15s infinite;
 }
 
-/* Phone UI Frame */
 .phone-ui-container {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at 50% 50%, #0f0f18, #050508);
-    padding: 30px;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top, rgba(126, 242, 255, 0.12), transparent 30%),
+    radial-gradient(circle at 80% 15%, rgba(255, 138, 198, 0.16), transparent 25%),
+    linear-gradient(180deg, #090d18 0%, #050508 100%);
+  padding: 30px;
 }
 
 .phone-shell {
-    width: 100%;
-    height: 100%;
-    max-width: 1400px;
-    max-height: 900px;
-    background: #1e1e2d;
-    border-radius: 44px;
-    border: 14px solid #2a2a35;
-    box-shadow: 0 0 120px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,255,255,0.03);
-    position: relative;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 1400px;
+  max-height: 900px;
+  background: linear-gradient(180deg, rgba(30, 34, 52, 0.96), rgba(18, 21, 34, 0.98));
+  border-radius: 44px;
+  border: 14px solid #262b3b;
+  box-shadow: 0 0 120px rgba(0,0,0,0.8), inset 0 0 30px rgba(255,255,255,0.05), 0 0 50px rgba(126,242,255,0.08);
+  position: relative;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 .phone-screen {
-    flex: 1;
-    background: #020205;
-    border-radius: 24px;
-    overflow: hidden;
-    position: relative;
-    border: 4px solid #000;
+  flex: 1;
+  background:
+    radial-gradient(circle at top, rgba(182, 178, 255, 0.08), transparent 30%),
+    linear-gradient(180deg, #05070f 0%, #020205 100%);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  border: 4px solid #000;
 }
 
-/* Screw Detail */
 .screw {
-    width: 14px;
-    height: 14px;
-    background: #2a2a35;
-    border-radius: 99px;
-    box-shadow: inset 1px 1px 2px rgba(255,255,255,0.1), 1px 1px 2px rgba(0,0,0,0.4);
-    position: relative;
+  width: 14px;
+  height: 14px;
+  background: #2a2a35;
+  border-radius: 99px;
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,0.1), 1px 1px 2px rgba(0,0,0,0.4);
+  position: relative;
 }
+
 .screw::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 8px; height: 1px;
-    background: rgba(0,0,0,0.5);
-    transform: translate(-50%, -50%) rotate(45deg);
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 1px;
+  background: rgba(0,0,0,0.5);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .bg-mesh {
-    background-image: radial-gradient(var(--accent-primary) 0.5px, transparent 0.5px);
-    background-size: 32px 32px;
-    opacity: 0.03;
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+  background-image: radial-gradient(var(--accent-primary) 0.5px, transparent 0.5px);
+  background-size: 32px 32px;
+  opacity: 0.03;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-/* Typography Overrides */
 .tech-label {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.2rem;
-    color: var(--accent-primary);
-    text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.2rem;
+  color: var(--accent-ice);
+  text-transform: uppercase;
 }
 
 .glow-text {
-    text-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+  text-shadow: 0 0 15px rgba(126, 242, 255, 0.4);
 }

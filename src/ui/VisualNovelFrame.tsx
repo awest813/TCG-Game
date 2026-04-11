@@ -49,7 +49,7 @@ export const VisualNovelFrame: React.FC = () => {
 
       <div className="vn-frame-top">
         <div className="vn-frame-topline">
-          <span className="vn-frame-chip">{sceneMeta.chapter}</span>
+          <span className="vn-frame-chip" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>{sceneMeta.chapter}</span>
           <span className="vn-frame-title">{displayLabel}</span>
         </div>
         <div className="vn-frame-topline">
@@ -62,10 +62,10 @@ export const VisualNovelFrame: React.FC = () => {
 
       <div className="vn-frame-sidebar left">
         <div className="vn-frame-kicker">Current Route</div>
-        <div className="vn-frame-sidebar-copy">{state.currentQuest}</div>
+        <div className="vn-frame-sidebar-copy" style={{ color: 'var(--text-secondary)' }}>{state.currentQuest}</div>
         <div className="vn-frame-divider" />
         <div className="vn-frame-kicker">Scene Tone</div>
-        <div className="vn-frame-sidebar-copy">{sceneMeta.tone}</div>
+        <div className="vn-frame-sidebar-copy" style={{ color: 'var(--text-secondary)' }}>{sceneMeta.tone}</div>
         {districtProfile && (
           <>
             <div className="vn-frame-divider" />

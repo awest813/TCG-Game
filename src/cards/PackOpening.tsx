@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { CARD_POOL, getCardById, getCardPalette } from '../data/cards';
 import { audioManager } from '../core/AudioManager';
+import '../styles/SonsotyoScenes.css';
 
 export const PackOpening: React.FC = () => {
   const { state, updateProfile, setScene } = useGame();
@@ -87,7 +88,7 @@ export const PackOpening: React.FC = () => {
 
       {packStatus !== 'REVEAL' ? (
         <div className="glass-panel" style={{ textAlign: 'center', padding: '54px', borderRadius: '36px', zIndex: 10, background: 'rgba(8,12,24,0.84)', minWidth: '440px' }}>
-          <div style={{ fontSize: '0.68rem', letterSpacing: '0.34rem', opacity: 0.6, color: 'var(--accent-cyan)' }}>DECRYPTION_PROTOCOL_ACTIVE</div>
+          <div className="sonsotyo-kicker" style={{ color: 'var(--accent-primary)' }}>Decryption Protocol Active</div>
           <div
             className={packStatus === 'IDLE' ? 'pack-shell-float' : packStatus === 'BURST' ? 'pack-burst' : 'shred-anim'}
             style={{
@@ -118,8 +119,8 @@ export const PackOpening: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ fontSize: '2.5rem', fontWeight: 900, textShadow: '0 0 20px rgba(121,247,255,0.3)' }}>{state.profile.inventory.packs.length} PACKS</div>
-          <div style={{ marginTop: '12px', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Rupture the energy shell to reveal synced data cards.</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', textShadow: '0 0 20px rgba(121,247,255,0.3)' }}>{state.profile.inventory.packs.length} PACKS</div>
+          <div className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.85rem' }}>Rupture the energy shell to reveal synced data cards.</div>
 
           <div style={{ marginTop: '26px' }}>
             {state.profile.inventory.packs.length > 0 ? (
@@ -273,15 +274,15 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
         </div>
       </div>
 
-      <div className="glass-panel" style={{ padding: '32px', background: 'rgba(8,12,24,0.85)', textAlign: 'left', border: `1px solid ${palette.accent}` }}>
-        <div style={{ fontSize: '0.74rem', color: palette.accent, letterSpacing: '0.22rem', fontWeight: 700 }}>REVEAL_SEQUENCE {index} / {total}</div>
-        <div style={{ marginTop: '12px', fontSize: '2.5rem', fontWeight: 900, color: 'white' }}>{card.name.toUpperCase()}</div>
+        <div className="glass-panel" style={{ padding: '32px', background: 'rgba(8,12,24,0.85)', textAlign: 'left', border: `1px solid ${palette.accent}` }}>
+        <div className="sonsotyo-kicker" style={{ color: palette.accent }}>REVEAL_SEQUENCE {index} / {total}</div>
+        <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '2.5rem', color: 'white' }}>{card.name.toUpperCase()}</div>
         <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <Tag label={card.cardType.toUpperCase()} accent={palette.accent} />
           {card.creatureType && <Tag label={card.creatureType.toUpperCase()} accent="var(--accent-yellow)" />}
           <Tag label={card.rarity.toUpperCase()} accent="var(--text-primary)" />
         </div>
-        <div style={{ marginTop: '22px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, fontSize: '1rem', borderLeft: `3px solid ${palette.accent}`, paddingLeft: '20px' }}>
+        <div className="sonsotyo-copy" style={{ marginTop: '22px', lineHeight: 1.7, fontSize: '1rem', borderLeft: `3px solid ${palette.accent}`, paddingLeft: '20px' }}>
           {(card.rulesText ?? ['No effect text loaded.']).join(' ')}
         </div>
         <div style={{ display: 'flex', gap: '14px', marginTop: '32px' }}>
