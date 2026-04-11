@@ -19,6 +19,9 @@ export const Tournament: React.FC = () => {
   const { state, updateGameState, updateProfile, setScene } = useGame();
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
+  const currentOpponentRelScore = activeTourney
+    ? (state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0)
+    : 0;
 
   React.useEffect(() => {
     if (!activeTourney) {
@@ -32,8 +35,7 @@ export const Tournament: React.FC = () => {
     if (!activeTourney) return undefined;
     const tier = TOURNAMENT_TIERS.find((e) => e.id === activeTourney.tierId);
     if (!tier) return undefined;
-    const relScore = state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0;
-    const currentBanter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, relScore, activeTourney.wins);
+    const currentBanter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, currentOpponentRelScore, activeTourney.wins);
     const timer = setTimeout(() => {
       audioManager.speak(currentBanter.intro, 'announcer');
       const rivalTimer = setTimeout(() => {
@@ -43,8 +45,7 @@ export const Tournament: React.FC = () => {
       }, 4000);
     }, 500);
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTourney?.currentOpponentId, activeTourney?.wins]);
+  }, [activeTourney, currentOpponentRelScore]);
 
   const renderStars = (count: number) => {
     return (
