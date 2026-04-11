@@ -12,7 +12,7 @@ const SHOP_INVENTORY: ShopItem[] = [
 ];
 
 export const CardShop: React.FC = () => {
-  const { state, updateProfile, setScene } = useGame();
+  const { state, updateProfile, updateGameState, setScene } = useGame();
   const { profile } = state;
 
   const buyItem = (item: ShopItem) => {
@@ -96,6 +96,56 @@ export const CardShop: React.FC = () => {
               </button>
             </div>
           ))}
+        </div>
+
+        <div className="glass-panel sonsotyo-panel" style={{ padding: '30px', marginTop: '20px', borderLeft: '4px solid var(--accent-secondary)' }}>
+          <div className="sonsotyo-kicker">Local Events</div>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', marginTop: '8px' }}>Active Shop Tournaments</h2>
+          <p className="sonsotyo-copy" style={{ marginTop: '10px', maxWidth: '60ch' }}>
+            The backroom is open for regulation brackets. Small buy-ins, fast cycles, and guaranteed credit payouts for the winners.
+          </p>
+          
+          <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+            <div className="glass-panel shop-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--accent-primary)' }}>Beginner Initiation</div>
+                <div className="sonsotyo-pill" style={{ background: 'var(--accent-primary)', color: 'var(--bg-primary)' }}>FREE</div>
+              </div>
+              <p className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.9rem' }}>
+                Free entry bracket for new duelists. Practice and earn your first credits!
+              </p>
+              <button 
+                className="neo-button primary" 
+                style={{ marginTop: '15px', width: '100%' }}
+                onClick={() => {
+                  updateGameState({ pendingTournamentId: 'shop-beginner-circuit' });
+                  setScene('TOURNAMENT');
+                }}
+              >
+                Start Bracket
+              </button>
+            </div>
+
+            <div className="glass-panel shop-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--accent-secondary)' }}>Storefront Mini-Tourney</div>
+                <div className="sonsotyo-pill">100 CR Entry</div>
+              </div>
+              <p className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.9rem' }}>
+                A quick 2-round bracket for local regulars. Payout: 400 CR (base).
+              </p>
+              <button 
+                className="neo-button" 
+                style={{ marginTop: '15px', width: '100%' }}
+                onClick={() => {
+                  updateGameState({ pendingTournamentId: 'storefront-mini' });
+                  setScene('TOURNAMENT');
+                }}
+              >
+                Access Bracket
+              </button>
+            </div>
+          </div>
         </div>
 
         <div style={{ marginTop: 'auto', paddingTop: '18px', textAlign: 'center' }}>

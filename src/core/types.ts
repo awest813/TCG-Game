@@ -194,6 +194,7 @@ export interface GameState {
   timeOfDay: TimeOfDay;
   currentQuest: string;
   activeTournament: ActiveTournament | null;
+  pendingTournamentId: string | null;
   vnSession: VNSession | null;
   visuals: {
     presentationTier: PresentationTier;

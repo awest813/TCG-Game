@@ -18,8 +18,19 @@ import '../styles/SonsotyoScenes.css';
 
 export const Tournament: React.FC = () => {
   const { state, updateGameState, updateProfile, setScene } = useGame();
+  const pendingTierId = state.pendingTournamentId;
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
+
+  React.useEffect(() => {
+    if (!pendingTierId || activeTourney) return;
+    const tier = TOURNAMENT_TIERS.find((t) => t.id === pendingTierId);
+    if (!tier) return;
+    if (state.profile.currency >= tier.entryFee) {
+      startTournament(tier);
+      updateGameState({ pendingTournamentId: null });
+    }
+  }, [pendingTierId, activeTourney]);
   const currentOpponentRelScore = activeTourney
     ? (state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0)
     : 0;
@@ -79,7 +90,12 @@ export const Tournament: React.FC = () => {
     alert(`Withdrawn from Circuit. Cashing out winning pot: ${finalReward} credits.`);
     updateProfile({ currency: state.profile.currency + finalReward });
     updateGameState({ activeTournament: null });
-    setScene('DISTRICT_EXPLORE');
+    
+    if (tier.locationId === 'card-shop') {
+      setScene('STORE');
+    } else {
+      setScene('DISTRICT_EXPLORE');
+    }
   };
 
   if (!activeTourney) {
@@ -181,7 +197,10 @@ export const Tournament: React.FC = () => {
           </div>
 
           <div style={{ textAlign: 'center', paddingBottom: '12px' }}>
-            <button className="neo-button" onClick={() => { audioManager.playSFX('back'); setScene('DISTRICT_EXPLORE'); }}>
+            <button className="neo-button" onClick={() => { 
+                audioManager.playSFX('back'); 
+                setScene('DISTRICT_EXPLORE'); 
+            }}>
               Return To Streets
             </button>
           </div>
@@ -200,17 +219,7 @@ export const Tournament: React.FC = () => {
   const banter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, relationshipScore, activeTourney.wins);
   const roundLabel = getTournamentRoundLabel(tier.id, activeTourney.wins);
   const opponentMeta = getOpponentMeta(activeTourney.currentOpponentId);
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      audioManager.speak(banter.intro, 'announcer');
-      const rivalTimer = setTimeout(() => {
-        const npc = NPCS.find((entry) => entry.id === activeTourney.currentOpponentId);
-        audioManager.speak(banter.rival, npc?.archetype ?? 'rival');
-      }, 4000);
-    }, 500);
 
-    return () => clearTimeout(timer);
-  }, [activeTourney.currentOpponentId, activeTourney.wins]);
   return (
     <div
       className="tournament-scene sonsotyo-scene fade-in"

@@ -98,8 +98,9 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
     currentScene: config || !startInMenu ? 'APARTMENT' : 'MAIN_MENU',
     location: 'APARTMENT',
     timeOfDay: 'MORNING',
-    currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore Sunset Terminal' : INITIAL_QUEST,
+currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore Sunset Terminal' : INITIAL_QUEST,
     activeTournament: null,
+    pendingTournamentId: null,
     vnSession: null,
     visuals: {
       presentationTier: 'HIGH'

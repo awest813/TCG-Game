@@ -75,6 +75,30 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
     enemyLevelRange: [15, 99],
     isEndless: true,
     prestige: 5
+  },
+  {
+    id: 'storefront-mini',
+    name: 'Storefront Mini-Tourney',
+    description: 'Quick local bracket held in the shop backroom. Low entry, fast payout.',
+    locationId: 'card-shop',
+    entryFee: 100,
+    baseReward: 400,
+    rarityMultiplier: 1.2,
+    enemyLevelRange: [1, 5],
+    isEndless: false,
+    prestige: 1
+  },
+  {
+    id: 'shop-beginner-circuit',
+    name: 'Beginner Initiation',
+    description: 'Free entry bracket for new duelists. Practice and earn your first credits.',
+    locationId: 'card-shop',
+    entryFee: 0,
+    baseReward: 250,
+    rarityMultiplier: 1.5,
+    enemyLevelRange: [1, 3],
+    isEndless: false,
+    prestige: 1
   }
 ];
 
@@ -82,7 +106,9 @@ const TOURNAMENT_BRACKETS: Record<string, string[]> = {
   'rookie-scrim': ['kaizen', 'maya', 'vex'],
   'market-pro-am': ['maya', 'vex', 'luna', 'kaizen'],
   'neon-night-league': ['vex', 'luna', 'valerious', 'kaizen'],
-  'crown-unlimited': ['kaizen', 'maya', 'vex', 'luna', 'valerious', 'zeno']
+  'crown-unlimited': ['kaizen', 'maya', 'vex', 'luna', 'valerious', 'zeno'],
+  'storefront-mini': ['kaizen', 'maya'],
+  'shop-beginner-circuit': ['kaizen', 'maya']
 };
 
 type RawBanterPack = Pick<TournamentBanterPack, 'intro' | 'rival' | 'player'>;
@@ -162,6 +188,8 @@ export const getTournamentPreviewLine = (tier: TournamentTier) => {
   if (tier.id === 'rookie-scrim') return 'Local rivals, fast prize cycles, and enough pressure to teach without wrecking your wallet.';
   if (tier.id === 'market-pro-am') return 'A proper city bracket with scouts watching for duelists who can perform on command.';
   if (tier.id === 'neon-night-league') return 'High-visibility night circuit. Stronger rivals, louder crowds, and no quiet turns.';
+  if (tier.id === 'storefront-mini') return 'Shop regulation rules. Fast match cycles and immediate credit settlement.';
+  if (tier.id === 'shop-beginner-circuit') return 'Zero-cost entry. Perfect for learning the circuit. Your first credits are waiting.';
   return 'The crown-side gauntlet where each win turns the bracket crueler and the payout more addictive.';
 };
 
