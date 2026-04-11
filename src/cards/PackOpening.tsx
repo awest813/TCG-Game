@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../core/GameContext';
-import { CARD_POOL, getCardById, getCardPalette } from '../data/cards';
+import { CARD_POOL, getCardById, getCardPalette, resolveCardImage } from '../data/cards';
 import { audioManager } from '../core/AudioManager';
 import '../styles/SonsotyoScenes.css';
 
@@ -238,7 +238,7 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
 
           <div style={{ flex: 1, marginTop: '20px', marginBottom: '20px', borderRadius: '18px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
             <div style={{ width: '130px', height: '130px', background: palette.glow, borderRadius: '999px', filter: 'blur(20px)', opacity: 0.6 }} />
-            {card.image && <img src={card.image} alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px', opacity: 0.8 }} />}
+            <img src={resolveCardImage(card)} alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px', opacity: 0.82 }} />
             <div style={{ position: 'absolute', bottom: '14px', fontSize: '0.62rem', letterSpacing: '0.22rem', color: palette.accent, fontWeight: 700 }}>{card.set?.replace(/_/g, ' ') ?? 'CORE SET'}</div>
           </div>
 

@@ -5,15 +5,15 @@ import { ShopItem } from '../core/types';
 import { isShopVeteranUnlocked } from '../core/circuitProgression';
 import { formatCredits, getBracketEconomyCaption, getBracketSweepPot } from '../core/economy';
 import { TOURNAMENT_TIERS } from '../core/TournamentManager';
-import { getCardById } from '../data/cards';
+import { getCardById, resolveCardImage } from '../data/cards';
 import '../styles/SonsotyoScenes.css';
 
 const SHOP_INVENTORY: ShopItem[] = [
-  { id: 'p1', targetId: 'Metro Pulse', name: 'METRO PULSE PACK', description: 'Core data from the city rhythm.', cost: 200, type: 'PACK', image: '/pack_pulse.png' },
-  { id: 'p2', targetId: 'Neural Veil', name: 'NEURAL VEIL PACK', description: 'Technical denial and alloys.', cost: 250, type: 'PACK', image: '/pack_veil.png' },
+  { id: 'p1', targetId: 'Metro Pulse', name: 'METRO PULSE PACK', description: 'Core data from the city rhythm.', cost: 200, type: 'PACK', image: '/assets/packs/metro-pulse.svg' },
+  { id: 'p2', targetId: 'Neural Veil', name: 'NEURAL VEIL PACK', description: 'Technical denial and alloys.', cost: 250, type: 'PACK', image: '/assets/packs/neural-veil.svg' },
   { id: 's1', targetId: 'neon-striker', name: 'NEON STRIKER (SINGLE)', description: 'Direct acquisition of the combat classic.', cost: 500, type: 'SINGLE', image: '' },
   { id: 's2', targetId: 'voltlynx', name: 'VOLTLYNX (SINGLE)', description: 'Fast-sync voltage unit.', cost: 450, type: 'SINGLE', image: '' },
-  { id: 'c1', targetId: 'Gold Sleeve', name: 'CHAMPION SLEEVES', description: 'Cosmetic module for your data.', cost: 1000, type: 'COSMETIC', image: '' }
+  { id: 'c1', targetId: 'Gold Sleeve', name: 'CHAMPION SLEEVES', description: 'Cosmetic module for your data.', cost: 1000, type: 'COSMETIC', image: '/assets/items/holo-sleeve.svg' }
 ];
 
 export const CardShop: React.FC = () => {
@@ -54,7 +54,7 @@ export const CardShop: React.FC = () => {
         minHeight: '100vh',
         padding: '40px',
         background:
-          'linear-gradient(180deg, rgba(8,10,18,0.82), rgba(4,6,10,0.94)), radial-gradient(circle at 18% 18%, rgba(126,242,255,0.12), transparent 22%), url(/market_arcade_bg.png)',
+          'linear-gradient(180deg, rgba(8,10,18,0.82), rgba(4,6,10,0.94)), radial-gradient(circle at 18% 18%, rgba(126,242,255,0.12), transparent 22%), url(/assets/bg/card-annex.svg), url(/market_arcade_bg.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
@@ -98,7 +98,7 @@ export const CardShop: React.FC = () => {
         <div className="sonsotyo-grid cards">
           {SHOP_INVENTORY.map((item) => {
             const linkedCard = item.type === 'SINGLE' ? getCardById(item.targetId) : undefined;
-            const showcaseSrc = item.image || linkedCard?.image || '';
+            const showcaseSrc = item.image || (linkedCard ? resolveCardImage(linkedCard) : '');
             const accent =
               item.type === 'PACK' ? 'var(--accent-secondary)' : item.type === 'SINGLE' ? 'var(--accent-primary)' : 'var(--accent-yellow)';
 

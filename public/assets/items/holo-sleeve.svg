@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <rect x="8" y="18" width="104" height="84" rx="8" fill="#0a0c12" stroke="#ffe39a" stroke-opacity="0.5" stroke-width="2"/>
+  <path d="M20 32 L100 32 M20 48 L100 48 M20 64 L100 64" stroke="#ffe39a" stroke-opacity="0.15" stroke-width="2"/>
+  <text x="60" y="16" text-anchor="middle" fill="#ffe39a" font-family="system-ui,sans-serif" font-size="8" font-weight="700" letter-spacing="0.15em">HOLO</text>
+</svg>

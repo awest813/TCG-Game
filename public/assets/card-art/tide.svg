@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 448" fill="none">
+  <defs>
+    <linearGradient id="tbg" x1="0" y1="0" x2="0" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050f1c"/>
+      <stop offset="0.5" stop-color="#0c1e36"/>
+      <stop offset="1" stop-color="#040812"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="448" rx="18" fill="url(#tbg)"/>
+  <rect x="12" y="12" width="296" height="424" rx="12" stroke="#76b7ff" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M0 200 Q80 180 160 200 T320 200 L320 240 Q240 260 160 240 T0 240Z" fill="#76b7ff" fill-opacity="0.08"/>
+  <path d="M0 260 Q80 240 160 260 T320 260 L320 300 Q240 320 160 300 T0 300Z" fill="#76b7ff" fill-opacity="0.12"/>
+  <path d="M0 320 Q80 300 160 320 T320 320 L320 360 Q240 380 160 360 T0 360Z" fill="#76b7ff" fill-opacity="0.1"/>
+  <circle cx="200" cy="160" r="48" fill="#76b7ff" fill-opacity="0.12" stroke="#76b7ff" stroke-opacity="0.4"/>
+  <text x="24" y="40" fill="#76b7ff" fill-opacity="0.55" font-family="system-ui,sans-serif" font-size="11" font-weight="700" letter-spacing="0.35em">TIDE</text>
+</svg>

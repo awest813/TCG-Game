@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 448" fill="none">
+  <defs>
+    <linearGradient id="abg" x1="0" y1="0" x2="320" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0a0c10"/>
+      <stop offset="1" stop-color="#1a1e28"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="448" rx="18" fill="url(#abg)"/>
+  <rect x="12" y="12" width="296" height="424" rx="12" stroke="#d5dae2" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M80 120 L240 120 L200 280 L120 280 Z" fill="#d5dae2" fill-opacity="0.08" stroke="#d5dae2" stroke-opacity="0.35"/>
+  <path d="M100 300 L220 300 L200 360 L120 360 Z" fill="#d5dae2" fill-opacity="0.12"/>
+  <line x1="60" y1="180" x2="260" y2="200" stroke="#d5dae2" stroke-opacity="0.15" stroke-width="4"/>
+  <line x1="50" y1="220" x2="270" y2="240" stroke="#d5dae2" stroke-opacity="0.12" stroke-width="3"/>
+  <text x="24" y="40" fill="#d5dae2" fill-opacity="0.5" font-family="system-ui,sans-serif" font-size="11" font-weight="700" letter-spacing="0.35em">ALLOY</text>
+</svg>

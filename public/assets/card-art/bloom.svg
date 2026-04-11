@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 448" fill="none">
+  <defs>
+    <linearGradient id="bbg" x1="0" y1="0" x2="320" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06140f"/>
+      <stop offset="0.5" stop-color="#0f2a1c"/>
+      <stop offset="1" stop-color="#030a08"/>
+    </linearGradient>
+    <radialGradient id="bloomg" cx="0.35" cy="0.35" r="0.65">
+      <stop stop-color="#8effa7" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#8effa7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="320" height="448" rx="18" fill="url(#bbg)"/>
+  <rect x="12" y="12" width="296" height="424" rx="12" stroke="#8effa7" stroke-opacity="0.35" stroke-width="2"/>
+  <circle cx="160" cy="200" r="130" fill="url(#bloomg)"/>
+  <path d="M160 120 C200 160 200 240 160 280 C120 240 120 160 160 120Z" fill="#8effa7" fill-opacity="0.15" stroke="#8effa7" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M160 150 L175 195 L220 195 L185 225 L200 270 L160 245 L120 270 L135 225 L100 195 L145 195 Z" fill="#8effa7" fill-opacity="0.2" stroke="#8effa7" stroke-opacity="0.35"/>
+  <text x="24" y="40" fill="#8effa7" fill-opacity="0.55" font-family="system-ui,sans-serif" font-size="11" font-weight="700" letter-spacing="0.35em">BLOOM</text>
+</svg>

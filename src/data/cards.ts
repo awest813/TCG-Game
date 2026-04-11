@@ -15,7 +15,6 @@ export const BASE_CARDS: Card[] = [
     keywords: ["Swift"],
     evolutionTo: ["rail-bastion"],
     set: "METRO_PULSE",
-    image: "/technomancer_card_art_1775865583853.png",
     weakness: "Tide",
     retreatCost: 1,
     attacks: [
@@ -113,7 +112,6 @@ export const BASE_CARDS: Card[] = [
     rulesText: ["Regen: Heals 1 HP at the start of your turn."],
     keywords: ["Regen"],
     evolutionTo: ["lush-golem"],
-    image: "/biotech_nature_card_art_1775865596083.png",
     weakness: "Pulse",
     retreatCost: 1,
     attacks: [
@@ -212,7 +210,6 @@ export const BASE_CARDS: Card[] = [
     rulesText: ["On Play: Draw 1 card."],
     onPlayEffects: [{ type: "draw", value: 1 }],
     evolutionTo: ["tidal-whale"],
-    image: "/tide_card_art_main_1775865821451.png",
     weakness: "Alloy",
     retreatCost: 1,
     attacks: [
@@ -286,7 +283,6 @@ export const BASE_CARDS: Card[] = [
     attack: 1,
     health: 5,
     evolutionTo: ["alloy-titan"],
-    image: "/alloy_card_art_main_1775865833709.png",
     weakness: "Veil",
     retreatCost: 1,
     attacks: [
@@ -401,7 +397,6 @@ export const BASE_CARDS: Card[] = [
     attack: 1,
     health: 2,
     rulesText: ["On Play: Gain 1 temporary Mana this turn."],
-    image: "/current_card_art_main_1775865847401.png",
     weakness: "Bloom",
     abilities: [
       { name: "Mana Surge", effect: "On Play: Gain 1 Sync-Energy this turn." }
@@ -736,8 +731,7 @@ export const BASE_CARDS: Card[] = [
     rarity: "rare",
     cost: 4,
     rulesText: ["At the end of each turn, both players discard 1 card."],
-    set: "NEON_ECHO",
-    image: "/void_monolith_card_art_1775865612429.png"
+    set: "NEON_ECHO"
   },
   {
     id: "emergency-patch",
@@ -773,6 +767,29 @@ export const CARD_POOL = [...BASE_CARDS];
 export const getCardById = (id: string): Card | undefined => {
   return CARD_POOL.find(c => c.id === id);
 };
+
+const CARD_ART_BY_CREATURE: Partial<Record<NonNullable<Card['creatureType']>, string>> = {
+  Pulse: '/assets/card-art/pulse.svg',
+  Bloom: '/assets/card-art/bloom.svg',
+  Tide: '/assets/card-art/tide.svg',
+  Alloy: '/assets/card-art/alloy.svg',
+  Veil: '/assets/card-art/veil.svg',
+  Current: '/assets/card-art/current.svg'
+};
+
+/** Procedural SVG art by card type — use in UI wherever a card image is shown. */
+export function resolveCardImage(card: Card | undefined): string {
+  if (!card) return '/assets/card-art/support.svg';
+  if (card.cardType === 'creature' && card.creatureType && CARD_ART_BY_CREATURE[card.creatureType]) {
+    return CARD_ART_BY_CREATURE[card.creatureType]!;
+  }
+  if (card.cardType === 'field') return '/assets/card-art/field.svg';
+  if (card.cardType === 'item') return '/assets/card-art/item.svg';
+  if (card.image && typeof card.image === 'string' && card.image.startsWith('/assets/')) {
+    return card.image;
+  }
+  return '/assets/card-art/support.svg';
+}
 
 export const getCardPalette = (card?: Card) => {
   const typePalettes = {

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 448" fill="none">
+  <defs>
+    <linearGradient id="sbg" x1="0" y1="0" x2="320" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#100818"/>
+      <stop offset="1" stop-color="#180c20"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="448" rx="18" fill="url(#sbg)"/>
+  <rect x="12" y="12" width="296" height="424" rx="12" stroke="#c9a6ff" stroke-opacity="0.35" stroke-width="2"/>
+  <rect x="72" y="140" width="176" height="120" rx="8" fill="#c9a6ff" fill-opacity="0.08" stroke="#c9a6ff" stroke-opacity="0.3"/>
+  <path d="M100 200 L220 200 M160 160 L160 240" stroke="#c9a6ff" stroke-opacity="0.35" stroke-width="3"/>
+  <circle cx="160" cy="300" r="36" fill="#c9a6ff" fill-opacity="0.1"/>
+  <text x="24" y="40" fill="#c9a6ff" fill-opacity="0.5" font-family="system-ui,sans-serif" font-size="10" font-weight="700" letter-spacing="0.4em">SUPPORT</text>
+</svg>

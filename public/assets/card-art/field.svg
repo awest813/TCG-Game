@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 448" fill="none">
+  <defs>
+    <linearGradient id="fbg" x1="160" y1="0" x2="160" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050a12"/>
+      <stop offset="0.5" stop-color="#0a1420"/>
+      <stop offset="1" stop-color="#040608"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="448" rx="18" fill="url(#fbg)"/>
+  <rect x="12" y="12" width="296" height="424" rx="12" stroke="#7ef2ff" stroke-opacity="0.3" stroke-width="2"/>
+  <ellipse cx="160" cy="220" rx="120" ry="70" fill="#7ef2ff" fill-opacity="0.06" stroke="#7ef2ff" stroke-opacity="0.25"/>
+  <path d="M40 320 Q160 260 280 320" stroke="#7ef2ff" stroke-opacity="0.2" stroke-width="3" fill="none"/>
+  <text x="24" y="40" fill="#7ef2ff" fill-opacity="0.5" font-family="system-ui,sans-serif" font-size="11" font-weight="700" letter-spacing="0.35em">FIELD</text>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 448" fill="none">
+  <rect width="320" height="448" rx="18" fill="#0c0e14"/>
+  <rect x="12" y="12" width="296" height="424" rx="12" stroke="#ffe39a" stroke-opacity="0.45" stroke-width="2"/>
+  <rect x="100" y="160" width="120" height="140" rx="10" fill="#ffe39a" fill-opacity="0.1" stroke="#ffe39a" stroke-opacity="0.4"/>
+  <circle cx="160" cy="210" r="22" fill="#ffe39a" fill-opacity="0.2"/>
+  <text x="24" y="40" fill="#ffe39a" fill-opacity="0.55" font-family="system-ui,sans-serif" font-size="11" font-weight="700" letter-spacing="0.35em">ITEM</text>
+</svg>

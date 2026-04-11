@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none">
+  <defs>
+    <linearGradient id="gh" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#06120c"/>
+      <stop offset="0.5" stop-color="#0f2418"/>
+      <stop offset="1" stop-color="#040a08"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#gh)"/>
+  <ellipse cx="960" cy="400" rx="900" ry="280" fill="#8effa7" fill-opacity="0.06"/>
+  <path d="M0 700 Q480 620 960 680 T1920 640 L1920 1080 L0 1080Z" fill="#050f0a"/>
+  <g opacity="0.12" stroke="#8effa7">
+    <path d="M200 300 Q400 200 600 320" fill="none" stroke-width="2"/>
+    <path d="M900 280 Q1100 180 1300 300" fill="none" stroke-width="2"/>
+  </g>
+  <text x="960" y="110" text-anchor="middle" fill="#8effa7" fill-opacity="0.2" font-family="system-ui,sans-serif" font-size="26" font-weight="800" letter-spacing="0.45em">GARDEN HAZE</text>
+</svg>

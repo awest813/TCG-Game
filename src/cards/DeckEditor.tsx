@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { Card, CreatureType } from '../core/types';
-import { getCardById, getCardPalette, CARD_POOL } from '../data/cards';
+import { getCardById, getCardPalette, CARD_POOL, resolveCardImage } from '../data/cards';
 import { audioManager } from '../core/AudioManager';
 import '../styles/SonsotyoScenes.css';
 
@@ -53,7 +53,7 @@ export const DeckEditor: React.FC = () => {
         : 'Save & return to apartment';
 
   return (
-    <div className="deck-builder-container fade-in" style={{ height: '100vh', display: 'grid', gridTemplateColumns: '1fr 380px', background: 'linear-gradient(180deg, rgba(8,10,18,0.86), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.12), transparent 22%)', color: 'white', overflow: 'hidden' }}>
+    <div className="deck-builder-container fade-in" style={{ height: '100vh', display: 'grid', gridTemplateColumns: '1fr 380px', background: 'linear-gradient(180deg, rgba(8,10,18,0.86), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.12), transparent 22%), url(/assets/bg/deck-terminal.svg)', backgroundSize: 'cover', color: 'white', overflow: 'hidden' }}>
       <main className="collection-monitor" style={{ padding: '40px', overflowY: 'auto', borderRight: '1px solid rgba(121,247,255,0.08)' }}>
         <header style={{ marginBottom: '40px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
@@ -177,13 +177,7 @@ const EnhancedCollectionCard: React.FC<{ card: Card; count: number; onAdd: () =>
       </div>
 
       <div style={{ height: '180px', borderRadius: '16px', background: 'rgba(0,0,0,0.4)', overflow: 'hidden', marginBottom: '14px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
-        {card.image ? (
-          <img src={card.image} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} alt="" />
-        ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ width: '60px', height: '60px', background: palette.glow, borderRadius: '99px', filter: 'blur(12px)' }} />
-          </div>
-        )}
+        <img src={resolveCardImage(card)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.88 }} />
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', background: 'linear-gradient(0deg, rgba(0,0,0,0.8), transparent)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1rem' }}>
           {card.rarity.toUpperCase()} / {card.set?.replace(/_/g, ' ') ?? 'CORE SET'}
         </div>

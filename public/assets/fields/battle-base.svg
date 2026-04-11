@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#04060c"/>
+      <stop offset="0.55" stop-color="#0a1220"/>
+      <stop offset="1" stop-color="#050810"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#060912"/>
+      <stop offset="1" stop-color="#020408"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <path d="M0 620 L1920 520 L1920 1080 L0 1080Z" fill="url(#floor)"/>
+  <path d="M0 620 L1920 520" stroke="#79f7ff" stroke-opacity="0.12" stroke-width="3"/>
+  <g opacity="0.14" stroke="#79f7ff">
+    <line x1="0" y1="400" x2="1920" y2="380" stroke-width="2"/>
+    <line x1="0" y1="450" x2="1920" y2="430" stroke-width="1"/>
+    <line x1="0" y1="500" x2="1920" y2="480" stroke-width="1"/>
+  </g>
+  <circle cx="960" cy="200" r="120" fill="#79f7ff" fill-opacity="0.04"/>
+  <text x="960" y="120" text-anchor="middle" fill="#79f7ff" fill-opacity="0.18" font-family="system-ui,sans-serif" font-size="28" font-weight="800" letter-spacing="0.5em">SYNC ARENA</text>
+</svg>

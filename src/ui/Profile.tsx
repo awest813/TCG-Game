@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { FACTIONS, getFactionById, TRAINERS, mergeSocialState } from '../data/trainers';
-import { getCardById, getCardPalette, CARD_POOL } from '../data/cards';
+import { getCardById, getCardPalette, CARD_POOL, resolveCardImage } from '../data/cards';
 import { Card, CreatureType, PlayerProfile, SocialState } from '../core/types';
 import { SonsotyoDiagnosticRow, SonsotyoHeroCard, SonsotyoKicker, SonsotyoPanel, SonsotyoPill, SonsotyoTitle } from './SonsotyoUI';
 import '../styles/SonsotyoScenes.css';
@@ -194,7 +194,7 @@ const InventoryView: React.FC<{ cards: Card[]; progress: number }> = ({ cards, p
             <div key={index} className="glass-panel sonsotyo-panel" style={{ padding: '14px', borderColor: palette.accent }}>
               <div className="sonsotyo-kicker" style={{ color: palette.accent }}>{card.creatureType?.toUpperCase() ?? 'TACTIC'}</div>
               <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '0.95rem' }}>{card.name.toUpperCase()}</div>
-              {card.image && <img src={card.image} alt="" style={{ width: '100%', marginTop: '12px', borderRadius: '14px', opacity: 0.74 }} />}
+              <img src={resolveCardImage(card)} alt="" style={{ width: '100%', marginTop: '12px', borderRadius: '14px', opacity: 0.76 }} />
               <div className="sonsotyo-caption" style={{ marginTop: '10px' }}>{card.rarity.toUpperCase()}</div>
             </div>
           );

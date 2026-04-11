@@ -227,7 +227,8 @@ export const BattleBoard: React.FC = () => {
       <div
         className={`battle-container battle-sonsotyo fade-in ${activeField ? 'field-active' : ''}`}
         style={{
-          backgroundImage: activeField === 'garden-haze' ? 'url("/garden_haze_field.png")' : 'url("/battle_base_bg.png")',
+          backgroundImage:
+            activeField === 'garden-haze' ? 'url("/assets/fields/garden-haze.svg")' : 'url("/assets/fields/battle-base.svg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}

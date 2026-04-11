@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" fill="none">
+  <defs>
+    <linearGradient id="nv" x1="200" y1="0" x2="0" y2="280" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0c0614"/>
+      <stop offset="1" stop-color="#1a0c28"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="280" rx="14" fill="url(#nv)"/>
+  <rect x="10" y="10" width="180" height="260" rx="10" stroke="#c9a6ff" stroke-opacity="0.5" stroke-width="2"/>
+  <text x="100" y="46" text-anchor="middle" fill="#c9a6ff" font-family="system-ui,sans-serif" font-size="10" font-weight="800" letter-spacing="0.18em">NEURAL</text>
+  <text x="100" y="64" text-anchor="middle" fill="#c9a6ff" font-family="system-ui,sans-serif" font-size="10" font-weight="800" letter-spacing="0.18em">VEIL</text>
+  <circle cx="100" cy="150" r="44" fill="none" stroke="#c9a6ff" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M70 150 L130 150 M100 118 L100 182" stroke="#c9a6ff" stroke-opacity="0.25" stroke-width="2"/>
+  <text x="100" y="238" text-anchor="middle" fill="#c9a6ff" fill-opacity="0.4" font-family="system-ui,sans-serif" font-size="8" letter-spacing="0.25em">BOOSTER</text>
+</svg>
