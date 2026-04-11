@@ -76,10 +76,19 @@ export const TransitStation: React.FC = () => {
   const getNPCsInDistrict = (id: string) => NPCS.filter((npc) => npc.location === id && npc.activeTimes.includes(state.timeOfDay));
 
   const handleTravel = (id: string) => {
+    if (!unlocked.includes(id)) {
+      setRouteStatus('Clearance denied — that district is still locked.');
+      return;
+    }
     setRouteStatus(`Routing train to ${id.replace(/_/g, ' ')}...`);
-    updateGameState({ location: id });
+    updateGameState({ location: id, transitReturn: null });
     setIsClosing(true);
     window.setTimeout(() => setScene('DISTRICT_EXPLORE'), 800);
+  };
+
+  const exitTransit = () => {
+    const back = state.transitReturn ?? 'APARTMENT';
+    updateGameState({ transitReturn: null, currentScene: back });
   };
 
   return (
@@ -217,7 +226,9 @@ export const TransitStation: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-          <button className="neo-button" onClick={() => setScene('APARTMENT')}>Return Home</button>
+          <button className="neo-button" onClick={exitTransit}>
+            {state.transitReturn === 'DISTRICT_EXPLORE' ? 'Back to streets' : 'Back to apartment'}
+          </button>
         </div>
       </div>
 

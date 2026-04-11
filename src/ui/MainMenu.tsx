@@ -37,7 +37,7 @@ const STARTER_OPTIONS: Array<{
 ];
 
 export const MainMenu: React.FC = () => {
-  const { loadGame, resetGame, setScene } = useGame();
+  const { loadGame, resetGame, setScene, updateGameState } = useGame();
   const [showSettings, setShowSettings] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -124,8 +124,8 @@ export const MainMenu: React.FC = () => {
           <div className="sonsotyo-grid menu">
             <MenuNode label="New Start" sub="Init Recruit" primary onClick={() => setShowOnboarding(true)} icon="S-01" />
             <MenuNode label="Continue" sub="Restore Link" disabled={!hasSaveData} onClick={handleContinue} icon="S-02" />
-            <MenuNode label="Archive" sub="Data Gallery" onClick={() => setScene('PROFILE')} icon="S-03" />
-            <MenuNode label="Loadout" sub="Sync Cards" onClick={() => setScene('DECK_EDITOR')} icon="S-04" />
+            <MenuNode label="Archive" sub="Data Gallery" onClick={() => updateGameState({ profileReturn: 'MAIN_MENU', currentScene: 'PROFILE' })} icon="S-03" />
+            <MenuNode label="Loadout" sub="Sync Cards" onClick={() => updateGameState({ deckEditorReturn: 'MAIN_MENU', currentScene: 'DECK_EDITOR' })} icon="S-04" />
             <MenuNode label="System" sub="Gear Sync" onClick={() => setShowSettings(true)} icon="S-05" />
             <MenuNode label="Recovery" sub="Backup Mng" onClick={() => setScene('SAVE_LOAD')} icon="S-06" />
           </div>

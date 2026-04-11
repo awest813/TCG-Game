@@ -94,8 +94,8 @@ export const VNScene: React.FC = () => {
           <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
             The route runner was opened without a valid script session.
           </div>
-          <button className="neo-button" style={{ marginTop: '18px' }} onClick={() => setScene('DISTRICT_EXPLORE')}>
-            Return
+          <button className="neo-button" style={{ marginTop: '18px' }} onClick={() => updateGameState({ currentScene: 'APARTMENT' })}>
+            Return to apartment
           </button>
         </div>
       </div>
@@ -171,6 +171,7 @@ export const VNScene: React.FC = () => {
             }
           });
           if (shouldAdvanceTime) advanceTime();
+          const nextScene = resolveCompletionScene(session, launchBattle);
           updateGameState({
             vnSession: null,
             currentQuest:
@@ -178,9 +179,10 @@ export const VNScene: React.FC = () => {
                 ? vnState.variables.currentQuest
                 : launchBattle
                   ? 'A champion duel is about to begin.'
-                  : state.currentQuest
+                  : state.currentQuest,
+            currentScene: nextScene,
+            ...(nextScene === 'DECK_EDITOR' ? { deckEditorReturn: session.returnScene ?? 'DISTRICT_EXPLORE' } : {})
           });
-          setScene(resolveCompletionScene(session, launchBattle));
         }}
         onExit={() => {
           updateGameState({ vnSession: null });

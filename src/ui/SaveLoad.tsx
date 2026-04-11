@@ -130,7 +130,7 @@ export const SaveLoad: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '8px' }}>
-          <button className="neo-button" onClick={() => setScene('MAIN_MENU')}>Return To Core</button>
+          <button className="neo-button" onClick={() => setScene('MAIN_MENU')}>Return to title</button>
         </div>
       </div>
     </div>

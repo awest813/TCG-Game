@@ -53,7 +53,7 @@ export const VisualNovelFrame: React.FC = () => {
           <span className="vn-frame-title">{displayLabel}</span>
         </div>
         <div className="vn-frame-topline">
-          <span className="vn-frame-micro">Operator {profile.name.toUpperCase()}</span>
+          <span className="vn-frame-micro">Operator {(profile.name?.trim() || 'ROOKIE').toUpperCase()}</span>
           <span className="vn-frame-micro">{state.timeOfDay}</span>
           <span className="vn-frame-micro">{state.location.replace(/_/g, ' ')}</span>
           {districtProfile && <span className="vn-frame-micro">{districtProfile.travelLabel}</span>}

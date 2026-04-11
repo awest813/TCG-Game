@@ -36,6 +36,14 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   const handleQuit = () => {
+    updateGameState({
+      tournamentLobbyReturn: null,
+      deckEditorReturn: null,
+      transitReturn: null,
+      profileReturn: null,
+      pendingTournamentId: null,
+      activeTournament: null
+    });
     setScene('MAIN_MENU');
     onClose();
   };

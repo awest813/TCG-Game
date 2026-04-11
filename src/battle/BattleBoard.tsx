@@ -39,7 +39,13 @@ export const BattleBoard: React.FC = () => {
   const trainer = getTrainerById(opponentId);
   const opponentName = opponent?.name ?? 'KAIZEN';
   const opponentAvatar = trainer?.avatarPath ?? (opponentId === 'kaizen' ? '/avatar_kaizen.png' : '/avatar_player.png');
-  const playerDeck = useMemo(() => [...state.profile.inventory.deck], [state.profile.inventory.deck]);
+  const playerDeck = useMemo(() => {
+    const ids = [...state.profile.inventory.deck];
+    if (ids.length === 0) {
+      return ['ziprail', 'ziprail', 'neon-striker', 'signalmite', 'quick-transfer'];
+    }
+    return ids;
+  }, [state.profile.inventory.deck]);
   const opponentDeck = useMemo(
     () => [...(trainer?.deck ?? ['ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'quick-transfer', 'ziprail'])],
     [trainer?.deck]
@@ -147,8 +153,13 @@ export const BattleBoard: React.FC = () => {
   };
 
   const handleVictoryExit = () => {
-    if (!activeTournament || !tournamentTier) {
-      setScene('DISTRICT_EXPLORE');
+    if (!activeTournament) {
+      setScene('APARTMENT');
+      return;
+    }
+    if (!tournamentTier) {
+      updateGameState({ activeTournament: null, tournamentLobbyReturn: null });
+      setScene('TOURNAMENT');
       return;
     }
 
@@ -204,7 +215,7 @@ export const BattleBoard: React.FC = () => {
       setScene('TOURNAMENT');
       return;
     }
-    setScene('MAIN_MENU');
+    setScene('APARTMENT');
   };
 
   if (showVS) {

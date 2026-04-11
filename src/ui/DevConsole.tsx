@@ -6,9 +6,19 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { setScene, updateProfile, updateGameState } = useGame();
 
     const scenes: SceneType[] = [
-        'MAIN_MENU', 'APARTMENT', 'DISTRICT_EXPLORE', 
-        'DECK_EDITOR', 'STORE', 'TOURNAMENT', 
-        'TRANSIT', 'PROFILE', 'BATTLE'
+        'MAIN_MENU',
+        'APARTMENT',
+        'DISTRICT_EXPLORE',
+        'DECK_EDITOR',
+        'STORE',
+        'TOURNAMENT',
+        'TRANSIT',
+        'PROFILE',
+        'BATTLE',
+        'VN_SCENE',
+        'PACK_OPENING',
+        'SOCIAL',
+        'SAVE_LOAD'
     ];
 
     return (
@@ -28,7 +38,14 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <button key={s} className="neo-button" 
                         style={{ fontSize: '0.7rem' }}
                         onClick={() => {
-                            updateGameState({ pendingTournamentId: null, activeTournament: null, tournamentLobbyReturn: null });
+                            updateGameState({
+                              pendingTournamentId: null,
+                              activeTournament: null,
+                              tournamentLobbyReturn: null,
+                              deckEditorReturn: null,
+                              transitReturn: null,
+                              profileReturn: null
+                            });
                             setScene(s);
                             onClose();
                         }}>
@@ -38,7 +55,7 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
             <div style={{ marginTop: '30px', display: 'flex', gap: '20px' }}>
-                <button className="neo-button primary" onClick={() => updateProfile({ currency: 99999 })}>+99999 DP</button>
+                <button className="neo-button primary" onClick={() => updateProfile({ currency: 99999 })}>+99999 CR</button>
                 <button className="neo-button primary" onClick={() => updateProfile({ xp: 5000 })}>MAX SYNC</button>
             </div>
             

@@ -216,7 +216,7 @@ export const CardShop: React.FC = () => {
         </div>
 
         <div style={{ marginTop: 'auto', paddingTop: '18px', textAlign: 'center' }}>
-          <button className="neo-button" onClick={() => setScene('DISTRICT_EXPLORE')}>Return To District</button>
+          <button className="neo-button" onClick={() => setScene('DISTRICT_EXPLORE')}>Return to district</button>
         </div>
       </div>
 

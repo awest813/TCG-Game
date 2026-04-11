@@ -8,7 +8,7 @@ import '../styles/SonsotyoScenes.css';
 type CardTypeFilter = 'ALL' | CreatureType | 'SUPPORT';
 
 export const DeckEditor: React.FC = () => {
-  const { state, updateProfile, setScene } = useGame();
+  const { state, updateProfile, updateGameState } = useGame();
   const [filter, setFilter] = useState<CardTypeFilter>('ALL');
   const [search, setSearch] = useState('');
 
@@ -38,6 +38,19 @@ export const DeckEditor: React.FC = () => {
   const averageCost = (deck.reduce((acc, id) => acc + (getCardById(id)?.cost || 0), 0) / (deck.length || 1)).toFixed(1);
   const creatureCount = deck.filter((id) => getCardById(id)?.cardType === 'creature').length;
   const supportCount = deck.length - creatureCount;
+
+  const exitDeckTerminal = () => {
+    audioManager.playSFX('menu_close');
+    const back = state.deckEditorReturn ?? 'APARTMENT';
+    updateGameState({ deckEditorReturn: null, currentScene: back });
+  };
+
+  const exitLabel =
+    state.deckEditorReturn === 'MAIN_MENU'
+      ? 'Save & return to title'
+      : state.deckEditorReturn === 'DISTRICT_EXPLORE'
+        ? 'Save & return to streets'
+        : 'Save & return to apartment';
 
   return (
     <div className="deck-builder-container fade-in" style={{ height: '100vh', display: 'grid', gridTemplateColumns: '1fr 380px', background: 'linear-gradient(180deg, rgba(8,10,18,0.86), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.12), transparent 22%)', color: 'white', overflow: 'hidden' }}>
@@ -126,8 +139,8 @@ export const DeckEditor: React.FC = () => {
         </div>
 
         <div style={{ marginTop: '24px', display: 'grid', gap: '12px' }}>
-          <button className="neo-button primary" onClick={() => { audioManager.playSFX('menu_close'); setScene('MAIN_MENU'); }} style={{ width: '100%', justifyContent: 'center' }}>
-            Sync Loadout
+          <button className="neo-button primary" onClick={exitDeckTerminal} style={{ width: '100%', justifyContent: 'center' }}>
+            {exitLabel}
           </button>
           <div style={{ textAlign: 'center' }} className="sonsotyo-caption">All changes auto-saved to biolink</div>
         </div>

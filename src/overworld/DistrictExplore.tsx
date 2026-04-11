@@ -37,6 +37,27 @@ export const DistrictExplore: React.FC = () => {
     []
   );
 
+  const validRemoteScenes = useMemo(
+    () =>
+      new Set<SceneType>([
+        'MAIN_MENU',
+        'APARTMENT',
+        'DISTRICT_EXPLORE',
+        'DECK_EDITOR',
+        'PACK_OPENING',
+        'STORE',
+        'BATTLE',
+        'REWARD',
+        'SOCIAL',
+        'TOURNAMENT',
+        'TRANSIT',
+        'SAVE_LOAD',
+        'PROFILE',
+        'VN_SCENE'
+      ]),
+    []
+  );
+
   useEffect(() => {
     setCurrentLocId(districtScenes[0]?.id ?? null);
   }, [state.location, districtScenes]);
@@ -52,7 +73,8 @@ export const DistrictExplore: React.FC = () => {
   const resolveSceneJump = (targetId?: string): SceneType | null => {
     if (!targetId) return null;
     if (jumpMap[targetId]) return jumpMap[targetId];
-    return targetId.replace(/-/g, '_').toUpperCase() as SceneType;
+    const slug = targetId.replace(/-/g, '_').toUpperCase();
+    return validRemoteScenes.has(slug as SceneType) ? (slug as SceneType) : null;
   };
 
   const handleAction = (action: LocationAction) => {
@@ -68,9 +90,12 @@ export const DistrictExplore: React.FC = () => {
           const nextScene = resolveSceneJump(action.targetId);
           if (nextScene) {
             if (nextScene === 'TOURNAMENT') {
-              updateGameState({ tournamentLobbyReturn: 'DISTRICT_EXPLORE' });
+              updateGameState({ tournamentLobbyReturn: 'DISTRICT_EXPLORE', currentScene: 'TOURNAMENT' });
+            } else if (nextScene === 'DECK_EDITOR') {
+              updateGameState({ deckEditorReturn: 'DISTRICT_EXPLORE', currentScene: 'DECK_EDITOR' });
+            } else {
+              setScene(nextScene);
             }
-            setScene(nextScene);
           } else setStatusText('Route target unavailable.');
         }
         setIsTransitioning(false);
@@ -212,7 +237,12 @@ export const DistrictExplore: React.FC = () => {
 
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
             <button className="neo-button" onClick={() => setShowSettings(true)}>System</button>
-            <button className="neo-button" onClick={() => setScene('TRANSIT')}>Transit Grid</button>
+            <button
+              className="neo-button"
+              onClick={() => updateGameState({ transitReturn: 'DISTRICT_EXPLORE', currentScene: 'TRANSIT' })}
+            >
+              Transit grid
+            </button>
           </div>
         </div>
       </div>

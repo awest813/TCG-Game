@@ -132,7 +132,7 @@ export const PackOpening: React.FC = () => {
                   INITIALIZE_SYNC
               </button>
             ) : (
-              <button className="neo-button" onClick={() => setScene('APARTMENT')}>RETURN TO HUB</button>
+              <button className="neo-button" onClick={() => setScene('APARTMENT')}>Return to apartment</button>
             )}
           </div>
         </div>

@@ -86,7 +86,7 @@ export const ApartmentHub: React.FC = () => {
         const name = pickResult.pickedMesh.name;
         if (name === 'terminal') {
           setStatusText('Opening sync terminal...');
-          setScene('DECK_EDITOR');
+          updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
         }
         if (name === 'bed' && confirm('Rest until next time block?')) {
           setStatusText('Advancing schedule...');
@@ -109,7 +109,7 @@ export const ApartmentHub: React.FC = () => {
       isDisposed = true;
       cleanup?.();
     };
-  }, [advanceTime, setScene, state.timeOfDay]);
+  }, [advanceTime, setScene, state.timeOfDay, updateGameState]);
 
   return (
     <div className="apartment-container sonsotyo-scene fade-in" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
@@ -133,17 +133,51 @@ export const ApartmentHub: React.FC = () => {
         <div />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-end', justifyContent: 'center', pointerEvents: 'auto' }}>
-          <button className="neo-button" onClick={() => { setStatusText('Opening deck terminal...'); setScene('DECK_EDITOR'); }}>Deck</button>
-          <button className="neo-button" onClick={() => setStatusText('Apartment route anchored.')}>Home</button>
-          <button className="neo-button primary" onClick={() => { setStatusText('Opening transit planner...'); setScene('TRANSIT'); }}>Transit</button>
+          <button
+            className="neo-button"
+            onClick={() => {
+              setStatusText('Opening deck terminal...');
+              updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+            }}
+          >
+            Deck
+          </button>
+          <div className="sonsotyo-caption" style={{ textAlign: 'right', maxWidth: '120px', lineHeight: 1.4 }}>
+            Current sector: apartment
+          </div>
+          <button
+            className="neo-button primary"
+            onClick={() => {
+              setStatusText('Opening transit planner...');
+              updateGameState({ transitReturn: 'APARTMENT', currentScene: 'TRANSIT' });
+            }}
+          >
+            Transit
+          </button>
         </div>
 
         <div className="glass-panel sonsotyo-panel" style={{ gridColumn: '1 / span 2', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'auto' }}>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button className="neo-button" onClick={() => { saveGame(); setStatusText('Progress encrypted and saved.'); }}>Save State</button>
-            <button className="neo-button" onClick={() => { setStatusText('Opening sync terminal...'); setScene('DECK_EDITOR'); }}>Terminal</button>
+            <button
+              className="neo-button"
+              onClick={() => {
+                setStatusText('Opening sync terminal...');
+                updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+              }}
+            >
+              Terminal
+            </button>
           </div>
-          <button className="neo-button primary" onClick={() => { setStatusText('Opening transit planner...'); setScene('TRANSIT'); }}>Go To Metro Station</button>
+          <button
+            className="neo-button primary"
+            onClick={() => {
+              setStatusText('Opening transit planner...');
+              updateGameState({ transitReturn: 'APARTMENT', currentScene: 'TRANSIT' });
+            }}
+          >
+            Go to metro station
+          </button>
         </div>
       </div>
 
@@ -205,7 +239,11 @@ export const ApartmentHub: React.FC = () => {
                 updateGameState({ currentQuest: nextCircuitQuest(mergedFlags) });
 
                 setStatusText('Lucy completed the onboarding route.');
-                setScene(vnState.flags.reviewedDeck ? 'DECK_EDITOR' : 'DISTRICT_EXPLORE');
+                if (vnState.flags.reviewedDeck) {
+                  updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+                } else {
+                  setScene('DISTRICT_EXPLORE');
+                }
               }}
             />
           </div>

@@ -197,6 +197,12 @@ export interface GameState {
   pendingTournamentId: string | null;
   /** Where the tournament lobby "back" action returns (e.g. Card Annex vs streets). */
   tournamentLobbyReturn?: 'STORE' | 'DISTRICT_EXPLORE' | null;
+  /** Where the deck terminal exits to (set when opening the editor from hub, streets, or title). */
+  deckEditorReturn?: SceneType | null;
+  /** Where the transit grid "back" exits to before boarding a train. */
+  transitReturn?: SceneType | null;
+  /** Where Profile exits when opened from the title screen. */
+  profileReturn?: SceneType | null;
   vnSession: VNSession | null;
   visuals: {
     presentationTier: PresentationTier;

@@ -66,6 +66,10 @@ export const Tournament: React.FC = () => {
 
   const startTournament = React.useCallback(
     (tier: TournamentTier) => {
+      if (state.activeTournament) {
+        showToast('You already have an active bracket. Finish it, cash out, or abandon before starting another.');
+        return;
+      }
       if (tier.locationId !== 'card-shop' && !isDistrictTournamentUnlocked(tier.id, state.profile.progress.flags)) {
         showToast(districtUnlockReason(tier.id, state.profile.progress.flags) ?? 'This bracket is locked.');
         return;
@@ -85,8 +89,14 @@ export const Tournament: React.FC = () => {
       audioManager.playSFX('select');
       updateGameState({ activeTournament: newActive });
     },
-    [showToast, state.profile.currency, state.profile.progress.flags, updateGameState, updateProfile]
+    [showToast, state.activeTournament, state.profile.currency, state.profile.progress.flags, updateGameState, updateProfile]
   );
+
+  React.useEffect(() => {
+    if (!activeTourney || !pendingTierId) return;
+    showToast('A bracket is already running — extra invite discarded.');
+    updateGameState({ pendingTournamentId: null });
+  }, [activeTourney, pendingTierId, showToast, updateGameState]);
 
   React.useEffect(() => {
     if (!pendingTierId || activeTourney) return;
@@ -171,7 +181,8 @@ export const Tournament: React.FC = () => {
     if (!window.confirm('Forfeit this bracket? Entry fee is not refunded.')) return;
     updateGameState({
       activeTournament: null,
-      currentQuest: nextCircuitQuest(state.profile.progress.flags)
+      currentQuest: nextCircuitQuest(state.profile.progress.flags),
+      tournamentLobbyReturn: null
     });
     showToast('Bracket forfeited. You can start again from the lobby or annex.');
   };
@@ -335,11 +346,12 @@ export const Tournament: React.FC = () => {
               className="neo-button primary"
               style={{ marginTop: '22px' }}
               onClick={() => {
+                const dest: SceneType = state.tournamentLobbyReturn === 'STORE' ? 'STORE' : 'DISTRICT_EXPLORE';
                 updateGameState({ activeTournament: null, tournamentLobbyReturn: null });
-                setScene('DISTRICT_EXPLORE');
+                setScene(dest);
               }}
             >
-              Return to district
+              {state.tournamentLobbyReturn === 'STORE' ? 'Return to Card Annex' : 'Return to district'}
             </button>
           </div>
         </div>

@@ -9,7 +9,7 @@ import '../styles/SonsotyoScenes.css';
 type ProfileTab = 'DOSSIER' | 'INVENTORY' | 'SYNC_ANALYTICS';
 
 export const Profile: React.FC = () => {
-  const { state, setScene } = useGame();
+  const { state, setScene, updateGameState } = useGame();
   const { profile } = state;
   const [activeTab, setActiveTab] = useState<ProfileTab>('DOSSIER');
   const social = mergeSocialState(profile.social);
@@ -72,8 +72,20 @@ export const Profile: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', paddingBottom: '10px', flexWrap: 'wrap' }}>
-          <button className="neo-button" onClick={() => setScene('APARTMENT')}>Return To Hub</button>
-          <button className="neo-button" onClick={() => setScene('DISTRICT_EXPLORE')}>City Streets</button>
+          <button
+            className="neo-button"
+            onClick={() => {
+              const dest = state.profileReturn ?? 'APARTMENT';
+              updateGameState({ profileReturn: null, currentScene: dest });
+            }}
+          >
+            {state.profileReturn === 'MAIN_MENU' ? 'Return to title' : 'Return to apartment'}
+          </button>
+          {state.profileReturn !== 'MAIN_MENU' && (
+            <button className="neo-button" onClick={() => setScene('DISTRICT_EXPLORE')}>
+              Open city streets
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -85,7 +97,9 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
       <SonsotyoPanel>
         <SonsotyoKicker>Passport</SonsotyoKicker>
-        <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '4.2rem', opacity: 0.18 }}>{profile.name[0]}</div>
+        <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '4.2rem', opacity: 0.18 }}>
+          {(profile.name.trim()[0] ?? '?').toUpperCase()}
+        </div>
         <div style={{ marginTop: '-16px', fontFamily: 'var(--font-display)', fontSize: '1.5rem' }}>Rank {profile.level}</div>
         <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <PassportStat label="Wins" value={profile.stats.wins} />

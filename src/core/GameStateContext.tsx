@@ -3,6 +3,7 @@ import { GameContext } from './GameContext';
 import { GameState, NewGameConfig, PlayerProfile, SceneType, TimeOfDay } from './types';
 import { migrateCircuitFlags } from './circuitProgression';
 import { DEFAULT_STARTING_CREDITS } from './economy';
+import { sanitizeGameState } from './gameStateSanitize';
 import { createDefaultSocialState, mergeSocialState } from '../data/trainers';
 
 const INITIAL_QUEST = 'Tutorial: Talk to Maya in your apartment, then follow Lucy’s briefing.';
@@ -104,6 +105,9 @@ currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore 
     activeTournament: null,
     pendingTournamentId: null,
     tournamentLobbyReturn: null,
+    deckEditorReturn: null,
+    transitReturn: null,
+    profileReturn: null,
     vnSession: null,
     visuals: {
       presentationTier: 'HIGH'
@@ -115,8 +119,13 @@ const normalizeProfile = (profile: PlayerProfile): PlayerProfile => {
   const starter = typeof profile.progress?.flags?.onboardingStarter === 'string' ? profile.progress.flags.onboardingStarter : 'Pulse';
   const starterLoadout = STARTER_LOADOUTS[starter as NewGameConfig['starter']] ?? STARTER_LOADOUTS.Pulse;
 
+  const safeCurrency = Math.max(0, Math.min(99_999_999, Math.floor(Number(profile.currency) || 0)));
+  const safeName = typeof profile.name === 'string' && profile.name.trim() ? profile.name.trim() : 'Neo_Rookie';
+
   return {
     ...profile,
+    name: safeName,
+    currency: safeCurrency,
     inventory: {
       cards: profile.inventory?.cards ?? [...starterLoadout.collection],
       packs: profile.inventory?.packs ?? [...starterLoadout.packs],
@@ -124,12 +133,12 @@ const normalizeProfile = (profile: PlayerProfile): PlayerProfile => {
       items: profile.inventory?.items ?? ['Basic Holo-Sleeve']
     },
     stats: {
-      wins: profile.stats?.wins ?? 0,
-      losses: profile.stats?.losses ?? 0,
-      tournamentsWon: profile.stats?.tournamentsWon ?? 0,
-      cardsCollected: profile.stats?.cardsCollected ?? profile.inventory?.cards?.length ?? starterLoadout.collection.length,
-      playTime: profile.stats?.playTime ?? 0,
-      winStreak: profile.stats?.winStreak ?? 0,
+      wins: Math.max(0, Math.floor(Number(profile.stats?.wins) || 0)),
+      losses: Math.max(0, Math.floor(Number(profile.stats?.losses) || 0)),
+      tournamentsWon: Math.max(0, Math.floor(Number(profile.stats?.tournamentsWon) || 0)),
+      cardsCollected: Math.max(0, Math.floor(Number(profile.stats?.cardsCollected) || profile.inventory?.cards?.length || starterLoadout.collection.length)),
+      playTime: Math.max(0, Math.floor(Number(profile.stats?.playTime) || 0)),
+      winStreak: Math.max(0, Math.floor(Number(profile.stats?.winStreak) || 0)),
       archetypeUsage: profile.stats?.archetypeUsage ?? { Pulse: 0, Bloom: 0, Tide: 0, Alloy: 0, Veil: 0, Current: 0 }
     },
     social: mergeSocialState(profile.social),
@@ -245,9 +254,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (saved) {
       const parsed: unknown = JSON.parse(saved);
       if (isGameState(parsed)) {
+        const loaded = sanitizeGameState(parsed as GameState);
         setState({
-          ...parsed,
-          profile: normalizeProfile(parsed.profile)
+          ...loaded,
+          profile: normalizeProfile(loaded.profile),
+          tournamentLobbyReturn: loaded.tournamentLobbyReturn ?? null,
+          deckEditorReturn: loaded.deckEditorReturn ?? null,
+          transitReturn: loaded.transitReturn ?? null,
+          profileReturn: loaded.profileReturn ?? null
         });
         return true;
       }
