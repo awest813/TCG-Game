@@ -242,3 +242,341 @@
     min-width: 100%;
   }
 }
+
+/* --- Tutorial & VN dialogue shell (shared with VNRunner) --- */
+
+.tutorial-guide-shell {
+  width: min(1120px, calc(100% - 40px));
+  margin: 0 auto 26px;
+  padding: 0 10px;
+  pointer-events: auto;
+}
+
+.tutorial-guide-panel {
+  display: grid;
+  grid-template-columns: minmax(180px, 300px) minmax(0, 1fr);
+  gap: 8px 26px;
+  padding: 22px 26px 24px;
+  border-radius: 26px;
+  align-items: end;
+  border: 1px solid rgba(223, 247, 255, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(255, 227, 154, 0.1),
+    0 22px 70px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(168deg, rgba(255, 227, 154, 0.07), transparent 38%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, rgba(14, 19, 35, 0.93), rgba(7, 10, 18, 0.88));
+}
+
+.tutorial-guide-panel.vn-runner-panel {
+  grid-template-columns: 1fr;
+  align-items: stretch;
+}
+
+.tutorial-guide-portrait {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.tutorial-guide-portrait::after {
+  content: '';
+  position: absolute;
+  inset: auto 8% 0;
+  height: 42%;
+  background: radial-gradient(ellipse at 50% 100%, rgba(126, 242, 255, 0.2), transparent 72%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tutorial-guide-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: space-between;
+  min-height: 180px;
+  padding: 4px 0 2px;
+}
+
+.tutorial-guide-message {
+  margin-top: 12px;
+  font-size: 1.04rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 62ch;
+}
+
+.tutorial-guide-objective {
+  padding: 13px 17px;
+  border-radius: 16px;
+  background: rgba(255, 227, 154, 0.07);
+  border-left: 4px solid var(--accent-yellow);
+  color: var(--text-bright);
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.tutorial-guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+  .tutorial-guide-panel:not(.vn-runner-panel) {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .tutorial-guide-portrait img {
+    max-height: 220px !important;
+  }
+}
+
+/* --- VNRunner stage strip --- */
+
+.vn-runner-stage {
+  margin-top: 16px;
+  border-radius: 20px;
+  min-height: 168px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, rgba(12, 16, 28, 0.5), rgba(6, 8, 14, 0.85));
+}
+
+.vn-runner-stage-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(4, 6, 12, 0.72));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vn-runner-stage-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 0.9fr);
+  gap: 10px;
+  padding: 12px 14px 18px;
+  align-items: end;
+  min-height: 200px;
+}
+
+.vn-runner-bust {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0.72;
+  transform: translateY(6px) scale(0.96);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.vn-runner-bust.focus {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.vn-runner-bust.empty {
+  opacity: 0.35;
+}
+
+.vn-runner-bust img {
+  max-height: 140px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+}
+
+.vn-runner-bust-fallback {
+  min-height: 120px;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  display: grid;
+  place-items: center;
+  font-size: 0.65rem;
+  letter-spacing: 0.14rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.vn-runner-portrait-column {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.vn-runner-center-portrait {
+  opacity: 0.88;
+  transform: scale(0.98);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.vn-runner-center-portrait.focus {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.vn-runner-center-portrait img {
+  max-height: 200px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.5));
+}
+
+.vn-runner-stage-copy {
+  text-align: center;
+  padding: 24px 12px;
+}
+
+.vn-runner-stage-kicker {
+  font-size: 0.65rem;
+  letter-spacing: 0.2rem;
+  color: var(--accent-yellow);
+  text-transform: uppercase;
+}
+
+.vn-runner-stage-title {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+/* --- Card boutique atmosphere --- */
+
+.shop-boutique-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 45% at 50% -5%, rgba(255, 227, 154, 0.11), transparent 52%),
+    radial-gradient(circle at 8% 92%, rgba(126, 242, 255, 0.08), transparent 38%),
+    radial-gradient(circle at 94% 18%, rgba(255, 138, 198, 0.1), transparent 32%);
+}
+
+.shop-display-niche {
+  position: relative;
+  border-radius: 18px;
+  min-height: 148px;
+  margin-bottom: 14px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.25)),
+    radial-gradient(circle at 50% 120%, rgba(126, 242, 255, 0.12), transparent 55%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35), 0 0 24px rgba(126, 242, 255, 0.06);
+}
+
+.shop-display-niche img {
+  max-height: 132px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
+}
+
+.shop-display-niche--empty {
+  font-size: 0.72rem;
+  letter-spacing: 0.16rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+}
+
+.shop-product-card {
+  position: relative;
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.38s ease, border-color 0.35s ease;
+}
+
+.shop-product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.4), 0 0 36px rgba(126, 242, 255, 0.12);
+}
+
+.shop-shelf-rail {
+  height: 4px;
+  border-radius: 999px;
+  margin: 6px 0 18px;
+  background: linear-gradient(90deg, transparent, rgba(255, 227, 154, 0.35), rgba(126, 242, 255, 0.25), transparent);
+  opacity: 0.85;
+}
+
+/* Lucy — permanent transit practice dock */
+
+.transit-lucy-dock {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  z-index: 45;
+  width: min(440px, calc(100% - 36px));
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.transit-lucy-dock > * {
+  pointer-events: auto;
+}
+
+.transit-lucy-dock-portrait {
+  flex-shrink: 0;
+  position: relative;
+  line-height: 0;
+}
+
+.transit-lucy-dock-portrait img {
+  max-height: 118px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.5));
+}
+
+.transit-lucy-dock-panel {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px 16px;
+  border-radius: 20px;
+  border-left: 3px solid var(--accent-yellow);
+}
+
+.transit-lucy-dock-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.transit-lucy-dock-actions .neo-button {
+  padding: 10px 16px;
+  font-size: 0.62rem;
+  letter-spacing: 0.12rem;
+}
+
+@media (max-width: 640px) {
+  .transit-lucy-dock {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .transit-lucy-dock-portrait {
+    display: flex;
+    justify-content: center;
+  }
+
+  .transit-lucy-dock-portrait img {
+    max-height: 96px;
+  }
+}

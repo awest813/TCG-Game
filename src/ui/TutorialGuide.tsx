@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/SonsotyoScenes.css';
 
 type TutorialAction = {
   label: string;
@@ -12,17 +13,70 @@ export const TutorialGuide: React.FC<{
   message: string;
   objective: string;
   actions: TutorialAction[];
-}> = ({ title, subtitle, message, objective, actions }) => {
+  portraitSrc?: string;
+  portraitAlt?: string;
+  /** Dim the scene behind the panel; optional click-through to parent via onBackdropClick */
+  dimBackdrop?: boolean;
+  onBackdropClick?: () => void;
+}> = ({
+  title,
+  subtitle,
+  message,
+  objective,
+  actions,
+  portraitSrc = '/lucy_tutorial.png',
+  portraitAlt = 'Lucy — circuit guide',
+  dimBackdrop = false,
+  onBackdropClick
+}) => {
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'end', justifyContent: 'center', pointerEvents: 'none', zIndex: 140 }}>
-      <div className="tutorial-guide-shell">
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'end',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+        zIndex: 140
+      }}
+    >
+      {dimBackdrop &&
+        (onBackdropClick ? (
+          <button
+            type="button"
+            aria-label="Dismiss overlay backdrop"
+            onClick={onBackdropClick}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              border: 'none',
+              cursor: 'pointer',
+              pointerEvents: 'auto',
+              zIndex: 0,
+              background: 'linear-gradient(180deg, rgba(2,4,12,0.55), rgba(4,6,14,0.72))'
+            }}
+          />
+        ) : (
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              zIndex: 0,
+              background: 'linear-gradient(180deg, rgba(2,4,12,0.4), rgba(4,6,14,0.55))'
+            }}
+          />
+        ))}
+      <div className="tutorial-guide-shell" style={{ pointerEvents: 'auto', position: 'relative', zIndex: 1 }}>
         <div
           className="glass-panel tutorial-guide-panel"
         >
           <div className="tutorial-guide-portrait">
             <img
-              src="/lucy_tutorial.png"
-              alt="Lucy tutorial guide"
+              src={portraitSrc}
+              alt={portraitAlt}
               style={{
                 position: 'relative',
                 zIndex: 1,

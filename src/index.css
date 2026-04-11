@@ -9,6 +9,9 @@
   --accent-yellow: #ffe39a;
   --accent-lavender: #b6b2ff;
   --accent-ice: #dff7ff;
+  /* Aliases used by narrative / legacy panels */
+  --accent-cyan: #7ef2ff;
+  --accent-magenta: #ff8ac6;
   --text-main: #e5ebff;
   --text-bright: #ffffff;
   --text-secondary: rgba(229, 235, 255, 0.66);

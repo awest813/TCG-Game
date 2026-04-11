@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
+import { getTrainerById } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
+import { TutorialGuide } from './TutorialGuide';
 import '../styles/SonsotyoScenes.css';
 
 type DistrictNode = {
@@ -23,12 +25,46 @@ const ALL_DISTRICTS: DistrictNode[] = [
   { id: 'CIVIC_CROWN', name: 'Civic Crown', description: 'The pinnacle. Sanctioned league grand finals.', color: '#ffffff', pos: { x: '82%', y: '18%' }, shops: true, events: true }
 ];
 
+const LUCY = getTrainerById('lucy');
+
+const TRANSIT_PRACTICE_DRILLS = [
+  'Gold chip under a node: that district still has boutique inventory on the line.',
+  'Pink chip: arena brackets fire there—good for streak practice before league night.',
+  'Cyan chip: handlers and story beats are clocked in on the platform.',
+  'Locked nodes stay dark until your clearance list updates from the apartment arc.',
+  'After you pick a node, read District Intel, then Board Train—no partial jumps.',
+  'If the route feed stalls, re-hover the ring to wake the GPS echo.'
+];
+
 export const TransitStation: React.FC = () => {
-  const { state, setScene, updateGameState } = useGame();
+  const { state, setScene, updateGameState, updateProfile } = useGame();
   const [hovered, setHovered] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(state.location);
   const [routeStatus, setRouteStatus] = useState('Select a district node to view route intel.');
   const [isClosing, setIsClosing] = useState(false);
+  const [lucyBriefingSessionHidden, setLucyBriefingSessionHidden] = useState(false);
+  const [lucyReplayBriefing, setLucyReplayBriefing] = useState(false);
+  const [practiceDrillIndex, setPracticeDrillIndex] = useState(0);
+
+  const lucyPortrait = LUCY?.avatarPath ?? '/lucy_tutorial.png';
+  const flags = state.profile.progress.flags;
+  const transitGridIntroDone = Boolean(flags.transitLucyGridIntroDone || flags.transitLucyBriefingDismissed);
+  const showLucyIntroOverlay =
+    ((!transitGridIntroDone && !lucyBriefingSessionHidden) || lucyReplayBriefing) && !isClosing;
+
+  const markGridIntroDone = () => {
+    updateProfile({
+      progress: {
+        ...state.profile.progress,
+        flags: {
+          ...state.profile.progress.flags,
+          transitLucyGridIntroDone: true,
+          transitLucyBriefingDismissed: true
+        }
+      }
+    });
+    setLucyReplayBriefing(false);
+  };
 
   const unlocked = state.profile.progress.unlockedDistricts;
   const activeDistrict = useMemo(() => ALL_DISTRICTS.find((district) => district.id === selected) ?? null, [selected]);
@@ -181,6 +217,71 @@ export const TransitStation: React.FC = () => {
           <button className="neo-button" onClick={() => setScene('APARTMENT')}>Return Home</button>
         </div>
       </div>
+
+      {transitGridIntroDone && !isClosing && (
+        <div className="transit-lucy-dock" aria-live="polite">
+          <div className="transit-lucy-dock-portrait">
+            <img src={lucyPortrait} alt="" />
+          </div>
+          <div className="glass-panel transit-lucy-dock-panel">
+            <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>
+              Lucy // Practice channel
+            </div>
+            <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 800 }}>
+              Grid drills and etiquette
+            </div>
+            <p className="sonsotyo-copy" style={{ marginTop: '10px', fontSize: '0.88rem', lineHeight: 1.55 }}>
+              {TRANSIT_PRACTICE_DRILLS[practiceDrillIndex]}
+            </p>
+            <div className="transit-lucy-dock-actions">
+              <button type="button" className="neo-button" onClick={() => setPracticeDrillIndex((i) => (i + 1) % TRANSIT_PRACTICE_DRILLS.length)}>
+                Next drill
+              </button>
+              <button type="button" className="neo-button primary" onClick={() => setLucyReplayBriefing(true)}>
+                Replay briefing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLucyIntroOverlay && (
+        <TutorialGuide
+          dimBackdrop
+          onBackdropClick={() => {
+            if (lucyReplayBriefing) setLucyReplayBriefing(false);
+            else setLucyBriefingSessionHidden(true);
+          }}
+          portraitSrc={lucyPortrait}
+          portraitAlt={`${LUCY?.name ?? 'Lucy'} — ${LUCY?.title ?? 'Circuit Guide'}`}
+          title="Lucy // Transit Desk"
+          subtitle="Neo-Rail orientation"
+          message={`Hey, ${state.profile.name} — welcome to the grid. Every lit node is a district you are cleared for: tap it once to pull intel, then use Board Train when you are ready to drop into that route. Gold chips mean shops are open there; pink means arena brackets; cyan means someone on-site wants to talk.`}
+          objective={state.currentQuest}
+          actions={
+            lucyReplayBriefing
+              ? [
+                  {
+                    label: 'Close briefing',
+                    variant: 'primary',
+                    onClick: () => setLucyReplayBriefing(false)
+                  }
+                ]
+              : [
+                  {
+                    label: 'Hide for this visit',
+                    variant: 'secondary',
+                    onClick: () => setLucyBriefingSessionHidden(true)
+                  },
+                  {
+                    label: 'Continue to grid',
+                    variant: 'primary',
+                    onClick: markGridIntroDone
+                  }
+                ]
+          }
+        />
+      )}
 
       <style>{`
         .transit-grid-lines {

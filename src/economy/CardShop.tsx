@@ -1,6 +1,8 @@
 import React from 'react';
 import { useGame } from '../core/GameContext';
+import { audioManager } from '../core/AudioManager';
 import { ShopItem } from '../core/types';
+import { getCardById } from '../data/cards';
 import '../styles/SonsotyoScenes.css';
 
 const SHOP_INVENTORY: ShopItem[] = [
@@ -14,6 +16,13 @@ const SHOP_INVENTORY: ShopItem[] = [
 export const CardShop: React.FC = () => {
   const { state, updateProfile, updateGameState, setScene } = useGame();
   const { profile } = state;
+
+  React.useEffect(() => {
+    audioManager.playBGM('SHOP');
+    return () => {
+      audioManager.playBGM('TOWN');
+    };
+  }, []);
 
   const buyItem = (item: ShopItem) => {
     if (profile.currency < item.cost) {
@@ -48,6 +57,7 @@ export const CardShop: React.FC = () => {
         position: 'relative'
       }}
     >
+      <div className="shop-boutique-layer" aria-hidden />
       <div className="sonsotyo-overlay" />
       <div className="scanlines" />
 
@@ -57,33 +67,61 @@ export const CardShop: React.FC = () => {
             <div className="sonsotyo-kicker">Hub Commerce Gateway</div>
             <h1 className="sonsotyo-title" style={{ fontSize: 'clamp(2.8rem, 6vw, 4.8rem)', marginTop: '10px' }}>Card Master Boutique</h1>
             <p className="sonsotyo-copy" style={{ maxWidth: '46ch', marginTop: '14px' }}>
-              A sleep-lit market shelf for packs, singles, and prestige flourishes.
+              A soft-lit shelf line for boosters, curated singles, and prestige flourishes. Neon glass, quiet hum, rare pulls waiting behind the counter glow.
             </p>
+            <div className="sonsotyo-meta-strip" style={{ marginTop: '18px' }}>
+              <div className="sonsotyo-pill" style={{ borderColor: 'rgba(255,227,154,0.35)' }}>
+                Floor audio: boutique loop
+              </div>
+              <div className="sonsotyo-pill">Stock rotates with district league data</div>
+              <div className="sonsotyo-pill" style={{ color: 'var(--accent-secondary)' }}>
+                Singles verified
+              </div>
+            </div>
           </div>
 
           <div className="glass-panel sonsotyo-panel">
             <div className="sonsotyo-kicker">Available Sync</div>
             <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '2.2rem', color: 'var(--accent-primary)' }}>{profile.currency} CR</div>
             <div className="sonsotyo-copy" style={{ marginTop: '10px' }}>Spend carefully or chase rarity heat.</div>
+            <div className="shop-shelf-rail" />
+            <div className="sonsotyo-caption">Counter closes when you leave the district route.</div>
           </div>
         </div>
 
         <div className="sonsotyo-grid cards">
-          {SHOP_INVENTORY.map((item) => (
+          {SHOP_INVENTORY.map((item) => {
+            const linkedCard = item.type === 'SINGLE' ? getCardById(item.targetId) : undefined;
+            const showcaseSrc = item.image || linkedCard?.image || '';
+            const accent =
+              item.type === 'PACK' ? 'var(--accent-secondary)' : item.type === 'SINGLE' ? 'var(--accent-primary)' : 'var(--accent-yellow)';
+
+            return (
             <div
               key={item.id}
-              className="glass-panel shop-card"
+              className="glass-panel shop-product-card"
               style={{
                 padding: '24px',
                 display: 'flex',
                 flexDirection: 'column',
                 minHeight: '360px',
                 background: 'rgba(5,5,15,0.8)',
-                borderTop: `3px solid ${item.type === 'PACK' ? 'var(--accent-secondary)' : item.type === 'SINGLE' ? 'var(--accent-primary)' : 'var(--accent-yellow)'}`
+                borderTop: `3px solid ${accent}`
               }}
             >
               <div className="sonsotyo-kicker" style={{ marginBottom: '10px' }}>{item.type}_MODULE</div>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', marginBottom: '14px' }}>{item.name}</h3>
+
+              <div className="shop-display-niche">
+                {showcaseSrc ? (
+                  <img src={showcaseSrc} alt="" />
+                ) : (
+                  <div className="shop-display-niche--empty" style={{ color: accent }}>
+                    {item.type === 'COSMETIC' ? 'Display case' : 'Holo slip'}
+                  </div>
+                )}
+              </div>
+
               <p className="sonsotyo-copy" style={{ flex: 1 }}>{item.description}</p>
 
               <div className="glass-panel sonsotyo-panel" style={{ padding: '14px', marginTop: '18px', marginBottom: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -95,7 +133,8 @@ export const CardShop: React.FC = () => {
                 {profile.currency >= item.cost ? 'Acquire Data' : 'Sync Failed'}
               </button>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="glass-panel sonsotyo-panel" style={{ padding: '30px', marginTop: '20px', borderLeft: '4px solid var(--accent-secondary)' }}>
@@ -106,7 +145,7 @@ export const CardShop: React.FC = () => {
           </p>
           
           <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            <div className="glass-panel shop-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)' }}>
+            <div className="glass-panel shop-product-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--accent-primary)' }}>Beginner Initiation</div>
                 <div className="sonsotyo-pill" style={{ background: 'var(--accent-primary)', color: 'var(--bg-primary)' }}>FREE</div>
@@ -126,7 +165,7 @@ export const CardShop: React.FC = () => {
               </button>
             </div>
 
-            <div className="glass-panel shop-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)' }}>
+            <div className="glass-panel shop-product-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--accent-secondary)' }}>Storefront Mini-Tourney</div>
                 <div className="sonsotyo-pill">100 CR Entry</div>
@@ -153,10 +192,6 @@ export const CardShop: React.FC = () => {
         </div>
       </div>
 
-      <style>{`
-        .shop-card { transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .shop-card:hover { transform: translateY(-10px); background: rgba(10,10,30,0.95); box-shadow: 0 20px 50px rgba(0,242,255,0.1); }
-      `}</style>
     </div>
   );
 };
