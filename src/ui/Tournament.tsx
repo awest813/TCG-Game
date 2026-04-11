@@ -28,6 +28,24 @@ export const Tournament: React.FC = () => {
     }
   }, [activeTourney]);
 
+  React.useEffect(() => {
+    if (!activeTourney) return undefined;
+    const tier = TOURNAMENT_TIERS.find((e) => e.id === activeTourney.tierId);
+    if (!tier) return undefined;
+    const relScore = state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0;
+    const currentBanter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, relScore, activeTourney.wins);
+    const timer = setTimeout(() => {
+      audioManager.speak(currentBanter.intro, 'announcer');
+      const rivalTimer = setTimeout(() => {
+        const npc = NPCS.find((n) => n.id === activeTourney.currentOpponentId);
+        audioManager.speak(currentBanter.rival, npc?.archetype ?? 'rival');
+        clearTimeout(rivalTimer);
+      }, 4000);
+    }, 500);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTourney?.currentOpponentId, activeTourney?.wins]);
+
   const renderStars = (count: number) => {
     return (
       <div style={{ display: 'flex', gap: '3px', color: 'var(--accent-yellow)' }}>
@@ -219,22 +237,6 @@ export const Tournament: React.FC = () => {
   const banter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, relationshipScore, activeTourney.wins);
   const roundLabel = getTournamentRoundLabel(tier.id, activeTourney.wins);
   const opponentMeta = getOpponentMeta(activeTourney.currentOpponentId);
-
-  React.useEffect(() => {
-    // Speak announcer and rival dialogue when the round starts/loads
-    const timer = setTimeout(() => {
-      audioManager.speak(banter.intro, 'announcer');
-      
-      const rivalTimer = setTimeout(() => {
-        const npc = NPCS.find(n => n.id === activeTourney.currentOpponentId);
-        audioManager.speak(banter.rival, npc?.archetype ?? 'rival');
-      }, 4000); // Wait for announcer to finish roughly
-      
-      return () => clearTimeout(rivalTimer);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [activeTourney.currentOpponentId, activeTourney.wins]);
 
   return (
     <div

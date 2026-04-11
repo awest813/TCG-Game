@@ -49,7 +49,7 @@ class AudioManager {
         
         // Use a silent try-catch because browsers block autoplay without interaction
         audio.play().catch(() => {
-            console.warn(`[Audio] BGM Autplay blocked for: ${id}. Interaction required.`);
+            console.warn(`[Audio] BGM autoplay blocked for: ${id}. Requires prior user interaction.`);
         });
         
         this.currentBGM = audio;
@@ -65,7 +65,9 @@ class AudioManager {
         const path = `/audio/sfx_${id}.mp3`;
         const audio = new Audio(path);
         audio.volume = this.config.sfxVolume * this.config.masterVolume;
-        audio.play().catch(() => {});
+        audio.play().catch(() => {
+            console.warn('[Audio] SFX autoplay blocked.');
+        });
     }
 
     /**
@@ -116,19 +118,22 @@ class AudioManager {
         if (mute && this.currentBGM) {
             this.currentBGM.pause();
         } else if (!mute && this.currentBGM) {
-            this.currentBGM.play().catch(() => {});
+        this.currentBGM.play().catch(() => {
+            console.warn('[Audio] BGM resume blocked by browser autoplay policy.');
+        });
         }
     }
 
     setVolume(bus: 'master' | 'music' | 'sfx' | 'voice', value: number) {
-        const key = `${bus}Volume` as keyof typeof this.config;
-        if (key in this.config) {
-            (this.config as any)[key] = Math.max(0, Math.min(1, value));
-            
-            // Update currently playing BGM volume
-            if (this.currentBGM) {
-                this.currentBGM.volume = this.config.musicVolume * this.config.masterVolume;
-            }
+        const clamped = Math.max(0, Math.min(1, value));
+        switch (bus) {
+            case 'master': this.config.masterVolume = clamped; break;
+            case 'music':  this.config.musicVolume  = clamped; break;
+            case 'sfx':    this.config.sfxVolume    = clamped; break;
+            case 'voice':  this.config.voiceVolume  = clamped; break;
+        }
+        if (this.currentBGM) {
+            this.currentBGM.volume = this.config.musicVolume * this.config.masterVolume;
         }
     }
 }

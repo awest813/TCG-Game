@@ -105,7 +105,7 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
     ground.material = groundMat;
 
     // Grid lines - static for lower tiers
-    const gridLines = [];
+    const gridLines: BABYLON.Vector3[][] = [];
     const gridSkip = tier === 'LOW' || tier === 'MEDIUM' ? 4 : 2;
     for (let i = -14; i <= 14; i += gridSkip) {
         gridLines.push([new BABYLON.Vector3(i, 0.01, -10), new BABYLON.Vector3(i, 0.01, 10)]);

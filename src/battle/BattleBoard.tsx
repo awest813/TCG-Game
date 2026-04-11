@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useBattle } from './useBattle';
 import { useGame } from '../core/GameContext';
 import { Card } from '../core/types';
-import { getTournamentBracketSize, getTournamentOpponent, getTournamentRoundLabel, TOURNAMENT_TIERS } from '../core/TournamentManager';
-import { applyFactionReputationDelta, applyTrainerRelationshipDelta, getFactionById, getTrainerById, mergeSocialState } from '../data/trainers';
+import { getTournamentBracketSize, getTournamentOpponent, TOURNAMENT_TIERS } from '../core/TournamentManager';
+import { applyTrainerRelationshipDelta, getTrainerById, mergeSocialState } from '../data/trainers';
 import { getCardById, getCardPalette } from '../data/cards';
 import { BattleEntity } from './BattleEngine';
 import { NPCS } from '../npc/npcs';
@@ -21,7 +21,6 @@ export const BattleBoard: React.FC = () => {
   const opponentId = activeTournament?.currentOpponentId ?? 'kaizen';
   const opponent = NPCS.find((entry) => entry.id === opponentId);
   const trainer = getTrainerById(opponentId);
-  const faction = trainer ? getFactionById(trainer.factionId) : null;
   const opponentName = opponent?.name ?? 'KAIZEN';
   const opponentAvatar = trainer?.avatarPath ?? (opponentId === 'kaizen' ? '/avatar_kaizen.png' : '/avatar_player.png');
   const playerDeck = useMemo(() => [...state.profile.inventory.deck], [state.profile.inventory.deck]);
@@ -86,7 +85,7 @@ export const BattleBoard: React.FC = () => {
     }
   }, [battleState.turn, battleState.isPlayerTurn]);
 
-  const handleAttack = async () => {
+  const handleAttack = () => {
     if (!battleState.isPlayerTurn || !battleState.player.active) return;
     audioManager.playSFX('attack_resolve');
     triggerShake();
@@ -214,7 +213,14 @@ export const BattleBoard: React.FC = () => {
   );
 };
 
-const FieldRow: React.FC<{ side: string; active: any; bench: any[]; onHover: any; onLeave: any; onAttack?: any }> = ({ side, active, bench, onHover, onLeave, onAttack }) => (
+const FieldRow: React.FC<{
+  side: string;
+  active: BattleEntity | null;
+  bench: (BattleEntity | null)[];
+  onHover: (id: string) => void;
+  onLeave: () => void;
+  onAttack?: () => void;
+}> = ({ side, active, bench, onHover, onLeave, onAttack }) => (
   <div className="glass-panel" style={{ padding: '14px', background: 'rgba(7,12,22,0.6)', display: 'grid', gridTemplateColumns: '160px 1fr', gap: '20px', alignItems: 'center' }}>
     <div style={{ fontSize: '0.65rem', letterSpacing: '0.2rem', color: 'var(--text-secondary)' }}>{side.toUpperCase()}_SECTOR</div>
     <div style={{ display: 'flex', gap: '14px', justifyContent: side === 'player' ? 'flex-start' : 'flex-end' }}>
@@ -225,7 +231,13 @@ const FieldRow: React.FC<{ side: string; active: any; bench: any[]; onHover: any
   </div>
 );
 
-const BattleSlot: React.FC<{ entity: any; isActive?: boolean; onClick?: any; onHover?: any; onLeave?: any }> = ({ entity, isActive, onClick, onHover, onLeave }) => {
+const BattleSlot: React.FC<{
+  entity: BattleEntity | null;
+  isActive?: boolean;
+  onClick?: () => void;
+  onHover?: (id: string) => void;
+  onLeave?: () => void;
+}> = ({ entity, isActive, onClick, onHover, onLeave }) => {
     const card = entity ? getCardById(entity.cardId) : null;
     const pal = getCardPalette(card);
     return (
@@ -253,7 +265,13 @@ const BattleSlot: React.FC<{ entity: any; isActive?: boolean; onClick?: any; onH
     );
 };
 
-const BattleCard: React.FC<{ cardId: string; onClick: any; onHover: any; onLeave: any; disabled: boolean }> = ({ cardId, onClick, onHover, onLeave, disabled }) => {
+const BattleCard: React.FC<{
+  cardId: string;
+  onClick: () => void;
+  onHover: () => void;
+  onLeave: () => void;
+  disabled: boolean;
+}> = ({ cardId, onClick, onHover, onLeave, disabled }) => {
     const card = getCardById(cardId);
     const pal = getCardPalette(card);
     return (
@@ -295,7 +313,7 @@ const VSDisplay: React.FC<{ playerAvatar: string; opponentAvatar: string; oppone
   </div>
 );
 
-const EndMatchModal: React.FC<{ title: string; color: string; onExit: any }> = ({ title, color, onExit }) => (
+const EndMatchModal: React.FC<{ title: string; color: string; onExit: () => void }> = ({ title, color, onExit }) => (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <h1 style={{ fontSize: '8rem', color }}>{title}</h1>
         <button className="neo-button primary" style={{ background: color, padding: '20px 60px', marginTop: '40px' }} onClick={onExit}>EXIT_CIRCUIT</button>
