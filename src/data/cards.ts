@@ -57,7 +57,7 @@ export const BASE_CARDS: Card[] = [
     retreatCost: 1,
     attacks: [
       { name: "Neon Jab", damage: 30, cost: 1 },
-      { name: "Circuit Slam", damage: 40, cost: 2, effect: "Boost: Deals +10 damage if you played another Pulse card this turn." }
+      { name: "Circuit Slam", damage: 40, cost: 2, effect: "Boost: Deals 50 damage instead if you played another Pulse card this turn." }
     ]
   },
   {
@@ -402,11 +402,7 @@ export const BASE_CARDS: Card[] = [
     health: 2,
     rulesText: ["On Play: Gain 1 temporary Mana this turn."],
     image: "/current_card_art_main_1775865847401.png",
-    weakness: "Veil",
-    retreatCost: 1,
-    attacks: [
-      { name: "Signal Zap", damage: 10, cost: 1 }
-    ],
+    weakness: "Bloom",
     abilities: [
       { name: "Mana Surge", effect: "On Play: Gain 1 Sync-Energy this turn." }
     ]
@@ -421,7 +417,7 @@ export const BASE_CARDS: Card[] = [
     attack: 2,
     health: 3,
     rulesText: ["Passive: You start each turn with +1 Mana."],
-    weakness: "Veil",
+    weakness: "Bloom",
     retreatCost: 1,
     attacks: [
       { name: "Static Scratch", damage: 20, cost: 1 },
