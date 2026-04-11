@@ -3,6 +3,7 @@ import { useGame } from '../core/GameContext';
 import { getTrainerById } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
+import { nextCircuitQuest } from '../core/circuitProgression';
 import { TutorialGuide } from './TutorialGuide';
 import '../styles/SonsotyoScenes.css';
 
@@ -53,16 +54,18 @@ export const TransitStation: React.FC = () => {
     ((!transitGridIntroDone && !lucyBriefingSessionHidden) || lucyReplayBriefing) && !isClosing;
 
   const markGridIntroDone = () => {
+    const mergedFlags = {
+      ...state.profile.progress.flags,
+      transitLucyGridIntroDone: true,
+      transitLucyBriefingDismissed: true
+    };
     updateProfile({
       progress: {
         ...state.profile.progress,
-        flags: {
-          ...state.profile.progress.flags,
-          transitLucyGridIntroDone: true,
-          transitLucyBriefingDismissed: true
-        }
+        flags: mergedFlags
       }
     });
+    updateGameState({ currentQuest: nextCircuitQuest(mergedFlags) });
     setLucyReplayBriefing(false);
   };
 

@@ -34,6 +34,8 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             backgroundImage: "/train_arrival_bg.png",
             description: "The gateway to your legend! Board the NEORail to find the 8 Grand Medals and reach the Civic Crown!",
             actions: [
+                { label: "Neighborhood Card Annex", type: "SCENE_JUMP", targetId: "store" },
+                { label: "Circuit Terminal", type: "SCENE_JUMP", targetId: "tournament" },
                 { label: "Check Medal Count", type: "EVENT" },
                 { label: "Board NEORail", type: "TRAVEL" },
                 { label: "Return Home", type: "SCENE_JUMP", targetId: "home-bedroom" }

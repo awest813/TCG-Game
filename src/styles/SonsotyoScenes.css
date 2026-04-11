@@ -580,3 +580,36 @@
     max-height: 96px;
   }
 }
+
+/* Tournament toast (pending drop, cash-out, forfeit, manual lock) */
+
+.tournament-toast {
+  position: fixed;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  max-width: min(520px, calc(100vw - 32px));
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-bright);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(18, 22, 38, 0.96), rgba(8, 10, 18, 0.98));
+  border: 1px solid rgba(126, 242, 255, 0.35);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 24px rgba(126, 242, 255, 0.12);
+  pointer-events: none;
+  animation: tournamentToastIn 0.35s ease-out;
+}
+
+@keyframes tournamentToastIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

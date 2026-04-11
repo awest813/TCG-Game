@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { VNRunner } from '../ui/VNRunner';
 import { VNEngineState } from '../engine/types';
+import { nextCircuitQuest } from '../core/circuitProgression';
 import { createApartmentOnboardingSession } from '../visual-novel/scriptRegistry';
 import '../styles/SonsotyoScenes.css';
 
@@ -178,23 +179,30 @@ export const ApartmentHub: React.FC = () => {
                 });
 
                 updateGameState({
-                  currentQuest: reviewedDeck ? 'Open the terminal and tune your first deck.' : 'Choose how to start the day and listen to Lucy.'
+                  currentQuest: nextCircuitQuest({
+                    ...state.profile.progress.flags,
+                    reviewedDeck,
+                    combatResolved,
+                    playerMood
+                  })
                 });
 
                 if (combatResolved) setStatusText('Babylon plugin handoff complete. Narrative link restored.');
               }}
               onComplete={(vnState: VNEngineState) => {
+                const mergedFlags = {
+                  ...state.profile.progress.flags,
+                  onboardingComplete: true,
+                  reviewedDeck: Boolean(vnState.flags.reviewedDeck),
+                  combatResolved: Boolean(vnState.pluginResults.start_3d_combat)
+                };
                 updateProfile({
                   progress: {
                     ...state.profile.progress,
-                    flags: {
-                      ...state.profile.progress.flags,
-                      onboardingComplete: true,
-                      reviewedDeck: Boolean(vnState.flags.reviewedDeck),
-                      combatResolved: Boolean(vnState.pluginResults.start_3d_combat)
-                    }
+                    flags: mergedFlags
                   }
                 });
+                updateGameState({ currentQuest: nextCircuitQuest(mergedFlags) });
 
                 setStatusText('Lucy completed the onboarding route.');
                 setScene(vnState.flags.reviewedDeck ? 'DECK_EDITOR' : 'DISTRICT_EXPLORE');

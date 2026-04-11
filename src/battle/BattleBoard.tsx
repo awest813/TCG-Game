@@ -2,6 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useBattle } from './useBattle';
 import { useGame } from '../core/GameContext';
 import { Card } from '../core/types';
+import {
+  mergeFlagsAfterTournamentVictory,
+  nextCircuitQuest,
+  unlockedDistrictsAfterVictory
+} from '../core/circuitProgression';
+import { getBracketPotAtWins } from '../core/economy';
 import { getTournamentBracketSize, getTournamentOpponent, TOURNAMENT_TIERS } from '../core/TournamentManager';
 import { applyTrainerRelationshipDelta, getTrainerById, mergeSocialState } from '../data/trainers';
 import { getCardById, getCardPalette } from '../data/cards';
@@ -149,10 +155,15 @@ export const BattleBoard: React.FC = () => {
     const nextWins = activeTournament.wins + 1;
     const officialBracketSize = getTournamentBracketSize(activeTournament.tierId);
     if (nextWins >= officialBracketSize && activeTournament.tierId !== 'crown-unlimited') {
-      const finalReward = Math.floor(tournamentTier.baseReward * (1 + nextWins * tournamentTier.rarityMultiplier));
+      const finalReward = getBracketPotAtWins(tournamentTier, nextWins);
       const socialWithTrainer = trainer
         ? applyTrainerRelationshipDelta(state.profile, trainer.id, { affinity: 1, rivalry: 1, respect: 2, lastResult: 'WIN' })
         : social;
+
+      const mergedFlags = mergeFlagsAfterTournamentVictory(activeTournament.tierId, state.profile.progress.flags);
+      const expandedDistricts =
+        unlockedDistrictsAfterVictory(activeTournament.tierId, state.profile.progress.unlockedDistricts) ??
+        state.profile.progress.unlockedDistricts;
 
       updateProfile({
         currency: state.profile.currency + finalReward,
@@ -161,9 +172,14 @@ export const BattleBoard: React.FC = () => {
           wins: state.profile.stats.wins + 1,
           tournamentsWon: state.profile.stats.tournamentsWon + 1
         },
-        social: socialWithTrainer
+        social: socialWithTrainer,
+        progress: {
+          ...state.profile.progress,
+          flags: mergedFlags,
+          unlockedDistricts: expandedDistricts
+        }
       });
-      updateGameState({ activeTournament: null, currentQuest: `${tournamentTier.name} conquered.` });
+      updateGameState({ activeTournament: null, currentQuest: nextCircuitQuest(mergedFlags) });
       setScene('TOURNAMENT');
       return;
     }
@@ -181,7 +197,10 @@ export const BattleBoard: React.FC = () => {
   const handleDefeatExit = () => {
     if (activeTournament) {
       updateProfile({ stats: { ...state.profile.stats, losses: state.profile.stats.losses + 1 } });
-      updateGameState({ activeTournament: null });
+      updateGameState({
+        activeTournament: null,
+        currentQuest: nextCircuitQuest(state.profile.progress.flags)
+      });
       setScene('TOURNAMENT');
       return;
     }

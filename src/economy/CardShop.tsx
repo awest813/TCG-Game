@@ -2,6 +2,9 @@ import React from 'react';
 import { useGame } from '../core/GameContext';
 import { audioManager } from '../core/AudioManager';
 import { ShopItem } from '../core/types';
+import { isShopVeteranUnlocked } from '../core/circuitProgression';
+import { formatCredits, getBracketEconomyCaption, getBracketSweepPot } from '../core/economy';
+import { TOURNAMENT_TIERS } from '../core/TournamentManager';
 import { getCardById } from '../data/cards';
 import '../styles/SonsotyoScenes.css';
 
@@ -16,6 +19,9 @@ const SHOP_INVENTORY: ShopItem[] = [
 export const CardShop: React.FC = () => {
   const { state, updateProfile, updateGameState, setScene } = useGame();
   const { profile } = state;
+  const shopBeginner = TOURNAMENT_TIERS.find((t) => t.id === 'shop-beginner-circuit');
+  const shopMini = TOURNAMENT_TIERS.find((t) => t.id === 'storefront-mini');
+  const shopVet = TOURNAMENT_TIERS.find((t) => t.id === 'shop-veteran-gauntlet');
 
   React.useEffect(() => {
     audioManager.playBGM('SHOP');
@@ -141,7 +147,7 @@ export const CardShop: React.FC = () => {
           <div className="sonsotyo-kicker">Local Events</div>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', marginTop: '8px' }}>Active Shop Tournaments</h2>
           <p className="sonsotyo-copy" style={{ marginTop: '10px', maxWidth: '60ch' }}>
-            The backroom is open for regulation brackets. Small buy-ins, fast cycles, and guaranteed credit payouts for the winners.
+            Three backroom brackets echo Pokémon TCG GBC club packs and early Yu-Gi-Oh shop duels: learn the UI for free, pay-in for a faster mini bracket, then run the gauntlet for your Club License data.
           </p>
           
           <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
@@ -151,13 +157,13 @@ export const CardShop: React.FC = () => {
                 <div className="sonsotyo-pill" style={{ background: 'var(--accent-primary)', color: 'var(--bg-primary)' }}>FREE</div>
               </div>
               <p className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.9rem' }}>
-                Free entry bracket for new duelists. Practice and earn your first credits!
+                Free entry for new duelists. {shopBeginner ? getBracketEconomyCaption(shopBeginner) : 'Practice and bank your first credits.'}
               </p>
               <button 
                 className="neo-button primary" 
                 style={{ marginTop: '15px', width: '100%' }}
                 onClick={() => {
-                  updateGameState({ pendingTournamentId: 'shop-beginner-circuit' });
+                  updateGameState({ pendingTournamentId: 'shop-beginner-circuit', tournamentLobbyReturn: 'STORE' });
                   setScene('TOURNAMENT');
                 }}
               >
@@ -171,17 +177,39 @@ export const CardShop: React.FC = () => {
                 <div className="sonsotyo-pill">100 CR Entry</div>
               </div>
               <p className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.9rem' }}>
-                A quick 2-round bracket for local regulars. Payout: 400 CR (base).
+                A quick 2-round bracket for local regulars. {shopMini ? `Sweep ${formatCredits(getBracketSweepPot(shopMini))}. ${getBracketEconomyCaption(shopMini)}` : 'Fast cycles and immediate settlement.'}
               </p>
               <button 
                 className="neo-button" 
                 style={{ marginTop: '15px', width: '100%' }}
                 onClick={() => {
-                  updateGameState({ pendingTournamentId: 'storefront-mini' });
+                  updateGameState({ pendingTournamentId: 'storefront-mini', tournamentLobbyReturn: 'STORE' });
                   setScene('TOURNAMENT');
                 }}
               >
                 Access Bracket
+              </button>
+            </div>
+
+            <div className="glass-panel shop-product-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)', opacity: isShopVeteranUnlocked(profile.progress.flags) ? 1 : 0.55 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--accent-yellow)' }}>Counter Run Gauntlet</div>
+                <div className="sonsotyo-pill">250 CR Entry</div>
+              </div>
+              <p className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.9rem' }}>
+                Three-match escalation after you clear the mini bracket — last annex gate before the terminal issues a Club License.
+                {shopVet ? ` Sweep ${formatCredits(getBracketSweepPot(shopVet))}. ${getBracketEconomyCaption(shopVet)}` : ''}
+              </p>
+              <button
+                className="neo-button primary"
+                style={{ marginTop: '15px', width: '100%' }}
+                disabled={!isShopVeteranUnlocked(profile.progress.flags) || profile.currency < 250}
+                onClick={() => {
+                  updateGameState({ pendingTournamentId: 'shop-veteran-gauntlet', tournamentLobbyReturn: 'STORE' });
+                  setScene('TOURNAMENT');
+                }}
+              >
+                {!isShopVeteranUnlocked(profile.progress.flags) ? 'Clear mini bracket first' : profile.currency < 250 ? 'Need 250 CR' : 'Enter Gauntlet'}
               </button>
             </div>
           </div>

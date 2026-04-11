@@ -195,6 +195,8 @@ export interface GameState {
   currentQuest: string;
   activeTournament: ActiveTournament | null;
   pendingTournamentId: string | null;
+  /** Where the tournament lobby "back" action returns (e.g. Card Annex vs streets). */
+  tournamentLobbyReturn?: 'STORE' | 'DISTRICT_EXPLORE' | null;
   vnSession: VNSession | null;
   visuals: {
     presentationTier: PresentationTier;

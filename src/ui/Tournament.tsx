@@ -10,11 +10,26 @@ import {
   TOURNAMENT_TIERS,
   TournamentTier
 } from '../core/TournamentManager';
-import { ActiveTournament } from '../core/types';
+import { ActiveTournament, SceneType } from '../core/types';
 import { getTrainerById, mergeSocialState } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
 import { audioManager } from '../core/AudioManager';
+import {
+  districtTournamentsForLobby,
+  districtUnlockReason,
+  isDistrictTournamentUnlocked,
+  nextCircuitQuest
+} from '../core/circuitProgression';
+import {
+  formatCredits,
+  getBracketEconomyCaption,
+  getBracketPotAtWins,
+  getBracketSweepPot,
+  getNetProfitAfterSweep
+} from '../core/economy';
 import '../styles/SonsotyoScenes.css';
+
+const TOAST_MS = 4800;
 
 export const Tournament: React.FC = () => {
   const { state, updateGameState, updateProfile, setScene } = useGame();
@@ -22,14 +37,41 @@ export const Tournament: React.FC = () => {
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
 
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+  const toastDismissRef = React.useRef<number | null>(null);
+  const banterRivalTimerRef = React.useRef<number | null>(null);
+
+  const showToast = React.useCallback((message: string) => {
+    if (toastDismissRef.current !== null) {
+      window.clearTimeout(toastDismissRef.current);
+    }
+    setToastMessage(message);
+    toastDismissRef.current = window.setTimeout(() => {
+      setToastMessage(null);
+      toastDismissRef.current = null;
+    }, TOAST_MS);
+  }, []);
+
+  React.useEffect(
+    () => () => {
+      if (toastDismissRef.current !== null) window.clearTimeout(toastDismissRef.current);
+      if (banterRivalTimerRef.current !== null) window.clearTimeout(banterRivalTimerRef.current);
+    },
+    []
+  );
+
   const currentOpponentRelScore = activeTourney
     ? (state.profile.social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0)
     : 0;
 
   const startTournament = React.useCallback(
     (tier: TournamentTier) => {
+      if (tier.locationId !== 'card-shop' && !isDistrictTournamentUnlocked(tier.id, state.profile.progress.flags)) {
+        showToast(districtUnlockReason(tier.id, state.profile.progress.flags) ?? 'This bracket is locked.');
+        return;
+      }
       if (state.profile.currency < tier.entryFee) {
-        alert('Insufficient Credits for entry.');
+        showToast(`Need ${formatCredits(tier.entryFee)} to enter ${tier.name}.`);
         return;
       }
 
@@ -43,18 +85,32 @@ export const Tournament: React.FC = () => {
       audioManager.playSFX('select');
       updateGameState({ activeTournament: newActive });
     },
-    [state.profile.currency, updateGameState, updateProfile]
+    [showToast, state.profile.currency, state.profile.progress.flags, updateGameState, updateProfile]
   );
 
   React.useEffect(() => {
     if (!pendingTierId || activeTourney) return;
     const tier = TOURNAMENT_TIERS.find((t) => t.id === pendingTierId);
-    if (!tier) return;
-    if (state.profile.currency >= tier.entryFee) {
-      startTournament(tier);
+    if (!tier) {
+      showToast('That bracket invite was invalid — it has been cleared.');
       updateGameState({ pendingTournamentId: null });
+      return;
     }
-  }, [pendingTierId, activeTourney, startTournament, state.profile.currency, updateGameState]);
+    const flags = state.profile.progress.flags;
+    const isLockedDistrict = tier.locationId !== 'card-shop' && !isDistrictTournamentUnlocked(tier.id, flags);
+    if (isLockedDistrict) {
+      showToast(`${tier.name} is still locked — pending invite cleared.`);
+      updateGameState({ pendingTournamentId: null });
+      return;
+    }
+    if (state.profile.currency < tier.entryFee) {
+      showToast(`Need ${formatCredits(tier.entryFee)} to enter — pending invite cleared.`);
+      updateGameState({ pendingTournamentId: null });
+      return;
+    }
+    startTournament(tier);
+    updateGameState({ pendingTournamentId: null });
+  }, [activeTourney, pendingTierId, showToast, startTournament, state.profile.currency, state.profile.progress.flags, updateGameState]);
 
   React.useEffect(() => {
     if (!activeTourney) audioManager.playBGM('TOWN');
@@ -66,15 +122,21 @@ export const Tournament: React.FC = () => {
     const tier = TOURNAMENT_TIERS.find((e) => e.id === activeTourney.tierId);
     if (!tier) return undefined;
     const currentBanter = getTournamentBanter(activeTourney.currentOpponentId, tier.prestige, currentOpponentRelScore, activeTourney.wins);
-    const timer = setTimeout(() => {
+    const introTimer = window.setTimeout(() => {
       audioManager.speak(currentBanter.intro, 'announcer');
-      const rivalTimer = setTimeout(() => {
+      banterRivalTimerRef.current = window.setTimeout(() => {
         const npc = NPCS.find((n) => n.id === activeTourney.currentOpponentId);
         audioManager.speak(currentBanter.rival, npc?.archetype ?? 'rival');
-        clearTimeout(rivalTimer);
+        banterRivalTimerRef.current = null;
       }, 4000);
     }, 500);
-    return () => clearTimeout(timer);
+    return () => {
+      window.clearTimeout(introTimer);
+      if (banterRivalTimerRef.current !== null) {
+        window.clearTimeout(banterRivalTimerRef.current);
+        banterRivalTimerRef.current = null;
+      }
+    };
   }, [activeTourney, currentOpponentRelScore]);
 
   const renderStars = (count: number) => (
@@ -90,20 +152,40 @@ export const Tournament: React.FC = () => {
     const tier = TOURNAMENT_TIERS.find((entry) => entry.id === activeTourney.tierId);
     if (!tier) return;
 
-    const finalReward = Math.floor(tier.baseReward * (1 + activeTourney.wins * tier.rarityMultiplier));
-    alert(`Withdrawn from Circuit. Cashing out winning pot: ${finalReward} credits.`);
+    const finalReward = getBracketPotAtWins(tier, activeTourney.wins);
+    if (!window.confirm(`Cash out for ${formatCredits(finalReward)} now? You will leave the active bracket.`)) return;
+
     updateProfile({ currency: state.profile.currency + finalReward });
-    updateGameState({ activeTournament: null });
-    
-    if (tier.locationId === 'card-shop') {
-      setScene('STORE');
-    } else {
-      setScene('DISTRICT_EXPLORE');
-    }
+    const returnScene: SceneType = tier.locationId === 'card-shop' ? 'STORE' : (state.tournamentLobbyReturn ?? 'DISTRICT_EXPLORE');
+    updateGameState({
+      activeTournament: null,
+      currentQuest: nextCircuitQuest(state.profile.progress.flags),
+      tournamentLobbyReturn: null
+    });
+    showToast(`Credited ${formatCredits(finalReward)}. Bracket closed.`);
+    setScene(returnScene);
   };
+
+  const abandonBracket = () => {
+    if (!activeTourney) return;
+    if (!window.confirm('Forfeit this bracket? Entry fee is not refunded.')) return;
+    updateGameState({
+      activeTournament: null,
+      currentQuest: nextCircuitQuest(state.profile.progress.flags)
+    });
+    showToast('Bracket forfeited. You can start again from the lobby or annex.');
+  };
+
+  const toastNode = toastMessage ? (
+    <div className="tournament-toast" role="status">
+      {toastMessage}
+    </div>
+  ) : null;
 
   if (!activeTourney) {
     return (
+      <>
+        {toastNode}
       <div
         className="tournament-scene sonsotyo-scene fade-in"
         style={{
@@ -123,11 +205,11 @@ export const Tournament: React.FC = () => {
             <div className="glass-panel sonsotyo-hero-card">
               <div className="sonsotyo-kicker">Circuit Access</div>
               <h1 className="sonsotyo-title" style={{ fontSize: 'clamp(2.8rem, 6vw, 4.6rem)', marginTop: '10px' }}>Local Events</h1>
-              <p className="sonsotyo-copy" style={{ maxWidth: '48ch', marginTop: '14px' }}>
-                A rivalry ladder wrapped in moonlit glass. Every bracket previews the mood, cost, and opening threat before you step in.
+              <p className="sonsotyo-copy" style={{ maxWidth: '52ch', marginTop: '14px' }}>
+                Sanctioned city events unlock like classic handheld card RPGs: clear the Card Annex backroom ladders for your Club License, then climb Sunset → Market → Neon → Crown brackets for medals and credits.
               </p>
               <div className="sonsotyo-meta-strip">
-                <div className="sonsotyo-pill">Currency {state.profile.currency}</div>
+                <div className="sonsotyo-pill">Currency {state.profile.currency.toLocaleString('en-US')} CR</div>
                 <div className="sonsotyo-pill">Titles {state.profile.stats.tournamentsWon}</div>
                 <div className="sonsotyo-pill">Sleep Circuit Active</div>
               </div>
@@ -135,12 +217,12 @@ export const Tournament: React.FC = () => {
 
             <div className="glass-panel sonsotyo-panel">
               <div className="sonsotyo-kicker">Bracket Forecast</div>
-              <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.45rem' }}>Four routes, one city pulse.</div>
+              <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.45rem' }}>Four major tiers, one league ladder.</div>
               <div style={{ marginTop: '18px', display: 'grid', gap: '12px' }}>
-                {TOURNAMENT_TIERS.map((tier) => (
+                {districtTournamentsForLobby().map((tier) => (
                   <div key={tier.id} className="sonsotyo-diagnostic">
                     <span>{tier.name}</span>
-                    <span className="sonsotyo-value">{tier.baseReward} CR</span>
+                    <span className="sonsotyo-value">{formatCredits(getBracketSweepPot(tier))} sweep</span>
                   </div>
                 ))}
               </div>
@@ -148,10 +230,14 @@ export const Tournament: React.FC = () => {
           </div>
 
           <div className="sonsotyo-grid cards">
-            {TOURNAMENT_TIERS.map((tier) => {
+            {districtTournamentsForLobby().map((tier) => {
               const featuredOpponentId = getTournamentOpponent(tier.id, 0);
               const featuredOpponent = NPCS.find((entry) => entry.id === featuredOpponentId);
               const trainer = getTrainerById(featuredOpponentId);
+              const tierUnlocked = isDistrictTournamentUnlocked(tier.id, state.profile.progress.flags);
+              const lockReason = districtUnlockReason(tier.id, state.profile.progress.flags);
+              const canPay = state.profile.currency >= tier.entryFee;
+              const canEnter = tierUnlocked && canPay;
 
               return (
                 <div key={tier.id} className="glass-panel sonsotyo-panel" style={{ borderTop: `3px solid ${tier.isEndless ? 'var(--accent-secondary)' : 'var(--accent-primary)'}` }}>
@@ -160,21 +246,32 @@ export const Tournament: React.FC = () => {
                       <div className="sonsotyo-kicker">{tier.locationId.replace(/-/g, ' ')}</div>
                       <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.45rem' }}>{tier.name}</div>
                     </div>
-                    {tier.isEndless && <div className="sonsotyo-pill" style={{ color: 'var(--accent-secondary)' }}>Endless</div>}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+                      {tier.isEndless && <div className="sonsotyo-pill" style={{ color: 'var(--accent-secondary)' }}>Endless</div>}
+                      {!tierUnlocked && <div className="sonsotyo-pill" style={{ borderColor: 'rgba(255,138,198,0.5)', color: 'var(--accent-secondary)' }}>Locked</div>}
+                    </div>
                   </div>
 
                   <div style={{ marginTop: '12px' }}>{renderStars(tier.prestige)}</div>
                   <p className="sonsotyo-copy" style={{ marginTop: '14px' }}>{tier.description}</p>
                   <div className="sonsotyo-copy" style={{ marginTop: '10px' }}>{getTournamentPreviewLine(tier)}</div>
+                  {!tierUnlocked && lockReason && (
+                    <p className="sonsotyo-copy" style={{ marginTop: '12px', color: 'var(--accent-yellow)', lineHeight: 1.55, fontSize: '0.88rem' }}>
+                      {lockReason}
+                    </p>
+                  )}
 
                   <div style={{ marginTop: '18px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div className="glass-panel sonsotyo-panel" style={{ padding: '16px' }}>
                       <div className="sonsotyo-kicker">Entry</div>
-                      <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--accent-yellow)' }}>{tier.entryFee} CR</div>
+                      <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--accent-yellow)' }}>
+                        {tier.entryFee > 0 ? formatCredits(tier.entryFee) : 'Free'}
+                      </div>
                     </div>
                     <div className="glass-panel sonsotyo-panel" style={{ padding: '16px' }}>
-                      <div className="sonsotyo-kicker">Payout</div>
-                      <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>{tier.baseReward} CR</div>
+                      <div className="sonsotyo-kicker">Sweep cap</div>
+                      <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>{formatCredits(getBracketSweepPot(tier))}</div>
+                      <div className="sonsotyo-caption" style={{ marginTop: '8px', lineHeight: 1.45 }}>{getBracketEconomyCaption(tier)}</div>
                     </div>
                   </div>
 
@@ -191,8 +288,12 @@ export const Tournament: React.FC = () => {
 
                   <div style={{ marginTop: '18px', display: 'flex', justifyContent: 'space-between', gap: '14px', alignItems: 'center' }}>
                     <div className="sonsotyo-caption">Opponents {getTournamentOpponents(tier.id).length}</div>
-                    <button className={`neo-button ${state.profile.currency >= tier.entryFee ? 'primary' : ''}`} onClick={() => startTournament(tier)} disabled={state.profile.currency < tier.entryFee}>
-                      {state.profile.currency >= tier.entryFee ? 'Enter Bracket' : 'Insufficient Funds'}
+                    <button
+                      className={`neo-button ${canEnter ? 'primary' : ''}`}
+                      onClick={() => startTournament(tier)}
+                      disabled={!canEnter}
+                    >
+                      {!tierUnlocked ? 'Requirements not met' : !canPay ? 'Insufficient Funds' : 'Enter Bracket'}
                     </button>
                   </div>
                 </div>
@@ -201,22 +302,52 @@ export const Tournament: React.FC = () => {
           </div>
 
           <div style={{ textAlign: 'center', paddingBottom: '12px' }}>
-            <button className="neo-button" onClick={() => { 
-                audioManager.playSFX('back'); 
-                setScene('DISTRICT_EXPLORE'); 
-            }}>
-              Return To Streets
+            <button
+              className="neo-button"
+              onClick={() => {
+                audioManager.playSFX('back');
+                const dest: SceneType = state.tournamentLobbyReturn ?? 'DISTRICT_EXPLORE';
+                updateGameState({ tournamentLobbyReturn: null });
+                setScene(dest);
+              }}
+            >
+              {state.tournamentLobbyReturn === 'STORE' ? 'Return to Card Annex' : 'Return to district'}
             </button>
           </div>
         </div>
       </div>
+      </>
     );
   }
 
   const tier = TOURNAMENT_TIERS.find((entry) => entry.id === activeTourney.tierId);
-  if (!tier) return null;
+  if (!tier) {
+    return (
+      <>
+        {toastNode}
+        <div className="tournament-scene sonsotyo-scene fade-in" style={{ minHeight: '100vh', padding: '40px', display: 'grid', placeItems: 'center' }}>
+          <div className="glass-panel sonsotyo-panel" style={{ maxWidth: '480px', padding: '28px', textAlign: 'center' }}>
+            <div className="sonsotyo-kicker">Bracket sync error</div>
+            <p className="sonsotyo-copy" style={{ marginTop: '14px' }}>
+              No tier data for this run. Your save may reference a removed event — the bracket has been cleared.
+            </p>
+            <button
+              className="neo-button primary"
+              style={{ marginTop: '22px' }}
+              onClick={() => {
+                updateGameState({ activeTournament: null, tournamentLobbyReturn: null });
+                setScene('DISTRICT_EXPLORE');
+              }}
+            >
+              Return to district
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
-  const currentPot = Math.floor(tier.baseReward * (1 + activeTourney.wins * tier.rarityMultiplier));
+  const currentPot = getBracketPotAtWins(tier, activeTourney.wins);
   const opponent = NPCS.find((entry) => entry.id === activeTourney.currentOpponentId);
   const trainer = getTrainerById(activeTourney.currentOpponentId);
   const relationshipScore = social.trainers[activeTourney.currentOpponentId]?.affinity ?? 0;
@@ -225,6 +356,8 @@ export const Tournament: React.FC = () => {
   const opponentMeta = getOpponentMeta(activeTourney.currentOpponentId);
 
   return (
+    <>
+      {toastNode}
     <div
       className="tournament-scene sonsotyo-scene fade-in"
       style={{
@@ -255,9 +388,23 @@ export const Tournament: React.FC = () => {
 
           <div className="glass-panel sonsotyo-panel">
             <div className="sonsotyo-kicker">Estimated Payout</div>
-            <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '2.3rem', color: 'var(--accent-yellow)' }}>{currentPot} CR</div>
+            <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '2.3rem', color: 'var(--accent-yellow)' }}>{formatCredits(currentPot)}</div>
             <div className="sonsotyo-copy" style={{ marginTop: '10px' }}>
-              Cash out now to lock the pot, or keep climbing while the circuit gets meaner.
+              {activeTourney.wins === 0
+                ? 'Entry is already paid. Cash out now to take the base settlement, or fight to grow the pot.'
+                : 'Cash out now to lock the pot, or keep climbing while the circuit gets meaner.'}
+            </div>
+            <div className="sonsotyo-caption" style={{ marginTop: '12px', lineHeight: 1.55 }}>
+              {tier.isEndless ? (
+                <>
+                  Next win lifts cash-out to {formatCredits(getBracketPotAtWins(tier, activeTourney.wins + 1))}. {getBracketEconomyCaption(tier)}
+                </>
+              ) : (
+                <>
+                  Full clear pays {formatCredits(getBracketSweepPot(tier))}.
+                  {tier.entryFee > 0 && <> Sweep vs entry: {formatCredits(getNetProfitAfterSweep(tier))}.</>}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -323,9 +470,20 @@ export const Tournament: React.FC = () => {
             <button className="neo-button" onClick={() => { audioManager.playSFX('withdraw'); cashOut(); }}>
               Withdraw & Cash Out
             </button>
+            <button
+              className="neo-button"
+              style={{ opacity: 0.85 }}
+              onClick={() => {
+                audioManager.playSFX('back');
+                abandonBracket();
+              }}
+            >
+              Abandon bracket
+            </button>
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 };

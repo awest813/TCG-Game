@@ -66,8 +66,12 @@ export const DistrictExplore: React.FC = () => {
           setStatusText(`Local route changed to ${destination.name}.`);
         } else {
           const nextScene = resolveSceneJump(action.targetId);
-          if (nextScene) setScene(nextScene);
-          else setStatusText('Route target unavailable.');
+          if (nextScene) {
+            if (nextScene === 'TOURNAMENT') {
+              updateGameState({ tournamentLobbyReturn: 'DISTRICT_EXPLORE' });
+            }
+            setScene(nextScene);
+          } else setStatusText('Route target unavailable.');
         }
         setIsTransitioning(false);
       }, 420);

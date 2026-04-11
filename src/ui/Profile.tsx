@@ -43,7 +43,7 @@ export const Profile: React.FC = () => {
             </p>
             <div className="sonsotyo-meta-strip">
               <SonsotyoPill>Rank {profile.level}</SonsotyoPill>
-              <SonsotyoPill>Credits {profile.currency}</SonsotyoPill>
+              <SonsotyoPill>Credits {profile.currency.toLocaleString('en-US')} CR</SonsotyoPill>
               <SonsotyoPill>Badges {profile.badges.length}</SonsotyoPill>
             </div>
           </SonsotyoHeroCard>
@@ -93,7 +93,9 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
         </div>
         <div style={{ marginTop: '18px' }}>
           <SonsotyoKicker>Credit Balance</SonsotyoKicker>
-          <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.8rem', color: 'var(--accent-yellow)' }}>{profile.currency} DP</div>
+          <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.8rem', color: 'var(--accent-yellow)' }}>
+            {profile.currency.toLocaleString('en-US')} CR
+          </div>
         </div>
       </SonsotyoPanel>
 

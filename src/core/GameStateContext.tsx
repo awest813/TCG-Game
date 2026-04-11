@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { GameContext } from './GameContext';
 import { GameState, NewGameConfig, PlayerProfile, SceneType, TimeOfDay } from './types';
+import { migrateCircuitFlags } from './circuitProgression';
+import { DEFAULT_STARTING_CREDITS } from './economy';
 import { createDefaultSocialState, mergeSocialState } from '../data/trainers';
 
-const INITIAL_QUEST = 'Tutorial: Talk to Maya in your Apartment';
+const INITIAL_QUEST = 'Tutorial: Talk to Maya in your apartment, then follow Lucy’s briefing.';
 
 const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; species: string; deck: string[]; collection: string[]; packs: string[]; quest: string }> = {
   Pulse: {
@@ -12,7 +14,7 @@ const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; sp
     deck: ['ziprail', 'ziprail', 'neon-striker', 'neon-striker', 'voltlynx', 'voltlynx', 'signalmite', 'signalmite', 'quick-transfer', 'quick-transfer', 'rooftop-remedy', 'rooftop-remedy'],
     collection: ['ziprail', 'ziprail', 'rail-bastion', 'neon-striker', 'neon-striker', 'voltlynx', 'voltlynx', 'overdrive-fox', 'signalmite', 'signalmite', 'quick-transfer', 'quick-transfer', 'signal-boost', 'rooftop-remedy', 'rooftop-remedy', 'power-cell'],
     packs: ['Metro Pulse', 'Metro Pulse'],
-    quest: 'Tutorial: Visit the terminal and learn your Pulse opener.'
+    quest: 'Tutorial: Apartment onboarding → Transit map → Card Annex beginner bracket → Sunset regional.'
   },
   Bloom: {
     partnerId: 'mosshop-p1',
@@ -20,7 +22,7 @@ const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; sp
     deck: ['mosshop', 'mosshop', 'verdajack', 'verdajack', 'spore-scout', 'spore-scout', 'signalmite', 'signalmite', 'rooftop-remedy', 'rooftop-remedy', 'quick-transfer', 'system-refresh'],
     collection: ['mosshop', 'mosshop', 'lush-golem', 'verdajack', 'verdajack', 'spore-scout', 'spore-scout', 'bloom-whisper', 'seedling-bot', 'solar-rose', 'quick-transfer', 'system-refresh', 'rooftop-remedy', 'rooftop-remedy', 'stim-patch', 'power-cell'],
     packs: ['Garden Shift', 'Metro Pulse'],
-    quest: 'Tutorial: Talk to Maya and test your Bloom sustain plan.'
+    quest: 'Tutorial: Apartment onboarding → Transit map → Card Annex beginner bracket → Sunset regional.'
   },
   Tide: {
     partnerId: 'wharfin-p1',
@@ -28,7 +30,7 @@ const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; sp
     deck: ['wharfin', 'wharfin', 'mist-glider', 'mist-glider', 'coral-guard', 'coral-guard', 'quick-transfer', 'quick-transfer', 'system-refresh', 'system-refresh', 'rooftop-remedy', 'power-cell'],
     collection: ['wharfin', 'wharfin', 'tidal-whale', 'mist-glider', 'mist-glider', 'coral-guard', 'coral-guard', 'wave-rider', 'data-diver', 'quick-transfer', 'quick-transfer', 'system-refresh', 'system-refresh', 'rooftop-remedy', 'stim-patch', 'power-cell'],
     packs: ['Neon Echo', 'Bayline Current'],
-    quest: 'Tutorial: Learn how to control tempo with your Tide starter.'
+    quest: 'Tutorial: Apartment onboarding → Transit map → Card Annex beginner bracket → Sunset regional.'
   }
 };
 
@@ -38,7 +40,7 @@ const createProfile = (config?: NewGameConfig): PlayerProfile => {
 
   return {
     name: config?.name?.trim() || 'Neo_Rookie',
-    currency: 1250,
+    currency: DEFAULT_STARTING_CREDITS,
     level: 1,
     xp: 0,
     inventory: {
@@ -101,6 +103,7 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
 currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore Sunset Terminal' : INITIAL_QUEST,
     activeTournament: null,
     pendingTournamentId: null,
+    tournamentLobbyReturn: null,
     vnSession: null,
     visuals: {
       presentationTier: 'HIGH'
@@ -132,7 +135,11 @@ const normalizeProfile = (profile: PlayerProfile): PlayerProfile => {
     social: mergeSocialState(profile.social),
     progress: {
       unlockedDistricts: profile.progress?.unlockedDistricts ?? ['APARTMENT', 'SUNSET_TERMINAL'],
-      flags: profile.progress?.flags ?? { onboardingStarter: starter, onboardingComplete: false },
+      flags: migrateCircuitFlags({
+        onboardingStarter: starter,
+        onboardingComplete: false,
+        ...(profile.progress?.flags ?? {})
+      }),
       storyProgress: profile.progress?.storyProgress ?? 0,
       chapter: profile.progress?.chapter ?? 1
     }
