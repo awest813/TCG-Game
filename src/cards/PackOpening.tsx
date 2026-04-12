@@ -73,21 +73,35 @@ export const PackOpening: React.FC = () => {
     <div
       className="pack-opening-container fade-in"
       style={{
-        height: '100vh',
+        height: '100%',
+        maxHeight: '100%',
+        boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         background: 'radial-gradient(circle at 50% 30%, rgba(121,247,255,0.16), transparent 22%), linear-gradient(180deg, #020611 0%, #09040f 100%)',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'auto',
+        padding: '16px'
       }}
     >
       <div className="scanlines" />
       {packStatus === 'BURST' && <div className="energy-beam" />}
 
       {packStatus !== 'REVEAL' ? (
-        <div className="glass-panel" style={{ textAlign: 'center', padding: '54px', borderRadius: '36px', zIndex: 10, background: 'rgba(8,12,24,0.84)', minWidth: '440px' }}>
+        <div
+          className="glass-panel"
+          style={{
+            textAlign: 'center',
+            padding: 'clamp(24px, 5vw, 54px)',
+            borderRadius: '36px',
+            zIndex: 10,
+            background: 'rgba(8,12,24,0.84)',
+            width: 'min(440px, 100%)',
+            maxWidth: '100%'
+          }}
+        >
           <div className="sonsotyo-kicker" style={{ color: 'var(--accent-primary)' }}>Decryption Protocol Active</div>
           <div
             className={packStatus === 'IDLE' ? 'pack-shell-float' : packStatus === 'BURST' ? 'pack-burst' : 'shred-anim'}

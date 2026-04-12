@@ -13,6 +13,71 @@
   overscroll-behavior: contain;
 }
 
+/**
+ * Scenes inside PhoneFrame: use height from the shell (not 100vh) so content scrolls instead of
+ * clipping under phone-screen overflow:hidden. Pair with sonsotyo-scene where you need scroll.
+ */
+.sonsotyo-scene.sonsotyo-scene--bounded {
+  box-sizing: border-box;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.system-menu-modal {
+  max-height: min(92dvh, calc(100vh - 48px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.main-menu-onboarding-modal {
+  max-height: min(90dvh, calc(100vh - 48px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.system-menu-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 720px) {
+  .system-menu-settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.system-menu-presentation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  gap: 8px;
+}
+
+/* Deck editor / pack flows — same bounded shell as sonsotyo scenes */
+.deck-builder-root {
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+}
+
+.vn-scene-scroll {
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .main-menu-content .sonsotyo-hero {
   flex-shrink: 0;
 }

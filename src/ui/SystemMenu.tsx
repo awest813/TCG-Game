@@ -56,9 +56,9 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   return (
     <div className="system-overlay fade-in" onClick={onClose} role="presentation">
       <div
-        className="glass-panel sonsotyo-modal"
+        className="glass-panel sonsotyo-modal system-menu-modal"
         onClick={(event) => event.stopPropagation()}
-        style={{ maxWidth: '960px' }}
+        style={{ maxWidth: '960px', width: 'min(960px, 100%)' }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="system-menu-title"
@@ -73,7 +73,7 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <button type="button" onClick={onClose} className="neo-button" aria-label="Close settings">Close</button>
         </div>
 
-        <div className="sonsotyo-grid cards" style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
+        <div className="sonsotyo-grid cards system-menu-settings-grid">
           <SettingCard label="Sound mix" wide>
             <div style={{ display: 'grid', gap: '14px' }}>
               <label className="sonsotyo-copy" style={{ display: 'grid', gap: '6px', fontSize: '0.78rem' }}>
@@ -192,7 +192,7 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </SettingCard>
 
           <SettingCard label="Presentation Sync" wide>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '8px' }} role="group" aria-label="Presentation quality">
+            <div className="system-menu-presentation-grid" role="group" aria-label="Presentation quality">
               {(['LOW', 'MEDIUM', 'HIGH', 'ULTRA'] as const).map((tier) => (
                 <button
                   key={tier}

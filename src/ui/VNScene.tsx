@@ -87,8 +87,8 @@ export const VNScene: React.FC = () => {
 
   if (!session) {
     return (
-      <div className="fade-in" style={{ height: '100vh', display: 'grid', placeItems: 'center' }}>
-        <div className="glass-panel" style={{ width: 'min(560px, calc(100vw - 40px))', padding: '28px 30px', textAlign: 'center' }}>
+      <div className="fade-in vn-scene-scroll" style={{ display: 'grid', placeItems: 'center', padding: '16px' }}>
+        <div className="glass-panel" style={{ width: 'min(560px, 100%)', maxWidth: '100%', padding: '28px 30px', textAlign: 'center' }}>
           <div className="system-menu-kicker">VN Scene</div>
           <div className="glow-text" style={{ marginTop: '10px', fontSize: '2.4rem' }}>No Active Script</div>
           <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
@@ -103,7 +103,15 @@ export const VNScene: React.FC = () => {
   }
 
   return (
-    <div className="fade-in" style={{ minHeight: '100vh', padding: '120px 24px 40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div
+      className="fade-in vn-scene-scroll"
+      style={{
+        padding: 'clamp(24px, 10vh, 120px) 24px max(40px, env(safe-area-inset-bottom, 0px))',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
       <VNRunner
         scriptUrl={session.scriptUrl}
         canvasId={session.canvasId}

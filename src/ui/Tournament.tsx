@@ -244,12 +244,11 @@ export const Tournament: React.FC = () => {
         {toastNode}
         {systemMenuOverlay}
       <div
-        className="tournament-scene sonsotyo-scene fade-in"
+        className="tournament-scene sonsotyo-scene sonsotyo-scene--bounded fade-in"
         style={{
           position: 'relative',
-          minHeight: '100vh',
           padding: '40px',
-          overflowY: 'auto',
+          paddingBottom: 'max(40px, env(safe-area-inset-bottom, 0px))',
           backgroundImage:
             'linear-gradient(180deg, rgba(7,8,15,0.76), rgba(6,8,12,0.92)), radial-gradient(circle at 14% 18%, rgba(126,242,255,0.12), transparent 20%), url(/metro_map_bg.png)',
           backgroundSize: 'cover',
@@ -454,11 +453,11 @@ export const Tournament: React.FC = () => {
       {toastNode}
       {systemMenuOverlay}
     <div
-      className="tournament-scene sonsotyo-scene fade-in"
+      className="tournament-scene sonsotyo-scene sonsotyo-scene--bounded fade-in"
       style={{
         position: 'relative',
-        minHeight: '100vh',
         padding: '40px',
+        paddingBottom: 'max(40px, env(safe-area-inset-bottom, 0px))',
         backgroundImage:
           'linear-gradient(180deg, rgba(7,8,15,0.76), rgba(6,8,12,0.92)), radial-gradient(circle at 82% 16%, rgba(255,138,198,0.14), transparent 24%), url(/civic_crown_bg.png)',
         backgroundSize: 'cover',

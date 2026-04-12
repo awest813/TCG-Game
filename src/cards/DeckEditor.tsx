@@ -56,11 +56,10 @@ export const DeckEditor: React.FC = () => {
 
   return (
     <div
-      className="deck-builder-container fade-in"
+      className="deck-builder-container fade-in deck-builder-root"
       style={{
-        height: '100vh',
         display: 'grid',
-        gridTemplateColumns: '1fr 380px',
+        gridTemplateColumns: 'minmax(0, 1fr) minmax(260px, 380px)',
         background:
           'linear-gradient(180deg, rgba(8,10,18,0.86), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.12), transparent 22%), url(/assets/bg/deck-terminal.svg)',
         backgroundSize: 'cover',
@@ -175,6 +174,13 @@ export const DeckEditor: React.FC = () => {
       </aside>
 
       <style>{`
+        @media (max-width: 900px) {
+          .deck-builder-root {
+            grid-template-columns: 1fr !important;
+            grid-template-rows: minmax(0, 1fr) auto;
+            overflow-y: auto !important;
+          }
+        }
         .deck-list-item:hover {
           background: rgba(255,255,255,0.08) !important;
           transform: translateX(-6px);

@@ -162,10 +162,10 @@ export const DistrictExplore: React.FC = () => {
     setScene('VN_SCENE');
   };
 
-  if (!currentLoc) return <div style={{ background: 'black', height: '100vh' }}>INITIALIZING METRO RELAY...</div>;
+  if (!currentLoc) return <div style={{ background: 'black', height: '100%' }}>INITIALIZING METRO RELAY...</div>;
 
   return (
-    <div className="explore-container sonsotyo-scene fade-in" style={{ height: '100vh', position: 'relative', overflow: 'hidden', background: '#000' }}>
+    <div className="explore-container sonsotyo-scene fade-in" style={{ height: '100%', maxHeight: '100%', position: 'relative', overflow: 'hidden', background: '#000' }}>
       <div className={`scene-background-container ${isTransitioning ? 'location-exit' : 'location-enter'}`} style={{ transition: 'opacity 0.4s ease' }}>
         <div className="alive-background" style={{ backgroundImage: `url(${currentLoc.backgroundImage})` }} />
         <div className="data-overlay" />

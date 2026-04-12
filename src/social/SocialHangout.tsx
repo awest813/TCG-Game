@@ -35,11 +35,14 @@ export const SocialHangout: React.FC = () => {
     <div
       className="social-scene sonsotyo-scene fade-in"
       style={{
-        height: '100vh',
+        height: '100%',
+        maxHeight: '100%',
+        boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-end',
         padding: '42px',
+        paddingBottom: 'max(42px, env(safe-area-inset-bottom, 0px))',
         overflow: 'hidden',
         position: 'relative',
         background: 'url("/sunset_terminal_bg.png") center/cover'

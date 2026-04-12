@@ -99,7 +99,8 @@ export const TransitStation: React.FC = () => {
     <div
       className={`transit-app-scene sonsotyo-scene ${isClosing ? 'exit-zoom' : 'fade-in'}`}
       style={{
-        height: '100vh',
+        height: '100%',
+        maxHeight: '100%',
         background:
           'linear-gradient(180deg, rgba(8,10,18,0.82), rgba(4,6,10,0.94)), radial-gradient(circle at 50% 50%, rgba(126,242,255,0.08), transparent 44%), url("/rotom_map_bg.png")',
         backgroundSize: 'cover',
