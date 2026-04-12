@@ -1,0 +1,35 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#060913"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+  <ellipse cx="822" cy="96" rx="534" ry="202" fill="url(#aura)" opacity="0.7"/>
+  <ellipse cx="1268" cy="202" rx="262" ry="150" fill="#FF8AC6" opacity="0.08"/>
+  <ellipse cx="284" cy="742" rx="314" ry="210" fill="#7EF2FF" opacity="0.08"/>
+  <path d="M0 598C186 552 284 622 468 622C673 622 793 488 1024 488C1214 488 1378 572 1600 536V900H0V598Z" fill="url(#haze)"/>
+  <path d="M0 668C210 632 330 708 528 708C741 708 846 566 1086 566C1272 566 1412 648 1600 628V900H0V668Z" fill="#0A0F1D"/>
+  <g opacity="0.56">
+    <path d="M312 224C496 120 716 104 922 160C1084 204 1234 300 1352 426" stroke="#7EF2FF" stroke-width="2"/>
+    <path d="M284 286C510 172 780 154 1032 238C1140 274 1240 330 1326 404" stroke="#FFE39A" stroke-width="1.5" stroke-dasharray="8 10"/>
+    <path d="M382 352C578 266 804 270 996 364" stroke="#FF8AC6" stroke-width="1.5" stroke-dasharray="2 9"/>
+  </g>
+  <g opacity="0.78">
+    <circle cx="430" cy="258" r="5" fill="#7EF2FF"/>
+    <circle cx="820" cy="170" r="6" fill="#FFE39A"/>
+    <circle cx="1084" cy="282" r="5" fill="#FF8AC6"/>
+    <circle cx="1240" cy="374" r="4" fill="#7EF2FF"/>
+  </g>
+  <defs>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" stroke="#DFF7FF" stroke-opacity="0.08"/>
+      <circle cx="0.5" cy="0.5" r="0.5" fill="#DFF7FF" fill-opacity="0.4"/>
+    </pattern>
+    <radialGradient id="aura" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(822 96) rotate(90) scale(202 534)">
+      <stop stop-color="#7EF2FF" stop-opacity="0.42"/>
+      <stop offset="0.46" stop-color="#B6B2FF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#060913" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="haze" x1="800" y1="488" x2="800" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1730" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#05070F"/>
+    </linearGradient>
+  </defs>
+</svg>

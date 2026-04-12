@@ -16,7 +16,7 @@ import {
   TOURNAMENT_TIERS
 } from '../core/TournamentManager';
 import { applyTrainerRelationshipDelta, getTrainerById, mergeSocialState } from '../data/trainers';
-import { getCardById, getCardPalette } from '../data/cards';
+import { formatCardSetLabel, getCardById, getCardPalette, resolveCardBadgeIcon, resolveCardImage } from '../data/cards';
 import { NPCS } from '../npc/npcs';
 import { audioManager } from '../core/AudioManager';
 import { BattleArena3D } from './BattleArena3D';
@@ -50,7 +50,7 @@ export const BattleBoard: React.FC = () => {
   const opponent = NPCS.find((entry) => entry.id === opponentId);
   const trainer = getTrainerById(opponentId);
   const opponentName = opponent?.name ?? 'KAIZEN';
-  const opponentAvatar = trainer?.avatarPath ?? (opponentId === 'kaizen' ? '/avatar_kaizen.png' : '/avatar_player.png');
+  const opponentAvatar = trainer?.bustPath ?? trainer?.avatarPath ?? (opponentId === 'kaizen' ? '/avatar_kaizen.png' : '/avatar_player.png');
   const playerDeck = useMemo(() => {
     const ids = [...state.profile.inventory.deck];
     if (ids.length === 0) {
@@ -295,8 +295,8 @@ export const BattleBoard: React.FC = () => {
 
         <div className="battle-grid">
           <div className="battle-topbar">
-            <div className="glass-panel battle-rival-panel">
-              <img className="battle-rival-avatar" src={opponentAvatar} alt={opponentName} />
+          <div className="glass-panel battle-rival-panel">
+            <img className="battle-rival-avatar" src={opponentAvatar} alt={opponentName} />
               <div>
                 <div className="battle-kicker">Sonsotyo Dream Match</div>
                 <div className="battle-rival-name" style={{ color: fieldTheme.accent }}>{opponentName}</div>
@@ -517,7 +517,8 @@ const BattleSlot: React.FC<{
         <div className="battle-slot-shell">
           <div className="battle-slot-type" style={{ color: palette.accent }}>{isActive ? 'Active' : 'Bench'}</div>
           <div className="battle-slot-name">{card?.name.toUpperCase()}</div>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: palette.accent }}>
+          <div className="battle-slot-art">
+            <img src={resolveCardImage(card)} alt="" />
             <div className="battle-slot-orb" style={{ background: palette.glow }} />
           </div>
           <div className="battle-slot-stats">
@@ -536,8 +537,14 @@ const BattleCard: React.FC<{ cardId: string; onClick: () => void; onHover: () =>
 
   return (
     <button disabled={disabled} onClick={onClick} onMouseEnter={onHover} onMouseLeave={onLeave} className="battle-card" style={{ borderColor: palette.accent, background: palette.panel, opacity: disabled ? 0.4 : 1 }}>
+      <div className="battle-card-crest" style={{ borderColor: palette.accent }}>
+        <img src={resolveCardBadgeIcon(card)} alt="" />
+      </div>
       <div className="battle-card-name">{card?.name.toUpperCase()}</div>
-      <div className="battle-card-art" style={{ boxShadow: `inset 0 0 40px ${palette.glow}` }} />
+      <div className="battle-card-art" style={{ boxShadow: `inset 0 0 40px ${palette.glow}` }}>
+        <img src={resolveCardImage(card)} alt="" />
+        <div className="battle-card-art-sheen" />
+      </div>
       <div className="battle-card-footer">
         <div>
           <div className="battle-card-cost" style={{ color: palette.accent }}>{card?.cost} EN</div>
@@ -596,9 +603,18 @@ const CardInspector: React.FC<{ card: Card }> = ({ card }) => {
 
   return (
     <div className="glass-panel battle-inspector" style={{ background: palette.panel, borderColor: palette.accent }}>
+      <div className="battle-inspector-media">
+        <div className="battle-inspector-icon" style={{ borderColor: palette.accent }}>
+          <img src={resolveCardBadgeIcon(card)} alt="" />
+        </div>
+        <div className="battle-inspector-art">
+          <img src={resolveCardImage(card)} alt="" />
+        </div>
+      </div>
       <div className="battle-mini-label" style={{ color: palette.accent }}>{card.cardType.toUpperCase()}</div>
       <h3 style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.6rem' }}>{card.name.toUpperCase()}</h3>
       <div style={{ margin: '14px 0', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{card.rulesText?.[0] ?? 'No passive text loaded.'}</div>
+      <div className="battle-inspector-set">Set // {formatCardSetLabel(card)}</div>
       <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>{card.attack ?? '-'} / {card.health ?? '-'}</div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { VNActionId, VNDialogueBeat } from '../visual-novel/types';
+import '../styles/SonsotyoScenes.css';
 
 export const VNDialogueOverlay: React.FC<{
   beat: VNDialogueBeat;
@@ -9,8 +10,8 @@ export const VNDialogueOverlay: React.FC<{
 }> = ({ beat, typedText, onAction, onDismiss }) => {
   return (
     <div
-      className="dialogue-overlay fade-in"
-      style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', backdropFilter: 'blur(10px)' }}
+      className="dialogue-overlay vn-dialogue-overlay fade-in"
+      style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', backdropFilter: 'blur(10px)' }}
     >
       <div style={{ position: 'relative', width: '100%', maxWidth: '1100px', display: 'flex', flexDirection: 'column', gap: '26px' }}>
         <div className="vn-dialogue-shell">
@@ -27,8 +28,13 @@ export const VNDialogueOverlay: React.FC<{
             <div className="vn-dialogue-name-tag" style={{ background: beat.accentColor }}>
               {beat.speaker.toUpperCase()} // {beat.role.toUpperCase()}
             </div>
+            <div className="vn-dialogue-signal-strip">
+              <span>{beat.timeOfDay}</span>
+              <span>{beat.mood}</span>
+              <span>Tap To Advance</span>
+            </div>
             <div className="vn-dialogue-text" style={{ color: 'var(--text-bright)' }}>{typedText}</div>
-            <div style={{ position: 'absolute', right: 30, bottom: 20, fontSize: '0.72rem', color: 'var(--accent-yellow)', letterSpacing: '0.16rem', animation: 'pulse 1s infinite' }}>
+            <div className="vn-dialogue-advance">
               CLICK TO ADVANCE
             </div>
           </div>

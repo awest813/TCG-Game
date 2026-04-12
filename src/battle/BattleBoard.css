@@ -268,6 +268,27 @@
   flex-direction: column;
 }
 
+.battle-slot-art {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 18px;
+  margin: 10px 0 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.battle-slot-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.34;
+}
+
 .battle-slot-name {
   font-weight: 700;
   font-size: 0.84rem;
@@ -375,6 +396,26 @@
   overflow: hidden;
 }
 
+.battle-card-crest {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 8, 16, 0.58);
+  border: 1px solid rgba(255,255,255,0.16);
+  z-index: 2;
+}
+
+.battle-card-crest img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
 .battle-card:hover:not(:disabled) {
   transform: translateY(-6px) rotate(-1deg);
   box-shadow: 0 18px 36px rgba(0,0,0,0.28);
@@ -406,6 +447,23 @@
   border: 1px solid rgba(255,255,255,0.1);
 }
 
+.battle-card-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.74;
+}
+
+.battle-card-art-sheen {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.18), transparent 34%),
+    linear-gradient(180deg, transparent 20%, rgba(4, 6, 12, 0.56));
+}
+
 .battle-card-footer {
   position: relative;
   z-index: 1;
@@ -429,6 +487,54 @@
 .battle-controls-copy {
   color: var(--text-secondary);
   font-size: 0.86rem;
+}
+
+.battle-inspector-media {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+
+.battle-inspector-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+.battle-inspector-icon img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.battle-inspector-art {
+  min-height: 84px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.battle-inspector-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.68;
+}
+
+.battle-inspector-set {
+  margin: -2px 0 10px;
+  font-size: 0.72rem;
+  letter-spacing: 0.16rem;
+  text-transform: uppercase;
+  color: var(--accent-yellow);
 }
 
 .battle-vs-screen {

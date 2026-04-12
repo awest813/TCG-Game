@@ -1,0 +1,21 @@
+<svg width="1200" height="420" viewBox="0 0 1200 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="420" rx="24" fill="#0A0F1B"/>
+  <rect width="1200" height="420" rx="24" fill="url(#noise)"/>
+  <path d="M48 62H1152" stroke="#DFF7FF" stroke-opacity="0.12"/>
+  <path d="M48 356H1152" stroke="#DFF7FF" stroke-opacity="0.12"/>
+  <path d="M120 38V382" stroke="#7EF2FF" stroke-opacity="0.08"/>
+  <path d="M1080 38V382" stroke="#FF8AC6" stroke-opacity="0.08"/>
+  <path d="M210 90C374 34 526 20 710 54C850 80 956 138 1088 238" stroke="#7EF2FF" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M146 276C282 212 432 204 588 230C740 254 878 314 1000 350" stroke="#FFE39A" stroke-opacity="0.14" stroke-width="1.5" stroke-dasharray="6 10"/>
+  <circle cx="216" cy="88" r="4" fill="#7EF2FF" fill-opacity="0.76"/>
+  <circle cx="598" cy="232" r="4" fill="#FFE39A" fill-opacity="0.72"/>
+  <circle cx="998" cy="350" r="4" fill="#FF8AC6" fill-opacity="0.76"/>
+  <defs>
+    <pattern id="noise" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" stroke="#DFF7FF" stroke-opacity="0.04"/>
+      <circle cx="8" cy="10" r="1" fill="#DFF7FF" fill-opacity="0.1"/>
+      <circle cx="30" cy="26" r="1" fill="#7EF2FF" fill-opacity="0.12"/>
+      <circle cx="18" cy="38" r="1" fill="#FF8AC6" fill-opacity="0.08"/>
+    </pattern>
+  </defs>
+</svg>

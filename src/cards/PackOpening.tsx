@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../core/GameContext';
-import { CARD_POOL, getCardById, getCardPalette, resolveCardImage } from '../data/cards';
+import { CARD_POOL, formatCardSetLabel, getCardById, getCardPalette, resolveCardBadgeIcon, resolveCardImage } from '../data/cards';
 import { audioManager } from '../core/AudioManager';
 import '../styles/SonsotyoScenes.css';
 
@@ -151,7 +151,7 @@ export const PackOpening: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', width: '100%', maxWidth: '980px', zIndex: 10 }}>
+        <div className="pack-reveal-layout" style={{ textAlign: 'center', width: '100%', maxWidth: '980px', zIndex: 10 }}>
           {currentIndex >= 0 && <RevealCard cardId={revealedCards[currentIndex]} onNext={nextCard} index={currentIndex + 1} total={revealedCards.length} />}
           <div style={{ marginTop: '42px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
             {revealedCards.map((_, index) => (
@@ -209,10 +209,11 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
   const palette = getCardPalette(card);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '42px', alignItems: 'center' }}>
+    <div className="pack-reveal-stage" style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '42px', alignItems: 'center' }}>
       {showFlash && <div className="rare-flash" />}
       <div
         onClick={onNext}
+        className="pack-reveal-card-shell"
         style={{
           width: '320px',
           height: '460px',
@@ -225,7 +226,7 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
         }}
       >
         <div
-          className="glass-panel"
+          className="glass-panel pack-face-card"
           style={{
             position: 'absolute',
             inset: 0,
@@ -240,6 +241,7 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
             overflow: 'hidden'
           }}
         >
+          <div className="pack-face-grid" />
           {card.rarity === 'rare' && <div className="holographic-shine" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 55%, transparent 60%)', backgroundSize: '200% 200%', animation: 'shine 2s infinite linear' }} />}
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', zIndex: 2 }}>
@@ -250,10 +252,14 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
             <div style={{ color: 'var(--accent-yellow)', fontWeight: 800, fontSize: '1.2rem' }}>{card.cost}</div>
           </div>
 
-          <div style={{ flex: 1, marginTop: '20px', marginBottom: '20px', borderRadius: '18px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+          <div className="pack-card-crest" style={{ borderColor: palette.accent }}>
+            <img src={resolveCardBadgeIcon(card)} alt="" />
+          </div>
+
+          <div className="pack-card-art-frame" style={{ flex: 1, marginTop: '20px', marginBottom: '20px', borderRadius: '18px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
             <div style={{ width: '130px', height: '130px', background: palette.glow, borderRadius: '999px', filter: 'blur(20px)', opacity: 0.6 }} />
             <img src={resolveCardImage(card)} alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px', opacity: 0.82 }} />
-            <div style={{ position: 'absolute', bottom: '14px', fontSize: '0.62rem', letterSpacing: '0.22rem', color: palette.accent, fontWeight: 700 }}>{card.set?.replace(/_/g, ' ') ?? 'CORE SET'}</div>
+            <div style={{ position: 'absolute', bottom: '14px', fontSize: '0.62rem', letterSpacing: '0.22rem', color: palette.accent, fontWeight: 700 }}>{formatCardSetLabel(card)}</div>
           </div>
 
           <div style={{ fontSize: '0.88rem', lineHeight: 1.5, color: 'var(--text-secondary)', minHeight: '80px', zIndex: 2 }}>
@@ -267,6 +273,7 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
         </div>
 
         <div
+          className="pack-back-card"
           style={{
             position: 'absolute',
             inset: 0,
@@ -288,13 +295,17 @@ const RevealCard: React.FC<{ cardId: string; onNext: () => void; index: number; 
         </div>
       </div>
 
-        <div className="glass-panel" style={{ padding: '32px', background: 'rgba(8,12,24,0.85)', textAlign: 'left', border: `1px solid ${palette.accent}` }}>
+        <div className="glass-panel pack-reveal-details" style={{ padding: '32px', background: 'rgba(8,12,24,0.85)', textAlign: 'left', border: `1px solid ${palette.accent}` }}>
         <div className="sonsotyo-kicker" style={{ color: palette.accent }}>REVEAL_SEQUENCE {index} / {total}</div>
         <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '2.5rem', color: 'white' }}>{card.name.toUpperCase()}</div>
         <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <Tag label={card.cardType.toUpperCase()} accent={palette.accent} />
           {card.creatureType && <Tag label={card.creatureType.toUpperCase()} accent="var(--accent-yellow)" />}
           <Tag label={card.rarity.toUpperCase()} accent="var(--text-primary)" />
+        </div>
+        <div className="pack-reveal-metadata">
+          <span>Set // {formatCardSetLabel(card)}</span>
+          <span>Signal // {card.cardType === 'creature' ? `${card.attack ?? '-'} ATK / ${card.health ?? '-'} HP` : 'TACTIC CLASS'}</span>
         </div>
         <div className="sonsotyo-copy" style={{ marginTop: '22px', lineHeight: 1.7, fontSize: '1rem', borderLeft: `3px solid ${palette.accent}`, paddingLeft: '20px' }}>
           {(card.rulesText ?? ['No effect text loaded.']).join(' ')}

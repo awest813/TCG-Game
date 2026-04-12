@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { Card, CreatureType } from '../core/types';
-import { getCardById, getCardPalette, CARD_POOL, resolveCardImage } from '../data/cards';
+import { formatCardSetLabel, getCardById, getCardPalette, CARD_POOL, resolveCardBadgeIcon, resolveCardImage } from '../data/cards';
 import { audioManager } from '../core/AudioManager';
 import { SystemMenu } from '../ui/SystemMenu';
 import '../styles/SonsotyoScenes.css';
@@ -87,7 +87,7 @@ export const DeckEditor: React.FC = () => {
               >
                 System
               </button>
-            <div className="glass-panel" style={{ padding: '12px 20px', background: 'rgba(255,255,255,0.03)', display: 'flex', gap: '20px', borderRadius: '22px' }}>
+            <div className="glass-panel deck-hero-metrics" style={{ padding: '12px 20px', background: 'rgba(255,255,255,0.03)', display: 'flex', gap: '20px', borderRadius: '22px' }}>
               <Metric label="AVG COST" value={`${averageCost} EN`} accent="var(--accent-yellow)" />
               <Metric label="CREATURES" value={`${creatureCount}`} accent="var(--accent-cyan)" />
               <Metric label="SUPPORT" value={`${supportCount}`} accent="var(--accent-magenta)" />
@@ -96,7 +96,7 @@ export const DeckEditor: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', gap: '20px', marginTop: '32px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div className="glass-panel" style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', padding: '6px', borderRadius: '999px', flexWrap: 'wrap' }}>
+            <div className="glass-panel deck-filter-strip" style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', padding: '6px', borderRadius: '999px', flexWrap: 'wrap' }}>
               {['ALL', 'Pulse', 'Bloom', 'Tide', 'Alloy', 'Veil', 'Current', 'SUPPORT'].map((cat) => (
                 <button
                   key={cat}
@@ -120,7 +120,7 @@ export const DeckEditor: React.FC = () => {
             </div>
 
             <input
-              className="glass-panel"
+              className="glass-panel deck-search-input"
               placeholder="FILTER BY DESIGNATION..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -136,7 +136,7 @@ export const DeckEditor: React.FC = () => {
         </div>
       </main>
 
-      <aside style={{ background: 'rgba(7,10,24,0.4)', padding: '32px', display: 'flex', flexDirection: 'column', backdropFilter: 'blur(20px)' }}>
+      <aside className="deck-sidebar-shell" style={{ background: 'rgba(7,10,24,0.4)', padding: '32px', display: 'flex', flexDirection: 'column', backdropFilter: 'blur(20px)' }}>
         <div className="sonsotyo-kicker" style={{ color: 'var(--accent-secondary)' }}>Active Loadout</div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '24px' }}>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', margin: '10px 0 0' }}>MAIN DECK</h2>
@@ -155,9 +155,14 @@ export const DeckEditor: React.FC = () => {
                 onClick={() => removeFromDeck(index)}
                 style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', borderLeft: `3px solid ${palette.accent}`, transition: '0.2s' }}
               >
-                <div>
-                  <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{card.name.toUpperCase()}</div>
-                  <div style={{ color: palette.accent, fontSize: '0.62rem', letterSpacing: '0.1rem', marginTop: '2px' }}>{card.creatureType?.toUpperCase() ?? card.cardType.toUpperCase()}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+                  <div className="deck-list-icon-shell">
+                    <img src={resolveCardBadgeIcon(card)} alt="" />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{card.name.toUpperCase()}</div>
+                    <div style={{ color: palette.accent, fontSize: '0.62rem', letterSpacing: '0.1rem', marginTop: '2px' }}>{card.creatureType?.toUpperCase() ?? card.cardType.toUpperCase()}</div>
+                  </div>
                 </div>
                 <div style={{ fontWeight: 900, color: 'var(--accent-yellow)', fontSize: '1.1rem' }}>{card.cost}</div>
               </div>
@@ -202,18 +207,23 @@ const EnhancedCollectionCard: React.FC<{ card: Card; count: number; onAdd: () =>
   const palette = getCardPalette(card);
   return (
     <div
-      className="glass-panel enhanced-card"
+      className="glass-panel enhanced-card deck-collection-card"
       onClick={onAdd}
       style={{ padding: '16px', border: `1px solid ${palette.accent}`, background: palette.panel, cursor: 'pointer', transition: '0.4s cubic-bezier(0.19, 1, 0.22, 1)', position: 'relative', borderRadius: '24px', overflow: 'hidden' }}
     >
+      <div className="deck-collection-card-glow" style={{ background: palette.glow }} />
       <div style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 5 }}>
         <div style={{ padding: '4px 8px', borderRadius: '999px', background: 'rgba(0,0,0,0.6)', fontWeight: 900, color: 'var(--accent-yellow)', fontSize: '0.9rem' }}>{card.cost}</div>
       </div>
+      <div className="deck-card-crest" style={{ borderColor: palette.accent }}>
+        <img src={resolveCardBadgeIcon(card)} alt="" />
+      </div>
 
-      <div style={{ height: '180px', borderRadius: '16px', background: 'rgba(0,0,0,0.4)', overflow: 'hidden', marginBottom: '14px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
-        <img src={resolveCardImage(card)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.88 }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', background: 'linear-gradient(0deg, rgba(0,0,0,0.8), transparent)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1rem' }}>
-          {card.rarity.toUpperCase()} / {card.set?.replace(/_/g, ' ') ?? 'CORE SET'}
+      <div className="deck-card-art-shell" style={{ height: '180px', borderRadius: '16px', background: 'rgba(0,0,0,0.4)', overflow: 'hidden', marginBottom: '14px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+        <img src={resolveCardImage(card)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
+        <div className="deck-card-art-overlay">
+          <span>{card.rarity.toUpperCase()}</span>
+          <span>{formatCardSetLabel(card)}</span>
         </div>
       </div>
 
@@ -222,9 +232,10 @@ const EnhancedCollectionCard: React.FC<{ card: Card; count: number; onAdd: () =>
         {card.creatureType?.toUpperCase() ?? card.cardType.toUpperCase()}
       </div>
 
-      <div className="sonsotyo-copy" style={{ fontSize: '0.8rem', lineHeight: 1.4, minHeight: '44px' }}>
+      <div className="sonsotyo-copy deck-card-copy" style={{ fontSize: '0.8rem', lineHeight: 1.4, minHeight: '44px' }}>
         {card.rulesText?.[0] ?? 'No rules data available.'}
       </div>
+      <div className="deck-card-flair">Signal index // {card.cardType === 'creature' ? `${card.attack ?? '-'} ATK / ${card.health ?? '-'} HP` : 'TACTICAL SUPPORT'}</div>
 
       {count > 0 && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none', fontSize: '8rem', fontWeight: 900, color: palette.accent, opacity: 0.1 }}>{count}</div>}
       {count > 0 && <div style={{ position: 'absolute', bottom: '16px', right: '16px', background: 'var(--accent-yellow)', color: 'black', padding: '4px 12px', borderRadius: '99px', fontSize: '0.74rem', fontWeight: 900, boxShadow: '0 4px 12px rgba(255,209,102,0.4)' }}>SYNCED: {count}</div>}

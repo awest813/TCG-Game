@@ -14,6 +14,13 @@ const formatSpeakerLabel = (speakerId: string) =>
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(' ');
 
+const formatPresentationLabel = (value: string) =>
+  value
+    .replace(/^.*\//, '')
+    .replace(/\.[^.]+$/, '')
+    .replace(/[_-]/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
 export const VNRunner: React.FC<{
   scriptUrl: string;
   canvasId?: string;
@@ -185,7 +192,7 @@ export const VNRunner: React.FC<{
   const hasStageVisuals = Boolean(background || portrait || bustLeft || bustRight);
   const stageStyle = background
     ? {
-        backgroundImage: `linear-gradient(180deg, rgba(8, 6, 8, 0.18), rgba(8, 6, 8, 0.7)), url(${background})`,
+        backgroundImage: `linear-gradient(180deg, rgba(8, 6, 8, 0.14), rgba(8, 6, 8, 0.74)), url(${background})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }
@@ -253,27 +260,27 @@ export const VNRunner: React.FC<{
             </div>
 
             <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <div className="glass-morphism" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
+              <div className="glass-morphism vn-runner-signal-chip" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
                 SPEAKER: {speakerLabel}
               </div>
-              <div className="glass-morphism" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
+              <div className="glass-morphism vn-runner-signal-chip" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
                 STEP TYPE: {stepLabel}
               </div>
-              <div className="glass-morphism" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
+              <div className="glass-morphism vn-runner-signal-chip" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
                 PAUSED: {engineState.paused ? 'YES' : 'NO'}
               </div>
               {background && (
-                <div className="glass-morphism" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
-                  BG: {background}
+                <div className="glass-morphism vn-runner-signal-chip" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
+                  BG: {formatPresentationLabel(background)}
                 </div>
               )}
               {bgmTrack && (
-                <div className="glass-morphism" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
-                  BGM: {bgmTrack}
+                <div className="glass-morphism vn-runner-signal-chip" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
+                  BGM: {formatPresentationLabel(bgmTrack)}
                 </div>
               )}
               {focusSide && (
-                <div className="glass-morphism" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
+                <div className="glass-morphism vn-runner-signal-chip" style={{ padding: '0.55rem 0.9rem', fontSize: '0.74rem', letterSpacing: '0.12rem' }}>
                   FOCUS: {focusSide.toUpperCase()}
                 </div>
               )}
@@ -282,7 +289,7 @@ export const VNRunner: React.FC<{
 
           <div>
             {showBacklog && recentTranscript.length > 0 && (
-              <div style={{ marginBottom: '16px', padding: '14px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="vn-runner-backlog-panel" style={{ marginBottom: '16px', padding: '14px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <div style={{ fontSize: '0.66rem', letterSpacing: '0.16rem', color: 'var(--accent-yellow)', textTransform: 'uppercase' }}>Backlog</div>
                 <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {recentTranscript.map((entry) => (

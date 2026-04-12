@@ -791,6 +791,18 @@ export function resolveCardImage(card: Card | undefined): string {
   return '/assets/card-art/support.svg';
 }
 
+export function resolveCardBadgeIcon(card: Card | undefined): string {
+  if (!card) return '/assets/ui/icon-signal.svg';
+  if (card.cardType === 'field') return '/assets/ui/icon-route.svg';
+  if (card.cardType === 'item') return '/assets/ui/icon-core.svg';
+  if (card.cardType === 'support') return '/assets/ui/icon-signal.svg';
+  return resolveCardImage(card);
+}
+
+export function formatCardSetLabel(card: Card | undefined): string {
+  return (card?.set ?? 'CORE_SET').replace(/_/g, ' ');
+}
+
 export const getCardPalette = (card?: Card) => {
   const typePalettes = {
     Pulse: { accent: '#79f7ff', glow: 'rgba(121,247,255,0.45)', panel: 'linear-gradient(180deg, rgba(8,29,44,0.96), rgba(5,10,18,0.96))' },
