@@ -108,10 +108,8 @@ export const MainMenu: React.FC = () => {
               Duel Signal
             </SonsotyoTitle>
             <p className="sonsotyo-copy" style={{ maxWidth: '50ch', marginTop: '14px' }}>
-              Neon card duels, a handheld-style circuit ladder, and a city that wakes after midnight. New here? Use{' '}
-              <strong style={{ fontWeight: 700, color: 'var(--accent-yellow)' }}>New game</strong> for the guided apartment start — or{' '}
-              <strong style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>Continue</strong> if you already have a save.{' '}
-              <strong style={{ fontWeight: 700, color: 'var(--accent-secondary)' }}>Settings</strong> here matches <strong style={{ fontWeight: 700 }}>System</strong> in play (apartment, transit, district, shop, tournaments): audio, save, and return to menu.
+              Neon card duels, a handheld circuit ladder, and a city that wakes after midnight. Start a guided apartment run,
+              jump back into your autosave, or tune the presentation before you head into the district.
             </p>
             <div className="sonsotyo-meta-strip">
               <SonsotyoPill>{hasSaveData ? 'Autosave found' : 'No autosave yet'}</SonsotyoPill>
@@ -120,25 +118,73 @@ export const MainMenu: React.FC = () => {
             </div>
           </SonsotyoHeroCard>
 
-          <SonsotyoPanel>
-            <SonsotyoKicker>Status</SonsotyoKicker>
-            <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.45rem', lineHeight: 1.35 }}>
+          <SonsotyoPanel className="main-menu-status-panel">
+            <SonsotyoKicker>Circuit status</SonsotyoKicker>
+            <div className="main-menu-status-title" style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.45rem', lineHeight: 1.35 }}>
               {statusMessage ?? (hasSaveData ? 'Ready to continue your last session.' : 'Pick New game to register, or Continue if a save exists.')}
             </div>
             <div className="sonsotyo-copy" style={{ marginTop: '12px', lineHeight: 1.55 }}>
-              Recovery opens numbered save slots. Loadout edits your deck from the title screen without starting a career.
+              Recovery opens numbered save slots. Deck edits your loadout from title without starting a new career.
+            </div>
+            <div className="main-menu-status-grid">
+              <div className="main-menu-status-chip">
+                <span className="main-menu-status-label">Route</span>
+                <strong>{hasSaveData ? 'Resume live run' : 'Fresh registration'}</strong>
+              </div>
+              <div className="main-menu-status-chip">
+                <span className="main-menu-status-label">Focus</span>
+                <strong>{hasSaveData ? 'Continue and calibrate' : 'Choose starter and learn'}</strong>
+              </div>
             </div>
           </SonsotyoPanel>
         </div>
 
         <div className="main-menu-body">
           <div className="sonsotyo-grid menu">
-            <MenuNode label="New game" sub="Name + starter · tutorial" primary onClick={() => setShowOnboarding(true)} icon="S-01" />
-            <MenuNode label="Continue" sub="Autosave slot" disabled={!hasSaveData} onClick={handleContinue} icon="S-02" />
-            <MenuNode label="Profile" sub="Stats & collection" onClick={() => updateGameState({ profileReturn: 'MAIN_MENU', currentScene: 'PROFILE' })} icon="S-03" />
-            <MenuNode label="Deck" sub="Edit from title" onClick={() => updateGameState({ deckEditorReturn: 'MAIN_MENU', currentScene: 'DECK_EDITOR' })} icon="S-04" />
-            <MenuNode label="Settings" sub="Audio · display" onClick={() => setShowSettings(true)} icon="S-05" />
-            <MenuNode label="Recovery" sub="3 save slots" onClick={() => setScene('SAVE_LOAD')} icon="S-06" />
+            <MenuNode
+              label="New game"
+              sub="Name + starter · tutorial"
+              detail="Guided apartment opener with Lucy, transit onboarding, and your first district route."
+              primary
+              onClick={() => setShowOnboarding(true)}
+              icon="S-01"
+            />
+            <MenuNode
+              label="Continue"
+              sub="Autosave slot"
+              detail={hasSaveData ? 'Resume from your last live scene and keep current objectives intact.' : 'Unlocks once the game has written an autosave.'}
+              disabled={!hasSaveData}
+              onClick={handleContinue}
+              icon="S-02"
+            />
+            <MenuNode
+              label="Profile"
+              sub="Stats & collection"
+              detail="Review duelist progress, inventory, and broader circuit history."
+              onClick={() => updateGameState({ profileReturn: 'MAIN_MENU', currentScene: 'PROFILE' })}
+              icon="S-03"
+            />
+            <MenuNode
+              label="Deck"
+              sub="Edit from title"
+              detail="Tune your build before loading into the city or stepping into a tournament."
+              onClick={() => updateGameState({ deckEditorReturn: 'MAIN_MENU', currentScene: 'DECK_EDITOR' })}
+              icon="S-04"
+            />
+            <MenuNode
+              label="Settings"
+              sub="Audio · display"
+              detail="Adjust mix, presentation tier, fullscreen, and quick system actions."
+              onClick={() => setShowSettings(true)}
+              icon="S-05"
+            />
+            <MenuNode
+              label="Recovery"
+              sub="3 save slots"
+              detail="Browse manual slots if you need to recover outside the active autosave."
+              onClick={() => setScene('SAVE_LOAD')}
+              icon="S-06"
+            />
           </div>
 
           <div className="sonsotyo-side-stack">
@@ -297,7 +343,15 @@ export const MainMenu: React.FC = () => {
   );
 };
 
-const MenuNode: React.FC<{ label: string; sub: string; icon: string; primary?: boolean; disabled?: boolean; onClick: () => void }> = ({ label, sub, icon, primary, disabled, onClick }) => (
+const MenuNode: React.FC<{
+  label: string;
+  sub: string;
+  detail: string;
+  icon: string;
+  primary?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+}> = ({ label, sub, detail, icon, primary, disabled, onClick }) => (
   <button
     disabled={disabled}
     onClick={() => {
@@ -307,10 +361,16 @@ const MenuNode: React.FC<{ label: string; sub: string; icon: string; primary?: b
     className={`neo-button sonsotyo-menu-node ${primary ? 'primary' : ''}`}
     style={{ opacity: disabled ? 0.3 : 1 }}
   >
-    <div className="sonsotyo-menu-icon">{icon}</div>
-    <div>
+    <div className="sonsotyo-menu-node-topline">
+      <div className="sonsotyo-menu-icon">{icon}</div>
+      <div className="sonsotyo-menu-arrow" aria-hidden="true">
+        {disabled ? 'LOCK' : 'OPEN'}
+      </div>
+    </div>
+    <div className="sonsotyo-menu-copy">
       <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>{label}</div>
       <SonsotyoKicker style={{ marginTop: '8px' }}>{sub}</SonsotyoKicker>
+      <div className="sonsotyo-copy sonsotyo-menu-detail">{detail}</div>
     </div>
   </button>
 );

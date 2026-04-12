@@ -53,6 +53,8 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     onClose();
   };
 
+  const isFullscreen = Boolean(document.fullscreenElement);
+
   return (
     <div className="system-overlay fade-in" onClick={onClose} role="presentation">
       <div
@@ -69,15 +71,34 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <h2 id="system-menu-title" className="sonsotyo-title" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', marginTop: '8px' }}>
               Audio & options
             </h2>
+            <p className="sonsotyo-copy system-menu-intro">
+              Tune presentation, sync your run, and step back to menu without breaking the handheld mood.
+            </p>
           </div>
           <button type="button" onClick={onClose} className="neo-button" aria-label="Close settings">Close</button>
         </div>
 
+        <div className="system-menu-summary-strip" aria-hidden="true">
+          <div className="system-menu-summary-pill">
+            <span className="system-menu-summary-label">Mix</span>
+            <strong>{audioMuted ? 'Muted' : `${volume}% live`}</strong>
+          </div>
+          <div className="system-menu-summary-pill">
+            <span className="system-menu-summary-label">Visual tier</span>
+            <strong>{state.visuals.presentationTier}</strong>
+          </div>
+          <div className="system-menu-summary-pill">
+            <span className="system-menu-summary-label">Display</span>
+            <strong>{isFullscreen ? 'Fullscreen' : 'Windowed'}</strong>
+          </div>
+        </div>
+
         <div className="sonsotyo-grid cards system-menu-settings-grid">
-          <SettingCard label="Sound mix" wide>
+          <SettingCard label="Sound mix" hint="Master applies to every bus. Music, SFX, and voice stay independently adjustable." wide>
             <div style={{ display: 'grid', gap: '14px' }}>
-              <label className="sonsotyo-copy" style={{ display: 'grid', gap: '6px', fontSize: '0.78rem' }}>
-                <span>Master — {volume}%</span>
+              <label className="system-menu-slider-row">
+                <span>Master</span>
+                <strong>{volume}%</strong>
                 <input
                   type="range"
                   min="0"
@@ -92,8 +113,9 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   style={{ width: '100%' }}
                 />
               </label>
-              <label className="sonsotyo-copy" style={{ display: 'grid', gap: '6px', fontSize: '0.78rem' }}>
-                <span>Music — {musicVol}%</span>
+              <label className="system-menu-slider-row">
+                <span>Music</span>
+                <strong>{musicVol}%</strong>
                 <input
                   type="range"
                   min="0"
@@ -108,8 +130,9 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   style={{ width: '100%' }}
                 />
               </label>
-              <label className="sonsotyo-copy" style={{ display: 'grid', gap: '6px', fontSize: '0.78rem' }}>
-                <span>SFX — {sfxVol}%</span>
+              <label className="system-menu-slider-row">
+                <span>SFX</span>
+                <strong>{sfxVol}%</strong>
                 <input
                   type="range"
                   min="0"
@@ -124,8 +147,9 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   style={{ width: '100%' }}
                 />
               </label>
-              <label className="sonsotyo-copy" style={{ display: 'grid', gap: '6px', fontSize: '0.78rem' }}>
-                <span>Voice — {voiceVol}%</span>
+              <label className="system-menu-slider-row">
+                <span>Voice</span>
+                <strong>{voiceVol}%</strong>
                 <input
                   type="range"
                   min="0"
@@ -141,10 +165,7 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 />
               </label>
             </div>
-            <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className="sonsotyo-copy" style={{ fontSize: '0.72rem', flex: '1 1 200px' }}>
-                Master scales every bus. Settings persist in this browser.
-              </div>
+            <div className="system-menu-inline-actions">
               <button
                 type="button"
                 onClick={() => {
@@ -157,10 +178,13 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               >
                 {audioMuted ? 'Muted' : 'Sound on'}
               </button>
+              <div className="sonsotyo-copy system-menu-inline-copy">
+                Settings persist in this browser.
+              </div>
             </div>
           </SettingCard>
 
-          <SettingCard label="Combat Flow">
+          <SettingCard label="Combat flow" hint="Presentation helpers used during battles and high-action transitions.">
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }} role="group" aria-label="Combat animation speed">
               {['NORMAL', 'TURBO'].map((speed) => (
                 <button
@@ -174,13 +198,21 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </button>
               ))}
             </div>
+            <div className="sonsotyo-copy system-menu-setting-footnote">
+              {animSpeed === 'TURBO' ? 'Fast queue playback for repeat matches and testing.' : 'Balanced pacing for first-time encounters and reading effects.'}
+            </div>
           </SettingCard>
 
-          <SettingCard label="Display Mode">
-            <button type="button" className="neo-button" onClick={handleFullscreen} style={{ width: '100%' }}>Toggle Fullscreen</button>
+          <SettingCard label="Display mode" hint="Change screen presentation without leaving the current session.">
+            <button type="button" className="neo-button" onClick={handleFullscreen} style={{ width: '100%' }}>
+              {isFullscreen ? 'Leave fullscreen' : 'Enter fullscreen'}
+            </button>
+            <div className="sonsotyo-copy system-menu-setting-footnote">
+              {isFullscreen ? 'Fullscreen is active on this device.' : 'Best for a cabinet-style title screen and cleaner battle framing.'}
+            </div>
           </SettingCard>
 
-          <SettingCard label="Screen Shake">
+          <SettingCard label="Screen shake" hint="Controls impact feedback on combat hits and heavier scene events.">
             <button
               type="button"
               onClick={() => setScreenShake(!screenShake)}
@@ -189,9 +221,12 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             >
               {screenShake ? 'Enabled' : 'Disabled'}
             </button>
+            <div className="sonsotyo-copy system-menu-setting-footnote">
+              {screenShake ? 'Impact accents stay on for heavier attacks.' : 'Reduced motion presentation for calmer readability.'}
+            </div>
           </SettingCard>
 
-          <SettingCard label="Presentation Sync" wide>
+          <SettingCard label="Presentation sync" hint="Controls atmosphere density, bloom, and scene fidelity presets." wide>
             <div className="system-menu-presentation-grid" role="group" aria-label="Presentation quality">
               {(['LOW', 'MEDIUM', 'HIGH', 'ULTRA'] as const).map((tier) => (
                 <button
@@ -212,7 +247,7 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
           </SettingCard>
 
-          <SettingCard label="Auto-Sync">
+          <SettingCard label="Auto-sync" hint="Background save behavior for routine scene progression and menu exits.">
             <button
               type="button"
               onClick={() => setAutoSave(!autoSave)}
@@ -221,9 +256,12 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             >
               {autoSave ? 'Enabled' : 'Disabled'}
             </button>
+            <div className="sonsotyo-copy system-menu-setting-footnote">
+              {autoSave ? 'Recommended for circuit progression and apartment-to-district hops.' : 'Manual sync only. Remember to save before leaving the run.'}
+            </div>
           </SettingCard>
 
-          <SettingCard label="Card Back Style">
+          <SettingCard label="Card back style" hint="Reserved for cosmetic variants and future unlocks.">
             <div className="sonsotyo-copy">DEFAULT_HEX // MODS_LOCKED</div>
           </SettingCard>
         </div>
@@ -241,9 +279,10 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   );
 };
 
-const SettingCard: React.FC<{ label: string; children: React.ReactNode; wide?: boolean }> = ({ label, children, wide }) => (
+const SettingCard: React.FC<{ label: string; hint?: string; children: React.ReactNode; wide?: boolean }> = ({ label, hint, children, wide }) => (
   <div className="glass-panel sonsotyo-panel" style={wide ? { gridColumn: '1 / -1' } : undefined}>
-    <div className="sonsotyo-kicker" style={{ marginBottom: '12px' }}>{label}</div>
+    <div className="sonsotyo-kicker" style={{ marginBottom: '10px' }}>{label}</div>
+    {hint && <div className="sonsotyo-copy" style={{ marginBottom: '16px', fontSize: '0.82rem' }}>{hint}</div>}
     {children}
   </div>
 );
