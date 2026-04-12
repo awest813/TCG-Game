@@ -2,6 +2,7 @@ import React from 'react';
 import { useGame } from '../core/GameContext';
 import { VNEngineState } from '../engine/types';
 import { TRAINERS, mergeSocialState } from '../data/trainers';
+import { createSceneTransition, createVNExitTransition } from '../core/sceneTransitions';
 import { resolveCompletionScene } from '../visual-novel/scriptRegistry';
 import { VNRunner } from './VNRunner';
 
@@ -186,15 +187,21 @@ export const VNScene: React.FC = () => {
               typeof vnState.variables.currentQuest === 'string'
                 ? vnState.variables.currentQuest
                 : launchBattle
-                  ? 'A champion duel is about to begin.'
-                  : state.currentQuest,
-            currentScene: nextScene,
+                ? 'A champion duel is about to begin.'
+                : state.currentQuest,
+            sceneTransition: createVNExitTransition(session, nextScene, launchBattle),
             ...(nextScene === 'DECK_EDITOR' ? { deckEditorReturn: session.returnScene ?? 'DISTRICT_EXPLORE' } : {})
           });
         }}
         onExit={() => {
           updateGameState({ vnSession: null });
-          setScene(session.returnScene ?? 'DISTRICT_EXPLORE');
+          updateGameState({
+            sceneTransition: createSceneTransition('VN_SCENE', session.returnScene ?? 'DISTRICT_EXPLORE', {
+              kicker: 'Route Exit',
+              title: 'Closing narrative channel',
+              detail: 'Returning to the previous gameplay surface.'
+            })
+          });
         }}
       />
     </div>

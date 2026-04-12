@@ -23,13 +23,47 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
 }) => {
   const { state } = useGame();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sceneRef = useRef<BABYLON.Scene | null>(null);
+  const entitiesRef = useRef({
+    playerActive,
+    opponentActive,
+    playerBench,
+    opponentBench
+  });
   const tier = state.visuals.presentationTier;
+
+  useEffect(() => {
+    entitiesRef.current = {
+      playerActive,
+      opponentActive,
+      playerBench,
+      opponentBench
+    };
+  }, [opponentActive, opponentBench, playerActive, playerBench]);
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+
+    let envCol = new BABYLON.Color3(0.1, 0.2, 0.5);
+    if (field === 'garden-haze') envCol = new BABYLON.Color3(0.05, 0.4, 0.1);
+    if (field === 'void-rift') envCol = new BABYLON.Color3(0.3, 0.05, 0.6);
+    if (field === 'alloy-foundry') envCol = new BABYLON.Color3(0.5, 0.2, 0.05);
+
+    scene.fogColor = envCol.scale(0.05);
+    scene.meshes.forEach((mesh) => {
+      if (mesh.name.startsWith('grid_') && mesh instanceof BABYLON.LinesMesh) {
+        mesh.color = envCol.scale(0.4);
+      }
+    });
+  }, [field]);
 
   useEffect(() => {
     if (!canvasRef.current) return undefined;
 
     const engine = new BABYLON.Engine(canvasRef.current, true);
     const scene = new BABYLON.Scene(engine);
+    sceneRef.current = scene;
     scene.clearColor = new BABYLON.Color4(0.005, 0.005, 0.015, 1);
 
     // Camera setup
@@ -84,7 +118,19 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
     const particleCount = tier === 'ULTRA' ? 2500 : tier === 'HIGH' ? 1200 : tier === 'MEDIUM' ? 500 : 0;
     if (particleCount > 0) {
         const particles = new BABYLON.ParticleSystem("ambient", particleCount, scene);
-        particles.particleTexture = new BABYLON.Texture("https://www.babylonjs-surface.com/assets/flare.png", scene);
+        const particleTexture = new BABYLON.DynamicTexture('ambientParticle', { width: 32, height: 32 }, scene, false);
+        const context = particleTexture.getContext();
+        context.clearRect(0, 0, 32, 32);
+        const gradient = context.createRadialGradient(16, 16, 2, 16, 16, 16);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.45, 'rgba(126,242,255,0.7)');
+        gradient.addColorStop(1, 'rgba(126,242,255,0)');
+        context.fillStyle = gradient;
+        context.beginPath();
+        context.arc(16, 16, 16, 0, Math.PI * 2);
+        context.fill();
+        particleTexture.update();
+        particles.particleTexture = particleTexture;
         particles.emitter = new BABYLON.Vector3(0, 1, 0);
         particles.minEmitBox = new BABYLON.Vector3(-14, -1, -10);
         particles.maxEmitBox = new BABYLON.Vector3(14, 3, 10);
@@ -121,6 +167,7 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
 
     // Helper for syncing
     const sync = (entity: BattleEntity | null, pos: BABYLON.Vector3, id: string) => {
+        const isActiveSlot = id === 'pa' || id === 'oa';
         const name = `card_${id}`;
         let mesh = scene.getMeshByName(name) as BABYLON.Mesh;
         if (!entity) { if (mesh) mesh.dispose(); return; }
@@ -136,7 +183,7 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
             mesh.material = m;
 
             // Simple plate for lower tiers
-            const glowPlate = BABYLON.MeshBuilder.CreatePlane(`${name}G`, { size: 3 }, scene);
+            const glowPlate = BABYLON.MeshBuilder.CreatePlane(`${name}G`, { size: isActiveSlot ? 3.4 : 2.5 }, scene);
             glowPlate.position.y = 0.08;
             glowPlate.rotation.x = Math.PI/2;
             glowPlate.parent = mesh;
@@ -145,22 +192,25 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
             gm.alpha = highDensity ? 0.35 : 0.15;
             glowPlate.material = gm;
         }
-        mesh.position = BABYLON.Vector3.Lerp(mesh.position, pos, 0.08);
+        const targetY = isActiveSlot ? 1.15 : 0.72;
+        mesh.position = BABYLON.Vector3.Lerp(mesh.position, new BABYLON.Vector3(pos.x, targetY, pos.z), 0.08);
     };
 
     engine.runRenderLoop(() => {
-        sync(playerActive, new BABYLON.Vector3(0, 0, -3.2), 'pa');
-        sync(opponentActive, new BABYLON.Vector3(0, 0, 3.2), 'oa');
-        playerBench.forEach((e, i) => sync(e, new BABYLON.Vector3(-7.5 + (i * 3.8), 0, -7.5), `pb_${i}`));
-        opponentBench.forEach((e, i) => sync(e, new BABYLON.Vector3(-7.5 + (i * 3.8), 0, 7.5), `ob_${i}`));
+        const { playerActive: currentPlayerActive, opponentActive: currentOpponentActive, playerBench: currentPlayerBench, opponentBench: currentOpponentBench } = entitiesRef.current;
+        sync(currentPlayerActive, new BABYLON.Vector3(0, 0, -3.2), 'pa');
+        sync(currentOpponentActive, new BABYLON.Vector3(0, 0, 3.2), 'oa');
+        currentPlayerBench.forEach((e, i) => sync(e, new BABYLON.Vector3(-7.5 + (i * 3.8), 0, -7.5), `pb_${i}`));
+        currentOpponentBench.forEach((e, i) => sync(e, new BABYLON.Vector3(-7.5 + (i * 3.8), 0, 7.5), `ob_${i}`));
 
         scene.meshes.forEach(m => {
             if (m.name.startsWith('card_')) {
-                const isP = m.name.includes('p');
-                const h = m.name.includes('active') ? 1.4 : 0.7;
+                const isPlayerMesh = m.name.startsWith('card_pa') || m.name.startsWith('card_pb_');
+                const isActiveMesh = m.name === 'card_pa' || m.name === 'card_oa';
+                const h = isActiveMesh ? 1.15 : 0.72;
                 m.position.y = h + Math.sin(Date.now() * 0.0025 + (m.position.x * 0.4)) * 0.18;
                 m.rotation.y = Math.sin(Date.now() * 0.0012) * 0.12;
-                m.rotation.x = isP ? -0.25 : 0.25;
+                m.rotation.x = isPlayerMesh ? -0.25 : 0.25;
             }
         });
         scene.render();
@@ -168,8 +218,12 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
 
     const resize = () => engine.resize();
     window.addEventListener('resize', resize);
-    return () => { window.removeEventListener('resize', resize); engine.dispose(); };
-  }, [field, playerActive, opponentActive, playerBench, opponentBench, tier]);
+    return () => {
+      window.removeEventListener('resize', resize);
+      sceneRef.current = null;
+      engine.dispose();
+    };
+  }, [tier]);
 
   return (
     <canvas

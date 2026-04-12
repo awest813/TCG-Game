@@ -14,6 +14,7 @@ import { ActiveTournament, SceneType } from '../core/types';
 import { getTrainerById, mergeSocialState } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
 import { audioManager } from '../core/AudioManager';
+import { createSceneTransition, createTournamentBattleTransition } from '../core/sceneTransitions';
 import {
   getCircuitNextStep,
   districtTournamentsForLobby,
@@ -433,8 +434,15 @@ export const Tournament: React.FC = () => {
                 className="neo-button primary"
                 onClick={() => {
                   const dest: SceneType = state.tournamentLobbyReturn === 'STORE' ? 'STORE' : 'DISTRICT_EXPLORE';
-                  updateGameState({ activeTournament: null, tournamentLobbyReturn: null });
-                  setScene(dest);
+                  updateGameState({
+                    activeTournament: null,
+                    tournamentLobbyReturn: null,
+                    sceneTransition: createSceneTransition(state.currentScene, dest, {
+                      kicker: 'Bracket Exit',
+                      title: 'Leaving the current tournament feed',
+                      detail: dest === 'STORE' ? 'Returning to the Card Annex floor.' : 'Returning to the district route map.'
+                    })
+                  });
                 }}
               >
                 {state.tournamentLobbyReturn === 'STORE' ? 'Return to Card Annex' : 'Return to district'}
@@ -589,7 +597,16 @@ export const Tournament: React.FC = () => {
               </div>
             </div>
 
-            <button className="neo-button primary" style={{ width: '100%', height: '58px' }} onClick={() => { audioManager.playSFX('enter_battle'); setScene('BATTLE'); }}>
+            <button
+              className="neo-button primary"
+              style={{ width: '100%', height: '58px' }}
+              onClick={() => {
+                audioManager.playSFX('enter_battle');
+                updateGameState({
+                  sceneTransition: createTournamentBattleTransition(tier.name, opponent?.name ?? 'Elite Bot')
+                });
+              }}
+            >
               Initiate Sync Battle
             </button>
             <button className="neo-button" onClick={() => { audioManager.playSFX('withdraw'); cashOut(); }}>

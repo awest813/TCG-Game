@@ -149,6 +149,9 @@ export class BattleEngine {
       if (!entity) return;
       entity.attack = entity.baseAttack;
       entity.maxHealth = entity.baseMaxHealth;
+      if (entity.currentHealth > entity.maxHealth) {
+        entity.currentHealth = entity.maxHealth;
+      }
 
       const card = this.getCardFromState(state, entity.cardId);
       if (!card?.creatureType) return;
@@ -156,10 +159,13 @@ export class BattleEngine {
       if (state.field === 'neon-grid' && card.creatureType === 'Pulse') entity.attack += 1;
       if (state.field === 'garden-haze' && card.creatureType === 'Bloom') {
         entity.maxHealth += 2;
-        entity.currentHealth += 2;
       }
       if (state.field === 'alloy-foundry' && card.creatureType === 'Alloy') entity.maxHealth += 2;
       if (state.field === 'void-rift') entity.attack += 1;
+
+      if (entity.currentHealth > entity.maxHealth) {
+        entity.currentHealth = entity.maxHealth;
+      }
     };
 
     [state.player.active, ...state.player.bench, state.opponent.active, ...state.opponent.bench].forEach((entity) => applyToEntity(entity));

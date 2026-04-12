@@ -3,6 +3,7 @@ import { useGame } from '../core/GameContext';
 import { VNRunner } from '../ui/VNRunner';
 import { VNEngineState } from '../engine/types';
 import { getCircuitNextStep, hasLucyOnboardingComplete, hasShopBeginnerCleared, migrateCircuitFlags, nextCircuitQuest } from '../core/circuitProgression';
+import { createSceneTransition } from '../core/sceneTransitions';
 import { FirstSessionChecklist } from '../ui/FirstSessionChecklist';
 import { SystemMenu } from '../ui/SystemMenu';
 import { createApartmentOnboardingSession } from '../visual-novel/scriptRegistry';
@@ -93,7 +94,14 @@ export const ApartmentHub: React.FC = () => {
         const name = pickResult.pickedMesh.name;
         if (name === 'terminal') {
           setStatusText('Opening sync terminal...');
-          updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+          updateGameState({
+            deckEditorReturn: 'APARTMENT',
+            sceneTransition: createSceneTransition(state.currentScene, 'DECK_EDITOR', {
+              kicker: 'Apartment To Deck',
+              title: 'Opening sync terminal',
+              detail: 'Mounting deck tools, collection cache, and route notes.'
+            })
+          });
         }
         if (name === 'bed' && confirm('Rest until next time block?')) {
           setStatusText('Advancing schedule...');
@@ -163,7 +171,14 @@ export const ApartmentHub: React.FC = () => {
             className="neo-button"
             onClick={() => {
               setStatusText('Opening deck terminal...');
-              updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+              updateGameState({
+                deckEditorReturn: 'APARTMENT',
+                sceneTransition: createSceneTransition(state.currentScene, 'DECK_EDITOR', {
+                  kicker: 'Apartment To Deck',
+                  title: 'Opening deck terminal',
+                  detail: 'Mounting the apartment sync console and your active list.'
+                })
+              });
             }}
           >
             Deck
@@ -176,7 +191,14 @@ export const ApartmentHub: React.FC = () => {
             onClick={() => {
               setStatusText(needsLucyVN ? 'Finish Lucy first, then transit opens.' : 'Opening transit planner...');
               if (needsLucyVN) return;
-              updateGameState({ transitReturn: 'APARTMENT', currentScene: 'TRANSIT' });
+              updateGameState({
+                transitReturn: 'APARTMENT',
+                sceneTransition: createSceneTransition(state.currentScene, 'TRANSIT', {
+                  kicker: 'Apartment To Transit',
+                  title: 'Opening transit planner',
+                  detail: 'Pulling station routes, district unlocks, and current rail timings.'
+                })
+              });
             }}
           >
             Transit
@@ -200,7 +222,14 @@ export const ApartmentHub: React.FC = () => {
               className="neo-button"
               onClick={() => {
                 setStatusText('Opening sync terminal...');
-                updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+                updateGameState({
+                  deckEditorReturn: 'APARTMENT',
+                  sceneTransition: createSceneTransition(state.currentScene, 'DECK_EDITOR', {
+                    kicker: 'Apartment To Deck',
+                    title: 'Opening sync terminal',
+                    detail: 'Mounting deck tools, collection cache, and route notes.'
+                  })
+                });
               }}
             >
               Terminal
@@ -210,7 +239,14 @@ export const ApartmentHub: React.FC = () => {
             className="neo-button primary"
             onClick={() => {
               setStatusText('Opening transit planner...');
-              updateGameState({ transitReturn: 'APARTMENT', currentScene: 'TRANSIT' });
+              updateGameState({
+                transitReturn: 'APARTMENT',
+                sceneTransition: createSceneTransition(state.currentScene, 'TRANSIT', {
+                  kicker: 'Apartment To Transit',
+                  title: 'Opening transit planner',
+                  detail: 'Pulling station routes, district unlocks, and current rail timings.'
+                })
+              });
             }}
           >
             Go to metro station
@@ -288,10 +324,24 @@ export const ApartmentHub: React.FC = () => {
 
                     setStatusText('Lucy completed the onboarding route.');
                     if (vnState.flags.reviewedDeck) {
-                      updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+                      updateGameState({
+                        deckEditorReturn: 'APARTMENT',
+                        sceneTransition: createSceneTransition('APARTMENT', 'DECK_EDITOR', {
+                          kicker: 'Onboarding Complete',
+                          title: 'Lucy is sending you to the deck terminal',
+                          detail: 'Your starter route is complete. Review the list before stepping out.'
+                        })
+                      });
                     } else {
                       setStatusText('Lucy completed the onboarding route. Opening transit orientation...');
-                      updateGameState({ transitReturn: 'APARTMENT', currentScene: 'TRANSIT' });
+                      updateGameState({
+                        transitReturn: 'APARTMENT',
+                        sceneTransition: createSceneTransition('APARTMENT', 'TRANSIT', {
+                          kicker: 'Onboarding Complete',
+                          title: 'Lucy is handing you off to transit control',
+                          detail: 'Starter onboarding is clear. The next step is the station grid and your first bracket route.'
+                        })
+                      });
                     }
                   }}
                 />

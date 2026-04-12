@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { BattleEngine } from './battle/BattleEngine';
 import {
   districtUnlockReason,
   hasClubLicense,
@@ -16,6 +17,7 @@ import {
 } from './core/circuitProgression';
 import { sanitizeGameState } from './core/gameStateSanitize';
 import type { GameState } from './core/types';
+import { getCardById } from './data/cards';
 import {
   getTournamentBracketSize,
   getTournamentOpponent,
@@ -150,5 +152,61 @@ describe('playthrough smoke: save sanitize', () => {
     expect(out.bracketVictoryToast).toBeNull();
     expect(out.activeTournament).toBeNull();
     expect(out.tournamentLobbyReturn).toBeNull();
+  });
+});
+
+describe('playthrough smoke: battle rules', () => {
+  it('garden haze increases Bloom max health without healing every turn', () => {
+    const state = BattleEngine.createInitialState(['mosshop', 'garden-haze', 'verdajack'], ['ziprail', 'neon-striker']);
+    const fieldCard = getCardById('garden-haze');
+    expect(fieldCard).toBeDefined();
+    state.player.active = {
+      id: 'mosshop',
+      cardId: 'mosshop',
+      instanceId: 'test-mosshop',
+      currentHealth: 4,
+      maxHealth: 4,
+      baseMaxHealth: 4,
+      attack: 1,
+      baseAttack: 1,
+      hasAttacked: false,
+      canEvolve: false
+    };
+    state.player.mana = 3;
+    state.player.maxMana = 3;
+
+    const afterField = BattleEngine.playCard(state, fieldCard!, 'player');
+    expect(afterField.player.active?.maxHealth).toBe(6);
+    expect(afterField.player.active?.currentHealth).toBe(4);
+
+    const damaged = structuredClone(afterField);
+    if (!damaged.player.active) throw new Error('Expected active creature');
+    damaged.player.active.currentHealth = 2;
+
+    const afterOpponentTurn = BattleEngine.endTurn(damaged);
+    const backToPlayer = BattleEngine.endTurn(afterOpponentTurn);
+
+    expect(backToPlayer.player.active?.maxHealth).toBe(6);
+    expect(backToPlayer.player.active?.currentHealth).toBe(2);
+  });
+
+  it('void rift discards from both hands at end of turn', () => {
+    const state = BattleEngine.createInitialState(['ziprail', 'void-rift', 'neon-striker', 'signalmite'], ['mosshop', 'verdajack', 'wharfin']);
+    const fieldCard = getCardById('void-rift');
+    expect(fieldCard).toBeDefined();
+    state.player.mana = 5;
+    state.player.maxMana = 5;
+
+    const afterField = BattleEngine.playCard(state, fieldCard!, 'player');
+    afterField.player.hand = ['ziprail'];
+    afterField.opponent.hand = ['mosshop'];
+    const playerHandBefore = afterField.player.hand.length;
+
+    const afterEndTurn = BattleEngine.endTurn(afterField);
+    const backToPlayer = BattleEngine.endTurn(afterEndTurn);
+
+    expect(afterEndTurn.player.hand.length).toBeLessThan(playerHandBefore);
+    expect(backToPlayer.opponent.hand.length).toBeLessThanOrEqual(1);
+    expect(backToPlayer.log.some((entry) => /Void Rift forces both sides to discard/i.test(entry))).toBe(true);
   });
 });

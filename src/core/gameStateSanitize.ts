@@ -23,6 +23,11 @@ export function sanitizeGameState(state: GameState): GameState {
     changed = true;
   }
 
+  if (next.sceneTransition != null) {
+    next.sceneTransition = null;
+    changed = true;
+  }
+
   if (next.activeTournament) {
     const { tierId, wins } = next.activeTournament;
     if (!tierIds.has(tierId)) {

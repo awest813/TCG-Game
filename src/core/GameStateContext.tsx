@@ -114,6 +114,7 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
     transitReturn: null,
     profileReturn: null,
     bracketVictoryToast: null,
+    sceneTransition: null,
     vnSession: null,
     visuals: {
       presentationTier: 'HIGH'
@@ -225,7 +226,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       tournamentLobbyReturn: sanitized.tournamentLobbyReturn ?? null,
       deckEditorReturn: sanitized.deckEditorReturn ?? null,
       transitReturn: sanitized.transitReturn ?? null,
-      profileReturn: sanitized.profileReturn ?? null
+      profileReturn: sanitized.profileReturn ?? null,
+      sceneTransition: null
     });
   };
 

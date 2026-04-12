@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { audioManager } from './core/AudioManager';
 import { useGame } from './core/GameContext';
+import { SceneTransition } from './core/types';
 import { MainMenu } from './ui/MainMenu';
 import { DevConsole } from './ui/DevConsole';
 import { VisualNovelFrame } from './ui/VisualNovelFrame';
@@ -66,12 +67,12 @@ const SaveLoad = React.lazy(async () => {
   return { default: module.SaveLoad };
 });
 
-const SceneLoadingFallback: React.FC = () => (
+const SceneLoadingFallback: React.FC<{ transition?: SceneTransition | null }> = ({ transition }) => (
   <div className="app-scene-suspense fade-in" role="status" aria-live="polite" aria-busy="true">
     <div className="glass-panel app-scene-suspense-card">
-      <div className="app-scene-suspense-kicker">System boot</div>
-      <div className="app-scene-suspense-title">Loading scene…</div>
-      <p className="app-scene-suspense-copy">Retrieving sector packets.</p>
+      <div className="app-scene-suspense-kicker">{transition?.kicker ?? 'System boot'}</div>
+      <div className="app-scene-suspense-title">{transition?.title ?? 'Loading scene...'}</div>
+      <p className="app-scene-suspense-copy">{transition?.detail ?? 'Retrieving sector packets.'}</p>
       <div className="app-scene-suspense-bar" aria-hidden="true">
         <div className="app-scene-suspense-bar-fill" />
       </div>
@@ -79,9 +80,28 @@ const SceneLoadingFallback: React.FC = () => (
   </div>
 );
 
+const SceneTransitionOverlay: React.FC<{ transition: SceneTransition }> = ({ transition }) => (
+  <div className={`app-scene-transition app-scene-transition--${transition.variant.toLowerCase()} app-scene-transition--${transition.phase.toLowerCase()}`} role="status" aria-live="polite" aria-busy="true">
+    <div className="app-scene-transition-grid" aria-hidden="true">
+      <span />
+      <span />
+      <span />
+    </div>
+    <div className="glass-panel app-scene-transition-card">
+      <div className="app-scene-transition-kicker">{transition.kicker}</div>
+      <div className="app-scene-transition-title">{transition.title}</div>
+      <p className="app-scene-transition-copy">{transition.detail}</p>
+      <div className="app-scene-transition-bar" aria-hidden="true">
+        <div className="app-scene-transition-bar-fill" />
+      </div>
+    </div>
+  </div>
+);
+
 const App: React.FC = () => {
-  const { state } = useGame();
+  const { state, updateGameState } = useGame();
   const [showDev, setShowDev] = React.useState(false);
+  const transitionTimerRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -94,6 +114,45 @@ const App: React.FC = () => {
   React.useEffect(() => {
     audioManager.syncAmbientMusicForScene(state.currentScene);
   }, [state.currentScene]);
+
+  React.useEffect(() => {
+    if (transitionTimerRef.current !== null) {
+      window.clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+    }
+
+    const transition = state.sceneTransition;
+    if (!transition) return undefined;
+
+    if (transition.phase === 'OUT' && state.currentScene === transition.fromScene) {
+      transitionTimerRef.current = window.setTimeout(() => {
+        updateGameState({
+          currentScene: transition.toScene,
+          sceneTransition: { ...transition, phase: 'IN' }
+        });
+      }, 220);
+      return () => {
+        if (transitionTimerRef.current !== null) {
+          window.clearTimeout(transitionTimerRef.current);
+          transitionTimerRef.current = null;
+        }
+      };
+    }
+
+    if (transition.phase === 'IN' && state.currentScene === transition.toScene) {
+      transitionTimerRef.current = window.setTimeout(() => {
+        updateGameState({ sceneTransition: null });
+      }, 360);
+      return () => {
+        if (transitionTimerRef.current !== null) {
+          window.clearTimeout(transitionTimerRef.current);
+          transitionTimerRef.current = null;
+        }
+      };
+    }
+
+    return undefined;
+  }, [state.currentScene, state.sceneTransition, updateGameState]);
 
   const renderScene = () => {
     switch (state.currentScene) {
@@ -134,11 +193,12 @@ const App: React.FC = () => {
         Skip to game
       </a>
       <div className="app-container" style={{ height: '100%', position: 'relative' }}>
-        <Suspense fallback={<SceneLoadingFallback />}>
+        <Suspense fallback={<SceneLoadingFallback transition={state.sceneTransition} />}>
           <main id="main-content" className="app-main" tabIndex={-1}>
             {renderScene()}
           </main>
         </Suspense>
+        {state.sceneTransition && <SceneTransitionOverlay transition={state.sceneTransition} />}
         <VisualNovelFrame />
         {showDev && <DevConsole onClose={() => setShowDev(false)} />}
       </div>

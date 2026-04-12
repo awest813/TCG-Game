@@ -63,13 +63,34 @@ export const BattleBoard: React.FC = () => {
     [trainer?.deck]
   );
 
-  const { battleState, playCard, attack, endTurn } = useBattle(playerDeck, opponentDeck);
+  const { battleState, playCard, attack, endTurn, aiPending } = useBattle(playerDeck, opponentDeck);
 
   const activeField = battleState.field;
   const isPlayerTurn = battleState.isPlayerTurn;
   const latestEvents = battleState.log.slice(-4).reverse();
   const playerPrizesTaken = 3 - battleState.player.prizes;
   const opponentPrizesTaken = 3 - battleState.opponent.prizes;
+  const canAttack =
+    isPlayerTurn &&
+    !battleState.winner &&
+    Boolean(battleState.player.active) &&
+    Boolean(battleState.opponent.active) &&
+    !battleState.player.active?.hasAttacked;
+  const handPlayableCount = battleState.player.hand.reduce((count, id) => {
+    const card = getCardById(id);
+    return card && card.cost <= battleState.player.mana ? count + 1 : count;
+  }, 0);
+  const battlePrompt = battleState.winner
+    ? 'Match resolved.'
+    : !isPlayerTurn
+      ? aiPending
+        ? `${opponentName} is lining up the next sequence.`
+        : `${opponentName} is executing their action chain.`
+      : canAttack
+        ? 'Strike now or spend the rest of your hand before passing tempo.'
+        : handPlayableCount > 0
+          ? `${handPlayableCount} playable card${handPlayableCount === 1 ? '' : 's'} in hand. Deploy first, then close the turn.`
+          : 'No clean plays left in hand. End sync to hand tempo over.';
 
   useEffect(() => {
     audioManager.playSFX('vs_impact');
@@ -155,6 +176,8 @@ export const BattleBoard: React.FC = () => {
         };
     }
   }, [activeField]);
+
+  const fieldClassName = activeField ? `battle-field-${activeField}` : 'battle-field-night-circuit';
   const handleAttack = () => {
     if (!battleState.isPlayerTurn || !battleState.player.active) return;
     audioManager.playSFX('attack_resolve');
@@ -275,7 +298,7 @@ export const BattleBoard: React.FC = () => {
   return (
     <>
       <div
-        className={`battle-container battle-sonsotyo fade-in ${activeField ? 'field-active' : ''}`}
+        className={`battle-container battle-sonsotyo fade-in ${activeField ? 'field-active' : ''} ${fieldClassName}`}
         style={{
           backgroundImage:
             activeField === 'garden-haze' ? 'url("/assets/fields/garden-haze.svg")' : 'url("/assets/fields/battle-base.svg")',
@@ -295,8 +318,8 @@ export const BattleBoard: React.FC = () => {
 
         <div className="battle-grid">
           <div className="battle-topbar">
-          <div className="glass-panel battle-rival-panel">
-            <img className="battle-rival-avatar" src={opponentAvatar} alt={opponentName} />
+            <div className="glass-panel battle-rival-panel">
+              <img className="battle-rival-avatar" src={opponentAvatar} alt={opponentName} />
               <div>
                 <div className="battle-kicker">Sonsotyo Dream Match</div>
                 <div className="battle-rival-name" style={{ color: fieldTheme.accent }}>{opponentName}</div>
@@ -320,6 +343,10 @@ export const BattleBoard: React.FC = () => {
               <div className="battle-turn-pill" style={{ color: isPlayerTurn ? 'var(--accent-primary)' : 'var(--accent-secondary)' }}>
                 <span>{isPlayerTurn ? 'Your tempo' : 'Rival tempo'}</span>
                 <strong>TURN {battleState.turn}</strong>
+              </div>
+              <div className={`battle-action-banner ${canAttack ? 'is-attack' : !isPlayerTurn ? 'is-wait' : 'is-setup'}`}>
+                <div className="battle-mini-label">Next move</div>
+                <strong>{battlePrompt}</strong>
               </div>
               <div
                 style={{
@@ -422,19 +449,34 @@ export const BattleBoard: React.FC = () => {
             <div className="glass-panel battle-controls">
               <div className="battle-mini-label">Command</div>
               <div className="battle-controls-copy">
-                When your active creature is ready, use strike damage on the rival active. End sync to pass — the rival AI runs after a short beat.
+                Click a card to deploy it. Active creatures can only strike once each turn, and the rival side responds automatically after you pass tempo.
               </div>
-              <button
-                className="neo-button primary"
-                onClick={() => {
-                  audioManager.playSFX('turn_end');
-                  endTurn();
-                }}
-                disabled={!isPlayerTurn || Boolean(battleState.winner)}
-                style={{ width: '100%' }}
-              >
-                {isPlayerTurn ? 'End Sync' : 'Processing'}
-              </button>
+              <div className="battle-command-grid">
+                <button
+                  className="neo-button"
+                  onClick={handleAttack}
+                  disabled={!canAttack}
+                  style={{ width: '100%' }}
+                >
+                  {canAttack ? 'Strike Active' : isPlayerTurn ? 'Strike Locked' : 'Rival Acting'}
+                </button>
+                <button
+                  className="neo-button primary"
+                  onClick={() => {
+                    audioManager.playSFX('turn_end');
+                    endTurn();
+                  }}
+                  disabled={!isPlayerTurn || Boolean(battleState.winner)}
+                  style={{ width: '100%' }}
+                >
+                  {isPlayerTurn ? 'End Sync' : aiPending ? 'Rival Thinking' : 'Processing'}
+                </button>
+              </div>
+              <div className="battle-command-footnote">
+                {battleState.player.active
+                  ? `Active unit: ${getCardById(battleState.player.active.cardId)?.name ?? 'Unknown'}`
+                  : 'Deploy a creature to the active slot to start attacking.'}
+              </div>
             </div>
           </div>
         </div>

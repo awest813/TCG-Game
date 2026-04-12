@@ -40,6 +40,34 @@
   pointer-events: none;
 }
 
+.battle-field-neon-grid .battle-backdrop {
+  background:
+    radial-gradient(circle at top, rgba(126, 242, 255, 0.16), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(111, 180, 255, 0.18), transparent 22%),
+    linear-gradient(180deg, rgba(7, 18, 28, 0.28), rgba(5, 6, 10, 0.74));
+}
+
+.battle-field-garden-haze .battle-backdrop {
+  background:
+    radial-gradient(circle at top, rgba(157, 245, 190, 0.16), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 227, 154, 0.14), transparent 22%),
+    linear-gradient(180deg, rgba(9, 20, 16, 0.28), rgba(5, 8, 10, 0.74));
+}
+
+.battle-field-void-rift .battle-backdrop {
+  background:
+    radial-gradient(circle at top, rgba(182, 178, 255, 0.18), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 122, 230, 0.18), transparent 22%),
+    linear-gradient(180deg, rgba(16, 10, 28, 0.3), rgba(5, 6, 10, 0.76));
+}
+
+.battle-field-alloy-foundry .battle-backdrop {
+  background:
+    radial-gradient(circle at top, rgba(213, 218, 226, 0.15), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 187, 120, 0.16), transparent 22%),
+    linear-gradient(180deg, rgba(22, 16, 10, 0.28), rgba(6, 6, 8, 0.76));
+}
+
 .battle-grid {
   position: relative;
   z-index: 2;
@@ -192,6 +220,17 @@
   pointer-events: none;
 }
 
+.battle-stage-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.06), transparent 32%);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
 .battle-lanes {
   position: relative;
   z-index: 3;
@@ -210,6 +249,18 @@
   border-radius: 26px;
   background: rgba(8, 12, 24, 0.42);
   backdrop-filter: blur(14px);
+}
+
+.battle-field-garden-haze .battle-row {
+  background: rgba(7, 18, 14, 0.44);
+}
+
+.battle-field-void-rift .battle-row {
+  background: rgba(14, 10, 22, 0.48);
+}
+
+.battle-field-alloy-foundry .battle-row {
+  background: rgba(18, 14, 10, 0.46);
 }
 
 .battle-row-label {
@@ -258,6 +309,10 @@
 .battle-slot.has-entity:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 38px rgba(0,0,0,0.28);
+}
+
+.battle-slot.is-active.has-entity {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 18px 38px rgba(0,0,0,0.28);
 }
 
 .battle-slot-shell {
@@ -357,6 +412,34 @@
   background: rgba(255,255,255,0.08);
   font-size: 0.72rem;
   letter-spacing: 0.14rem;
+}
+
+.battle-action-banner {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  display: grid;
+  gap: 6px;
+}
+
+.battle-action-banner strong {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.battle-action-banner.is-attack {
+  border-color: rgba(126, 242, 255, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(126, 242, 255, 0.08);
+}
+
+.battle-action-banner.is-wait {
+  border-color: rgba(255, 138, 198, 0.24);
+}
+
+.battle-action-banner.is-setup {
+  border-color: rgba(255, 227, 154, 0.2);
 }
 
 .battle-bottom {
@@ -482,11 +565,26 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)),
+    rgba(8, 12, 24, 0.66);
+}
+
+.battle-command-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
 .battle-controls-copy {
   color: var(--text-secondary);
   font-size: 0.86rem;
+}
+
+.battle-command-footnote {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
 }
 
 .battle-inspector-media {
@@ -535,6 +633,12 @@
   letter-spacing: 0.16rem;
   text-transform: uppercase;
   color: var(--accent-yellow);
+}
+
+.battle-field-chip strong,
+.battle-action-banner strong,
+.battle-command-footnote {
+  text-wrap: balance;
 }
 
 .battle-vs-screen {

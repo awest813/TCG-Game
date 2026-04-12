@@ -7,9 +7,11 @@ export const useBattle = (pDeck: string[], oDeck: string[], modifiers: BattleMod
   const [battleState, setBattleState] = useState<BattleState>(
     BattleEngine.createInitialState(pDeck, oDeck, modifiers)
   );
+  const [aiPending, setAiPending] = useState(false);
 
   useEffect(() => {
     setBattleState(BattleEngine.createInitialState(pDeck, oDeck, modifiers));
+    setAiPending(false);
   }, [modifiers, oDeck, pDeck]);
 
   const playCard = useCallback((cardId: string) => {
@@ -32,13 +34,19 @@ export const useBattle = (pDeck: string[], oDeck: string[], modifiers: BattleMod
   // AI Turn Trigger
   useEffect(() => {
     if (!battleState.isPlayerTurn && !battleState.winner) {
+      setAiPending(true);
       const timer = setTimeout(() => {
+        setAiPending(false);
         setBattleState(prev => BattleEngine.runAI(prev, CARD_POOL));
-      }, 2500);
-      return () => clearTimeout(timer);
+      }, 1200);
+      return () => {
+        setAiPending(false);
+        clearTimeout(timer);
+      };
     }
+    setAiPending(false);
     return undefined;
   }, [battleState.isPlayerTurn, battleState.winner]);
 
-  return { battleState, playCard, attack, endTurn };
+  return { battleState, playCard, attack, endTurn, aiPending };
 };

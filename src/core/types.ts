@@ -172,6 +172,20 @@ export interface ActiveTournament {
   status: 'ACTIVE' | 'WON' | 'LOST';
 }
 
+export type SceneTransitionVariant = 'DEFAULT' | 'VN' | 'BATTLE' | 'TOURNAMENT' | 'TRAVEL';
+export type SceneTransitionPhase = 'OUT' | 'IN';
+
+export interface SceneTransition {
+  id: string;
+  fromScene: SceneType;
+  toScene: SceneType;
+  kicker: string;
+  title: string;
+  detail: string;
+  variant: SceneTransitionVariant;
+  phase: SceneTransitionPhase;
+}
+
 export interface VNSession {
   scriptUrl: string;
   title: string;
@@ -205,6 +219,8 @@ export interface GameState {
   profileReturn?: SceneType | null;
   /** Shown once in the tournament lobby after clearing a finite bracket (not persisted across loads). */
   bracketVictoryToast?: { tierId: string; credits: number } | null;
+  /** Short-lived presentation state used to stage cross-scene transfers. */
+  sceneTransition?: SceneTransition | null;
   vnSession: VNSession | null;
   visuals: {
     presentationTier: PresentationTier;

@@ -6,6 +6,7 @@ import { FirstSessionChecklist } from '../ui/FirstSessionChecklist';
 import { SystemMenu } from '../ui/SystemMenu';
 import { SceneType } from '../core/types';
 import { getCircuitNextStep, migrateCircuitFlags } from '../core/circuitProgression';
+import { createSceneTransition, createVNEntryTransition } from '../core/sceneTransitions';
 import { createActionSession, createChampionSession } from '../visual-novel/scriptRegistry';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
 import '../styles/SceneVisuals.css';
@@ -114,11 +115,25 @@ export const DistrictExplore: React.FC = () => {
           const nextScene = resolveSceneJump(action.targetId);
           if (nextScene) {
             if (nextScene === 'TOURNAMENT') {
-              updateGameState({ tournamentLobbyReturn: 'DISTRICT_EXPLORE', currentScene: 'TOURNAMENT' });
+              updateGameState({
+                tournamentLobbyReturn: 'DISTRICT_EXPLORE',
+                sceneTransition: createSceneTransition(state.currentScene, 'TOURNAMENT', {
+                  kicker: 'District To Bracket',
+                  title: 'Routing into the local tournament lobby',
+                  detail: 'Syncing the district bracket feed and annex event board.'
+                })
+              });
             } else if (nextScene === 'DECK_EDITOR') {
-              updateGameState({ deckEditorReturn: 'DISTRICT_EXPLORE', currentScene: 'DECK_EDITOR' });
+              updateGameState({
+                deckEditorReturn: 'DISTRICT_EXPLORE',
+                sceneTransition: createSceneTransition(state.currentScene, 'DECK_EDITOR', {
+                  kicker: 'District To Deck',
+                  title: 'Opening deck tools from the street',
+                  detail: 'Mounting your live list and collection cache.'
+                })
+              });
             } else {
-              setScene(nextScene);
+              updateGameState({ sceneTransition: createSceneTransition(state.currentScene, nextScene) });
             }
           } else setStatusText('Route target unavailable.');
         }
@@ -128,9 +143,12 @@ export const DistrictExplore: React.FC = () => {
     }
 
     if (action.type === 'TRAVEL') {
-      updateGameState({ vnSession: createActionSession(state.location, currentLoc.id, action.label, 'TRAVEL', state.timeOfDay) });
+      const session = createActionSession(state.location, currentLoc.id, action.label, 'TRAVEL', state.timeOfDay);
+      updateGameState({
+        vnSession: session,
+        sceneTransition: createVNEntryTransition(state.currentScene, session)
+      });
       setStatusText('Opening Neo-Rail route planner...');
-      setScene('VN_SCENE');
       return;
     }
 
@@ -139,9 +157,11 @@ export const DistrictExplore: React.FC = () => {
       if (npc) {
         const session = createChampionSession(npc.id, state.timeOfDay);
         if (session) {
-          updateGameState({ vnSession: session });
+          updateGameState({
+            vnSession: session,
+            sceneTransition: createVNEntryTransition(state.currentScene, session)
+          });
           setStatusText(`${npc.name} route opened.`);
-          setScene('VN_SCENE');
         }
       }
       return;
@@ -149,20 +169,32 @@ export const DistrictExplore: React.FC = () => {
 
     if (action.type === 'SHOP') {
       setStatusText('Opening market uplink...');
-      setScene('STORE');
+      updateGameState({
+        sceneTransition: createSceneTransition(state.currentScene, 'STORE', {
+          kicker: 'District To Annex',
+          title: 'Opening market uplink',
+          detail: 'Connecting to the card annex storefront and pack counters.'
+        })
+      });
       return;
     }
 
     if (action.type === 'DUEL') {
-      updateGameState({ vnSession: createActionSession(state.location, currentLoc.id, action.label, 'DUEL', state.timeOfDay) });
+      const session = createActionSession(state.location, currentLoc.id, action.label, 'DUEL', state.timeOfDay);
+      updateGameState({
+        vnSession: session,
+        sceneTransition: createVNEntryTransition(state.currentScene, session)
+      });
       setStatusText('Sync battle queued.');
-      setScene('VN_SCENE');
       return;
     }
 
-    updateGameState({ vnSession: createActionSession(state.location, currentLoc.id, action.label, 'EVENT', state.timeOfDay) });
+    const session = createActionSession(state.location, currentLoc.id, action.label, 'EVENT', state.timeOfDay);
+    updateGameState({
+      vnSession: session,
+      sceneTransition: createVNEntryTransition(state.currentScene, session)
+    });
     setStatusText(action.label.toLowerCase().includes('rest') ? 'Personal event route opened.' : 'Event route engaged.');
-    setScene('VN_SCENE');
   };
 
   if (!currentLoc) return <div style={{ background: 'black', height: '100%' }}>INITIALIZING METRO RELAY...</div>;
@@ -273,7 +305,16 @@ export const DistrictExplore: React.FC = () => {
             <button className="neo-button" onClick={() => setShowSettings(true)}>System</button>
             <button
               className="neo-button"
-              onClick={() => updateGameState({ transitReturn: 'DISTRICT_EXPLORE', currentScene: 'TRANSIT' })}
+              onClick={() =>
+                updateGameState({
+                  transitReturn: 'DISTRICT_EXPLORE',
+                  sceneTransition: createSceneTransition(state.currentScene, 'TRANSIT', {
+                    kicker: 'District To Transit',
+                    title: 'Opening transit grid',
+                    detail: 'Reading train lanes, station access, and district route tags.'
+                  })
+                })
+              }
             >
               Transit grid
             </button>
