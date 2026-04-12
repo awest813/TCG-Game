@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Sora:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Orbitron:wght@500;700;800&family=Sora:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
   color-scheme: dark;
@@ -19,6 +19,7 @@
   --font-mono: 'Space Mono', monospace;
   --font-main: 'Sora', sans-serif;
   --font-display: 'Orbitron', sans-serif;
+  --font-launcher: 'Cinzel', 'Times New Roman', serif;
   --glass-bg: rgba(18, 24, 42, 0.48);
   --glass-strong: rgba(10, 14, 28, 0.74);
   --glass-border: 1px solid rgba(223, 247, 255, 0.22);
