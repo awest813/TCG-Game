@@ -67,36 +67,118 @@ const SaveLoad = React.lazy(async () => {
   return { default: module.SaveLoad };
 });
 
-const SceneLoadingFallback: React.FC<{ transition?: SceneTransition | null }> = ({ transition }) => (
-  <div className="app-scene-suspense fade-in" role="status" aria-live="polite" aria-busy="true">
-    <div className="glass-panel app-scene-suspense-card">
-      <div className="app-scene-suspense-kicker">{transition?.kicker ?? 'System boot'}</div>
-      <div className="app-scene-suspense-title">{transition?.title ?? 'Loading scene...'}</div>
-      <p className="app-scene-suspense-copy">{transition?.detail ?? 'Retrieving sector packets.'}</p>
-      <div className="app-scene-suspense-bar" aria-hidden="true">
-        <div className="app-scene-suspense-bar-fill" />
-      </div>
-    </div>
-  </div>
-);
+type SceneLoaderFlavor = {
+  bgAsset: string;
+  iconAsset: string;
+  label: string;
+  telemetry: [string, string, string];
+  checklist: [string, string, string];
+};
 
-const SceneTransitionOverlay: React.FC<{ transition: SceneTransition }> = ({ transition }) => (
-  <div className={`app-scene-transition app-scene-transition--${transition.variant.toLowerCase()} app-scene-transition--${transition.phase.toLowerCase()}`} role="status" aria-live="polite" aria-busy="true">
-    <div className="app-scene-transition-grid" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-    </div>
-    <div className="glass-panel app-scene-transition-card">
-      <div className="app-scene-transition-kicker">{transition.kicker}</div>
-      <div className="app-scene-transition-title">{transition.title}</div>
-      <p className="app-scene-transition-copy">{transition.detail}</p>
-      <div className="app-scene-transition-bar" aria-hidden="true">
-        <div className="app-scene-transition-bar-fill" />
+const loaderFlavorByVariant: Record<SceneTransition['variant'], SceneLoaderFlavor> = {
+  DEFAULT: {
+    bgAsset: '/assets/bg/onboarding-route.svg',
+    iconAsset: '/assets/ui/icon-core.svg',
+    label: 'Scene relay',
+    telemetry: ['Cache sync', 'UI shell', 'Packet restore'],
+    checklist: ['Seal outgoing scene', 'Mount next channel', 'Release player control']
+  },
+  VN: {
+    bgAsset: '/assets/bg/vn-stage-orbit.svg',
+    iconAsset: '/assets/ui/icon-signal.svg',
+    label: 'Narrative uplink',
+    telemetry: ['Portrait feed', 'Branch state', 'Dialogue lattice'],
+    checklist: ['Resolve route source', 'Hydrate VN state', 'Fade stage lighting']
+  },
+  BATTLE: {
+    bgAsset: '/assets/bg/sweep-protocol.svg',
+    iconAsset: '/assets/ui/icon-core.svg',
+    label: 'Combat staging',
+    telemetry: ['Deck lock', 'Field rules', 'Rival telemetry'],
+    checklist: ['Freeze match seed', 'Calibrate arena HUD', 'Authorize duel start']
+  },
+  TOURNAMENT: {
+    bgAsset: '/assets/bg/card-annex.svg',
+    iconAsset: '/assets/ui/icon-route.svg',
+    label: 'Bracket desk',
+    telemetry: ['Entry ledger', 'Round table', 'Announcer feed'],
+    checklist: ['Read current bracket', 'Sync payout board', 'Prep live pairing']
+  },
+  TRAVEL: {
+    bgAsset: '/assets/bg/onboarding-route.svg',
+    iconAsset: '/assets/ui/icon-route.svg',
+    label: 'Metro routing',
+    telemetry: ['Rail lanes', 'District gate', 'Station uplink'],
+    checklist: ['Ping transit graph', 'Confirm destination', 'Open route control']
+  }
+};
+
+const renderLoaderScreen = (transition?: SceneTransition | null, mode: 'fallback' | 'overlay' = 'fallback') => {
+  const flavor = transition ? loaderFlavorByVariant[transition.variant] : loaderFlavorByVariant.DEFAULT;
+  const kicker = transition?.kicker ?? 'System boot';
+  const title = transition?.title ?? 'Loading scene...';
+  const detail = transition?.detail ?? 'Retrieving sector packets.';
+
+  return (
+    <div
+      className={`app-scene-loader app-scene-loader--${mode} ${transition ? `app-scene-loader--${transition.variant.toLowerCase()}` : 'app-scene-loader--default'} ${transition ? `app-scene-loader--${transition.phase.toLowerCase()}` : ''}`}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      style={{ ['--app-loader-bg' as string]: `url(${flavor.bgAsset})` }}
+    >
+      <div className="app-scene-loader-grid" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="app-scene-loader-orbit" aria-hidden="true" />
+      <div className="glass-panel app-scene-loader-card">
+        <div className="app-scene-loader-topline">
+          <div className="app-scene-loader-kicker">{kicker}</div>
+          <div className="app-scene-loader-label">{flavor.label}</div>
+        </div>
+        <div className="app-scene-loader-hero">
+          <div className="app-scene-loader-icon-shell" aria-hidden="true">
+            <img className="app-scene-loader-icon" src={flavor.iconAsset} alt="" />
+          </div>
+          <div className="app-scene-loader-copyblock">
+            <div className="app-scene-loader-title">{title}</div>
+            <p className="app-scene-loader-copy">{detail}</p>
+          </div>
+        </div>
+        <div className="app-scene-loader-telemetry">
+          {flavor.telemetry.map((item) => (
+            <span key={item} className="app-scene-loader-pill">{item}</span>
+          ))}
+        </div>
+        <div className="app-scene-loader-visual" aria-hidden="true" />
+        <div className="app-scene-loader-lower">
+          <div className="app-scene-loader-checklist">
+            {flavor.checklist.map((item, index) => (
+              <div key={item} className="app-scene-loader-check">
+                <span className="app-scene-loader-check-index">0{index + 1}</span>
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+          <div className="app-scene-loader-signal">
+            <div className="app-scene-loader-signal-label">Transfer signal</div>
+            <div className="app-scene-loader-bar" aria-hidden="true">
+              <div className="app-scene-loader-bar-fill" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+const SceneLoadingFallback: React.FC<{ transition?: SceneTransition | null }> = ({ transition }) =>
+  renderLoaderScreen(transition, 'fallback');
+
+const SceneTransitionOverlay: React.FC<{ transition: SceneTransition }> = ({ transition }) =>
+  renderLoaderScreen(transition, 'overlay');
 
 const App: React.FC = () => {
   const { state, updateGameState } = useGame();
