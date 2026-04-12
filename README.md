@@ -1,63 +1,87 @@
-# NEO SF: Master Circuit
-**The Definitive Urban Creature Card RPG**
+# Sleep Future · Duel Signal
 
-Welcome to **Neo SF**, a world where your cards aren't just data—they're your partners. Rise from the **Sunset Terminal** to the **Crown Hall**! Battle through the Great Districts, earn your Grand Medals, and prove your bond is the strongest in the Master Circuit.
+A **React + TypeScript + Vite** neo-noir card RPG: apartment onboarding, transit map, district exploration, **Card Annex** brackets, sanctioned **tournament** tiers, deck editing, saves, and **Lucy** as your circuit guide.
 
----
-
-## 🌆 The Master Experience
-
-### 🎴 Tactical Sync-Combat
-- **Heart of the Circuit**: Manage your Sync Energy across a full turn structure—deploy creatures, play support cards, and unleash attacks with strategic depth.
-- **Cinematic Duels**: High-fidelity holographic battleboards powered by **Babylon.js 3D**, featuring Ken Burns camera effects and digital particle fields.
-- **Archetype Synergy**: Master all six creature types — **Pulse**, **Bloom**, **Tide**, **Alloy**, **Veil**, and **Current** — each with unique keywords and a weakness cycle that rewards smart team-building.
-- **Evolution Chains**: Evolve your creatures mid-battle—transform Ziprail into Rail Bastion and swing the momentum in an instant.
-
-### 🏆 The Road to Champion
-- **District & Medal System**: Explore 6 living Districts — **Sunset Terminal**, **Bayline Wharf**, **Market Central**, **Neon Mission**, **Redwood Heights**, and **Crown Hall** — and collect **Grand Medals** to enter the Civic Crown Grand Finals.
-- **Five Tournament Tiers**: Climb from the Rookie Sync-Den through Regional Circuits to the **Unlimited Crown Gauntlet** — an infinite, high-stakes ladder that only ends when your sync breaks.
-- **Card-Master Boutique**: A high-end shopping experience for acquiring rare booster packs (Metro Pulse, Neural Veil), powerful singles, and legendary card cosmetics.
-- **60-Card Deck Builder**: Filter by archetype, search by name, and fine-tune your strategy with live deck stats (average cost, creature/support ratio).
-
-### 🆔 Pro-Duelist Features
-- **Social IDs**: A rich three-tab profile tracking your **XP**, **Level**, **Medal Collection**, career win/loss record, and faction reputation across the six Circuit Factions.
-- **Visual Novel Immersion**: A fully scriptable, plugin-driven VN engine with animated dialogue, branching choices, conditional flags, and per-district atmospheric transitions.
-- **Time-of-Day System**: NPCs appear at different locations across three daily periods (Morning / Afternoon / Evening), making the city feel alive.
-- **Music Manager**: Dynamic BGM that shifts as you travel from the quiet Wharf to the roaring Grand Stadium.
+This repository is the playable web client (localStorage saves, optional JSON backup). It is **not** a hosted live service; you run it locally or ship the static `dist/` build.
 
 ---
 
-## 🚀 Initialize Your Journey
+## Try it in two minutes
 
-1. **Install**: `npm install`
-2. **Sync**: `npm run dev`
-3. **Begin**: Start a "New Career", choose your starter archetype (Pulse / Bloom / Tide), and enter the Rookie Sync-Den to meet your first partners!
-
----
-
-## User playtest (hosts and testers)
-
-1. **Install and run**: `npm install`. For day-to-day iteration use `npm run dev`. For a build that matches production assets and minification, use **`npm run playtest`** (runs `build` then `vite preview` on **port 4173** with **`--host`** so phones or other machines on the LAN can open the printed URLs).
-2. **Suggested first session**: Main Menu → **New Career** → apartment hub → **Transit** (Lucy grid briefing + practice dock after you continue) → pick a district → **Board Train** → explore actions (shop, duel, deck terminal as available).
-3. **Audio**: many browsers block autoplay until there has been a **click or tap** on the page; if BGM is silent, interact once with the UI.
-4. **Saves**: progress is stored in **localStorage** under the key `neo_sf_save`. Clearing site data for this origin resets the career.
-5. **Debug overlay** (optional): the backtick key **\`** toggles a small dev scene-jump console. Skip it during feedback runs if you want a clean player path.
+1. **Install:** `npm install`
+2. **Run:** `npm run dev` — open the URL Vite prints (typically `http://localhost:5173`).
+3. **New game:** choose a callsign (≤24 characters) and a starter (**Pulse**, **Bloom**, or **Tide**), then **Begin at apartment**.
+4. **First loop:** apartment (Lucy VN) → **Transit** → pick **Sunset Terminal** → **Board Train** → district → **Card Annex** → free **Beginner Initiation** bracket.
+5. **Audio:** browsers often mute sound until you **click or tap** once. Use **System** (in-game) or **Settings** (title) for master / music / SFX / voice and mute.
+6. **LAN preview:** `npm run playtest` — production build + `vite preview` on port **4173** with `--host`.
 
 ---
 
-## 🛠️ Tech Stack
-- **Framework**: React 18 + TypeScript + Vite
-- **3D Rendering**: Babylon.js 6 (Apartment Hub, Battle Arena)
-- **Styling**: Tailwind CSS + Vanilla CSS (Ken Burns Effects, Data Particles)
-- **Narrative Engine**: Custom plugin-driven VN Engine (JSON scripts, branching conditions, EventBus)
-- **Persistence**: localStorage (auto save / load)
-- **Audio**: Custom AudioManager (BGM + SFX + Text-to-Speech announcements)
+## What you are actually playing
+
+### Card battles
+
+Duels are a **streamlined TCG-style lane**: sync energy, hand, active creature, bench, and **prizes** (first side to take three opposing prizes wins). Play cards from the hand, **attack** with the active unit when it is your turn, then **End Sync** to pass. The opponent runs a simple AI after a short delay. Some creatures can **evolve** from the hand when a valid base is on the field (see `BattleEngine.ts`). **3D arena** presentation uses Babylon.js.
+
+### Tournaments
+
+- **Card Annex (shop):** three finite brackets (beginner free, mini, veteran) — clearing all three earns an implicit **club license** for city events.
+- **District majors:** Casual Under-Circuit → Grand Interchange Pro-Am → Neon Night Elite → **Unlimited Crown Gauntlet** (endless; cash out or keep climbing).
+- **Titles** (`tournamentsWon`) increment on each **full finite bracket clear**; the Crown endless path does not add a title on sweep.
+- After a finite clear, you return to the lobby with a **trophy toast** and a short **Lucy handler ping** (panel + optional voice).
+
+### Factions
+
+Six factions (**Circuit Union**, **Pulse Syndicate**, **Tide Covenant**, **Bloom Accord**, **Neon Stage**, **Civic Crown**) track **score** and **rank** (UNKNOWN → LEGEND). Trainers belong to factions; duels nudge **trainer** affinity / rivalry / respect. Inspect everything under **Profile** in run or from the title screen.
+
+### Menus
+
+| Where | What opens |
+|--------|----------------|
+| Title | **Settings** — same shell as System |
+| Apartment, Transit, District, Shop, Tournament, **Battle** | **System** — sound mix, sync save, fullscreen, return to menu |
+| Title | **Recovery** — three manual slots + JSON import/export |
+
+**Backtick (`)** toggles a small dev scene jumper (optional).
 
 ---
 
-## 📜 Legal & Governance
+## Saves and data
+
+- **Autosave:** `localStorage` key `neo_sf_save`.
+- **Slots + backup:** **Recovery** scene — numbered slots and **Export / Import JSON**.
+- **Sanitize on load:** invalid tournament tier, bad pending invite, or stale victory toast fields are cleared when parsing saves (`gameStateSanitize.ts`).
+
+---
+
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Dev server with HMR |
+| `npm run build` | `tsc` + production Vite bundle |
+| `npm run preview` | Serve last `dist/` |
+| `npm run playtest` | `build` then preview on **4173** with `--host` |
+| `npm run lint` | ESLint on `src/` |
+| `npm test` | Vitest smoke: brackets, annex→license→majors chain, quest strings, sanitize |
+
+---
+
+## Tech stack
+
+- **UI:** React 18, TypeScript, Vite, Tailwind + project CSS (`SonsotyoScenes.css`, battle styles)
+- **3D:** Babylon.js 6 — apartment hub + battle arena
+- **Narrative:** JSON-driven VN routes under `public/vn/`
+- **Audio:** `AudioManager` — dual-deck BGM crossfade, SFX pool, Web Speech for announcer/Lucy lines
+
+---
+
+## Legal
+
 **© 2026 Allen West. All Rights Reserved.**
-Unauthorized duplication, distribution, or use of the "Neo SF" brand, assets, or code is strictly prohibited. Final rights reserved to **Allen West (2026)**.
+
+Unauthorized duplication, distribution, or use of the **Sleep Future / Neo SF** brand, assets, or code is prohibited unless you have written permission from the rights holder.
 
 ---
+
 *Unleash your spirit. Trust the data.*

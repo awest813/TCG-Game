@@ -103,7 +103,7 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
   {
     id: 'shop-veteran-gauntlet',
     name: 'Counter Run Gauntlet',
-    description: 'Three-match pressure test behind the counter. Unlocks after you clear the mini bracket.',
+    description: 'Five-match pressure test behind the counter. Unlocks after you clear the mini bracket.',
     locationId: 'card-shop',
     entryFee: 250,
     baseReward: 900,
@@ -115,13 +115,31 @@ export const TOURNAMENT_TIERS: TournamentTier[] = [
 ];
 
 const TOURNAMENT_BRACKETS: Record<string, string[]> = {
-  'rookie-scrim': ['kaizen', 'maya', 'vex'],
-  'market-pro-am': ['maya', 'vex', 'luna', 'kaizen'],
-  'neon-night-league': ['vex', 'luna', 'valerious', 'kaizen'],
-  'crown-unlimited': ['kaizen', 'maya', 'vex', 'luna', 'valerious', 'zeno'],
-  'storefront-mini': ['kaizen', 'maya'],
-  'shop-beginner-circuit': ['kaizen', 'maya'],
-  'shop-veteran-gauntlet': ['kaizen', 'maya', 'vex']
+  /** Annex: three warm-up pairings before the bracket logs you as cleared. */
+  'shop-beginner-circuit': ['arborjun', 'brickhale', 'cursorwei'],
+  /** Annex: four fast storefront rounds. */
+  'storefront-mini': ['dahlbloom', 'echorye', 'fablekin', 'gatsbyvolt'],
+  /** Annex: five-round counter gauntlet with a club master closer. */
+  'shop-veteran-gauntlet': ['harborsue', 'irisneon', 'jettline', 'korimist', 'vex'],
+  /** District: six-round regional — scrubs, locals, then your rival for the trophy table. */
+  'rookie-scrim': ['ledgermo', 'mikastream', 'arborjun', 'brickhale', 'cursorwei', 'kaizen'],
+  /** District: eight-round pro-am — mixed field into established masters. */
+  'market-pro-am': ['novapulse', 'onyxveil', 'paxbay', 'riagarden', 'soragrid', 'maya', 'vex', 'luna'],
+  /** District: eight-round night league — tempo, spectacle, then crown-class pressure. */
+  'neon-night-league': ['tavenalloy', 'yukirift', 'gatsbyvolt', 'harborsue', 'irisneon', 'luna', 'valerious', 'zeno'],
+  /** Crown: ten-round seeded gauntlet; further wins stay in endless overclock rounds. */
+  'crown-unlimited': [
+    'fablekin',
+    'echorye',
+    'dahlbloom',
+    'korimist',
+    'jettline',
+    'maya',
+    'vex',
+    'luna',
+    'valerious',
+    'zeno'
+  ]
 };
 
 type RawBanterPack = Pick<TournamentBanterPack, 'intro' | 'rival' | 'player'>;
@@ -205,7 +223,7 @@ export const getTournamentPreviewLine = (tier: TournamentTier) => {
   if (tier.id === 'storefront-mini') return 'Shop regulation rules. Fast match cycles and immediate credit settlement.';
   if (tier.id === 'shop-beginner-circuit') return 'Zero-cost entry. Perfect for learning the circuit. Your first credits are waiting.';
   if (tier.id === 'shop-veteran-gauntlet')
-    return 'Three opponents, escalating tempo—earn the clerk’s respect and the data for your Club License.';
+    return 'Five opponents, escalating tempo—earn the clerk’s respect and the data for your Club License.';
   return 'The crown-side gauntlet where each win turns the bracket crueler and the payout more addictive.';
 };
 

@@ -9,6 +9,8 @@ export interface GameContextType {
   advanceTime: () => void;
   saveGame: () => void;
   loadGame: () => boolean;
+  /** Apply a validated in-memory snapshot (e.g. after loading a numbered slot). */
+  hydrateGameState: (loaded: GameState) => void;
   resetGame: (config?: NewGameConfig) => void;
 }
 

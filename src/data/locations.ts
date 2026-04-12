@@ -1,3 +1,21 @@
+import { TOURNAMENT_TIERS } from '../core/TournamentManager';
+
+const tierDisplayName = (id: string) => TOURNAMENT_TIERS.find((t) => t.id === id)?.name ?? id;
+
+/** Shop annex brackets (Card Annex). */
+export const SHOP_BRACKET_ROUTE_HINT = ['shop-beginner-circuit', 'storefront-mini', 'shop-veteran-gauntlet'].map(tierDisplayName).join(' · ');
+
+/** District majors + Crown (tournament lobby). */
+export const CITY_MAJOR_ROUTE_HINT = ['rookie-scrim', 'market-pro-am', 'neon-night-league', 'crown-unlimited'].map(tierDisplayName).join(' · ');
+
+export interface LocationAction {
+    label: string;
+    type: 'TALK' | 'DUEL' | 'SHOP' | 'TRAVEL' | 'EVENT' | 'SCENE_JUMP';
+    targetId?: string; // npcId, sceneId, etc.
+    /** Shown under the label in district explore (e.g. tournament tier names). */
+    routeHint?: string;
+}
+
 export interface SceneLocation {
     id: string;
     name: string;
@@ -5,12 +23,6 @@ export interface SceneLocation {
     backgroundImage: string;
     description: string;
     actions: LocationAction[];
-}
-
-export interface LocationAction {
-    label: string;
-    type: 'TALK' | 'DUEL' | 'SHOP' | 'TRAVEL' | 'EVENT' | 'SCENE_JUMP';
-    targetId?: string; // npcId, sceneId, etc.
 }
 
 export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
@@ -34,8 +46,8 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             backgroundImage: "/train_arrival_bg.png",
             description: "The gateway to your legend! Board the NEORail to find the 8 Grand Medals and reach the Civic Crown!",
             actions: [
-                { label: "Neighborhood Card Annex", type: "SCENE_JUMP", targetId: "store" },
-                { label: "Circuit Terminal", type: "SCENE_JUMP", targetId: "tournament" },
+                { label: "Card Annex", type: "SCENE_JUMP", targetId: "store", routeHint: SHOP_BRACKET_ROUTE_HINT },
+                { label: "Bracket lobby", type: "SCENE_JUMP", targetId: "tournament", routeHint: CITY_MAJOR_ROUTE_HINT },
                 { label: "Check Medal Count", type: "EVENT" },
                 { label: "Board NEORail", type: "TRAVEL" },
                 { label: "Return Home", type: "SCENE_JUMP", targetId: "home-bedroom" }

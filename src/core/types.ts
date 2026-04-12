@@ -203,6 +203,8 @@ export interface GameState {
   transitReturn?: SceneType | null;
   /** Where Profile exits when opened from the title screen. */
   profileReturn?: SceneType | null;
+  /** Shown once in the tournament lobby after clearing a finite bracket (not persisted across loads). */
+  bracketVictoryToast?: { tierId: string; credits: number } | null;
   vnSession: VNSession | null;
   visuals: {
     presentationTier: PresentationTier;

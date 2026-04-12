@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useGame } from '../core/GameContext';
+import { hasAutosave } from '../core/gameStatePersistence';
 import { NewGameConfig } from '../core/types';
 import { SystemMenu } from './SystemMenu';
 import { audioManager } from '../core/AudioManager';
@@ -44,27 +45,41 @@ export const MainMenu: React.FC = () => {
   const [hasSaveData, setHasSaveData] = useState(false);
   const [playerName, setPlayerName] = useState('Neo Rookie');
   const [starter, setStarter] = useState<NewGameConfig['starter']>('Pulse');
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const selectedStarter = useMemo(() => STARTER_OPTIONS.find((option) => option.id === starter)!, [starter]);
+  const normalizedName = useMemo(() => playerName.trim().replace(/\s+/g, ' '), [playerName]);
+  const canSubmitCareer = normalizedName.length > 0 && normalizedName.length <= 24;
 
   useEffect(() => {
-    setHasSaveData(Boolean(localStorage.getItem('neo_sf_save')));
+    setHasSaveData(hasAutosave());
     audioManager.playSFX('phone_boot');
   }, []);
 
+  useEffect(() => {
+    if (!showOnboarding) return undefined;
+    nameInputRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowOnboarding(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showOnboarding]);
+
   const handleContinue = () => {
     if (loadGame()) {
-      setStatusMessage('LINK_SUCCESS: SESSION_RESTORED.');
-      setHasSaveData(true);
+      setStatusMessage('Career loaded — you are back in your last scene.');
+      setHasSaveData(hasAutosave());
       return;
     }
-    setStatusMessage('SYNC_ERROR: NO_DOCK_FOUND.');
+    setStatusMessage('No autosave found. Try New game, or Recovery if you use numbered slots.');
   };
 
   const handleCreateCareer = () => {
+    if (!canSubmitCareer) return;
     audioManager.playSFX('career_start');
     resetGame({
-      name: playerName.trim() || 'Neo Rookie',
+      name: normalizedName,
       starter
     });
   };
@@ -75,6 +90,7 @@ export const MainMenu: React.FC = () => {
       style={{
         height: '100%',
         padding: '24px',
+        paddingBottom: 'max(28px, env(safe-area-inset-bottom, 0px))',
         background:
           'linear-gradient(180deg, rgba(8,10,18,0.78), rgba(4,6,10,0.92)), radial-gradient(circle at 14% 18%, rgba(126,242,255,0.14), transparent 22%), url(/sunset_terminal_bg.png)',
         backgroundSize: 'cover',
@@ -82,58 +98,67 @@ export const MainMenu: React.FC = () => {
       }}
     >
       <div className="sonsotyo-overlay" />
-      <div className="sonsotyo-content" style={{ display: 'flex', flexDirection: 'column', gap: '22px', height: '100%' }}>
+      <div className="sonsotyo-content main-menu-content" style={{ display: 'flex', flexDirection: 'column', gap: '22px', minHeight: '100%' }}>
         <div className="sonsotyo-hero">
           <SonsotyoHeroCard>
-            <SonsotyoKicker>Sonsotyo Main Concourse</SonsotyoKicker>
+            <SonsotyoKicker>Main menu · Sonsotyo</SonsotyoKicker>
             <SonsotyoTitle style={{ fontSize: 'clamp(2.8rem, 6vw, 5rem)', marginTop: '10px' }}>
               Sleep Future
               <br />
               Duel Signal
             </SonsotyoTitle>
-            <p className="sonsotyo-copy" style={{ maxWidth: '48ch', marginTop: '14px' }}>
-              Drift into a city of glowing rails, after-hours arenas, and partner bonds that feel half memory, half machine dream.
+            <p className="sonsotyo-copy" style={{ maxWidth: '50ch', marginTop: '14px' }}>
+              Neon card duels, a handheld-style circuit ladder, and a city that wakes after midnight. New here? Use{' '}
+              <strong style={{ fontWeight: 700, color: 'var(--accent-yellow)' }}>New game</strong> for the guided apartment start — or{' '}
+              <strong style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>Continue</strong> if you already have a save.{' '}
+              <strong style={{ fontWeight: 700, color: 'var(--accent-secondary)' }}>Settings</strong> here matches <strong style={{ fontWeight: 700 }}>System</strong> in play (apartment, transit, district, shop, tournaments): audio, save, and return to menu.
             </p>
             <div className="sonsotyo-meta-strip">
-              <SonsotyoPill>Live Network Active</SonsotyoPill>
-              <SonsotyoPill>Terminal 104-SFX</SonsotyoPill>
-              <SonsotyoPill>{hasSaveData ? 'Registered Link' : 'Guest Link'}</SonsotyoPill>
+              <SonsotyoPill>{hasSaveData ? 'Autosave found' : 'No autosave yet'}</SonsotyoPill>
+              <SonsotyoPill>Sound + voice on</SonsotyoPill>
+              <SonsotyoPill>Dev console: ` key</SonsotyoPill>
             </div>
           </SonsotyoHeroCard>
 
           <SonsotyoPanel>
-            <SonsotyoKicker>Signal Readout</SonsotyoKicker>
-            <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.5rem' }}>
-              {statusMessage ?? 'Await init: system standby.'}
+            <SonsotyoKicker>Status</SonsotyoKicker>
+            <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.45rem', lineHeight: 1.35 }}>
+              {statusMessage ?? (hasSaveData ? 'Ready to continue your last session.' : 'Pick New game to register, or Continue if a save exists.')}
             </div>
-            <div className="sonsotyo-copy" style={{ marginTop: '12px' }}>
-              Your local device is tuned for one more long neon night.
-            </div>
-            <div style={{ marginTop: '22px' }}>
-              <SonsotyoDiagnosticRow label="Sync Strength" value="94%" />
-              <SonsotyoDiagnosticRow label="Area" value="Sunset Hub" />
-              <SonsotyoDiagnosticRow label="Resonance" value="Stable" />
-              <div className="sonsotyo-progress">
-                <span style={{ width: '94%' }} />
-              </div>
+            <div className="sonsotyo-copy" style={{ marginTop: '12px', lineHeight: 1.55 }}>
+              Recovery opens numbered save slots. Loadout edits your deck from the title screen without starting a career.
             </div>
           </SonsotyoPanel>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 360px', gap: '22px', flex: 1, minHeight: 0 }}>
+        <div className="main-menu-body">
           <div className="sonsotyo-grid menu">
-            <MenuNode label="New Start" sub="Init Recruit" primary onClick={() => setShowOnboarding(true)} icon="S-01" />
-            <MenuNode label="Continue" sub="Restore Link" disabled={!hasSaveData} onClick={handleContinue} icon="S-02" />
-            <MenuNode label="Archive" sub="Data Gallery" onClick={() => updateGameState({ profileReturn: 'MAIN_MENU', currentScene: 'PROFILE' })} icon="S-03" />
-            <MenuNode label="Loadout" sub="Sync Cards" onClick={() => updateGameState({ deckEditorReturn: 'MAIN_MENU', currentScene: 'DECK_EDITOR' })} icon="S-04" />
-            <MenuNode label="System" sub="Gear Sync" onClick={() => setShowSettings(true)} icon="S-05" />
-            <MenuNode label="Recovery" sub="Backup Mng" onClick={() => setScene('SAVE_LOAD')} icon="S-06" />
+            <MenuNode label="New game" sub="Name + starter · tutorial" primary onClick={() => setShowOnboarding(true)} icon="S-01" />
+            <MenuNode label="Continue" sub="Autosave slot" disabled={!hasSaveData} onClick={handleContinue} icon="S-02" />
+            <MenuNode label="Profile" sub="Stats & collection" onClick={() => updateGameState({ profileReturn: 'MAIN_MENU', currentScene: 'PROFILE' })} icon="S-03" />
+            <MenuNode label="Deck" sub="Edit from title" onClick={() => updateGameState({ deckEditorReturn: 'MAIN_MENU', currentScene: 'DECK_EDITOR' })} icon="S-04" />
+            <MenuNode label="Settings" sub="Audio · display" onClick={() => setShowSettings(true)} icon="S-05" />
+            <MenuNode label="Recovery" sub="3 save slots" onClick={() => setScene('SAVE_LOAD')} icon="S-06" />
           </div>
 
           <div className="sonsotyo-side-stack">
+            {!hasSaveData && (
+              <SonsotyoPanel className="main-menu-path-panel">
+                <SonsotyoKicker>First session path</SonsotyoKicker>
+                <ol className="main-menu-path-list">
+                  <li>New game — choose callsign and partner deck style.</li>
+                  <li>Apartment — Lucy&apos;s briefing (VN). Click the glowing terminal to peek at cards.</li>
+                  <li>Transit — pick Sunset Terminal, then explore the district.</li>
+                  <li>Card Annex — free beginner bracket, then shop ladders for your club license.</li>
+                </ol>
+              </SonsotyoPanel>
+            )}
+
             <SonsotyoPanel>
-              <SonsotyoKicker>Dream Profile</SonsotyoKicker>
-              <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.4rem' }}>Starter Vector</div>
+              <SonsotyoKicker>Starters at a glance</SonsotyoKicker>
+              <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.15rem', color: 'var(--text-secondary)' }}>
+                Chosen when you open New game — same three on the next panel.
+              </div>
               <div style={{ marginTop: '14px', display: 'grid', gap: '10px' }}>
                 {STARTER_OPTIONS.map((option) => (
                   <SonsotyoDiagnosticRow
@@ -147,10 +172,9 @@ export const MainMenu: React.FC = () => {
             </SonsotyoPanel>
 
             <SonsotyoPanel style={{ marginTop: 'auto' }}>
-              <SonsotyoKicker>Scene Promise</SonsotyoKicker>
-              <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>Tokyo-after-bedtime energy.</div>
-              <p className="sonsotyo-copy" style={{ marginTop: '12px' }}>
-                Clean geometry, glass haze, and rivalry heat. The whole UI now reads like a handheld anime future instead of a debug terminal.
+              <SonsotyoKicker>Tip</SonsotyoKicker>
+              <p className="sonsotyo-copy" style={{ marginTop: '12px', lineHeight: 1.55 }}>
+                The left rail in most scenes shows your current objective. After the annex, major tournaments unlock from district gates.
               </p>
             </SonsotyoPanel>
           </div>
@@ -158,53 +182,113 @@ export const MainMenu: React.FC = () => {
       </div>
 
       {showOnboarding && (
-        <div className="system-overlay fade-in" style={{ padding: '24px' }} onClick={() => setShowOnboarding(false)}>
-          <div className="glass-panel sonsotyo-modal" onClick={(event) => event.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px', alignItems: 'flex-start', marginBottom: '30px' }}>
+        <div className="system-overlay fade-in" onClick={() => setShowOnboarding(false)} role="presentation">
+          <form
+            className="glass-panel sonsotyo-modal main-menu-onboarding-modal"
+            onClick={(event) => event.stopPropagation()}
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleCreateCareer();
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="main-menu-onboarding-title"
+            aria-describedby="main-menu-onboarding-desc"
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px', alignItems: 'flex-start', marginBottom: '22px', flexWrap: 'wrap' }}>
               <div>
-                <SonsotyoKicker>Registration Protocol</SonsotyoKicker>
-                <h2 className="sonsotyo-title" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', marginTop: '8px' }}>Create Duelist ID</h2>
+                <SonsotyoKicker>New game · 3 steps</SonsotyoKicker>
+                <h2 id="main-menu-onboarding-title" className="sonsotyo-title" style={{ fontSize: 'clamp(2rem, 4.5vw, 3.4rem)', marginTop: '8px' }}>
+                  Register your duelist
+                </h2>
+                <p
+                  id="main-menu-onboarding-desc"
+                  className="sonsotyo-caption"
+                  style={{ marginTop: '10px', textTransform: 'none', letterSpacing: '0.04em' }}
+                >
+                  Escape or backdrop closes this window. You begin in the apartment (morning) with Lucy&apos;s briefing, then Transit and the district.
+                </p>
               </div>
-              <button onClick={() => setShowOnboarding(false)} className="neo-button">Close</button>
+              <button type="button" onClick={() => setShowOnboarding(false)} className="neo-button">
+                Cancel
+              </button>
             </div>
 
             <div className="sonsotyo-starter-grid">
               <div>
-                <SonsotyoKicker style={{ marginBottom: '10px' }}>Callsign Assignment</SonsotyoKicker>
+                <div className="main-menu-step-badge">1</div>
+                <SonsotyoKicker style={{ marginBottom: '10px' }}>Display name</SonsotyoKicker>
                 <input
-                  className="glass-panel"
+                  ref={nameInputRef}
+                  className="glass-panel main-menu-name-input"
                   value={playerName}
-                  onChange={(event) => setPlayerName(event.target.value)}
+                  maxLength={24}
+                  autoComplete="username"
+                  aria-label="Duelist display name"
+                  aria-invalid={!canSubmitCareer}
+                  onChange={(event) => setPlayerName(event.target.value.slice(0, 24))}
+                  onBlur={() => setPlayerName((v) => v.trim().replace(/\s+/g, ' '))}
+                  placeholder="e.g. Neo Rookie"
                   style={{ width: '100%', padding: '16px 18px', color: 'var(--text-bright)', background: 'rgba(8,10,20,0.48)', borderRadius: '18px', fontSize: '1rem' }}
                 />
-                <SonsotyoKicker style={{ marginTop: '26px', marginBottom: '12px' }}>Partner Loadout Sync</SonsotyoKicker>
-                <div className="sonsotyo-option-list">
+                <div className="sonsotyo-caption" style={{ marginTop: '8px', textTransform: 'none' }}>
+                  {normalizedName.length}/24 · letters, numbers, spaces (trimmed for save)
+                </div>
+                {!canSubmitCareer && (
+                  <div className="sonsotyo-caption main-menu-name-hint" style={{ marginTop: '6px', textTransform: 'none' }}>
+                    Add at least one character for your callsign.
+                  </div>
+                )}
+
+                <div className="main-menu-step-badge" style={{ marginTop: '22px' }}>
+                  2
+                </div>
+                <SonsotyoKicker style={{ marginTop: '8px', marginBottom: '12px' }}>Starter deck style</SonsotyoKicker>
+                <div className="sonsotyo-option-list" role="group" aria-label="Starter style">
                   {STARTER_OPTIONS.map((option) => (
-                    <button key={option.id} className={`neo-button ${starter === option.id ? 'primary' : ''}`} onClick={() => setStarter(option.id)} style={{ justifyContent: 'space-between' }}>
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`neo-button ${starter === option.id ? 'primary' : ''}`}
+                      onClick={() => setStarter(option.id)}
+                      style={{ justifyContent: 'space-between' }}
+                      aria-pressed={starter === option.id}
+                    >
                       <span>{option.title}</span>
-                      <span style={{ opacity: 0.72 }}>{option.id.toUpperCase()}</span>
+                      <span style={{ opacity: 0.72 }}>{option.partner}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
               <SonsotyoPanel style={{ background: 'rgba(8,10,20,0.45)' }}>
-                <SonsotyoKicker>Selected Partner</SonsotyoKicker>
-                <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.8rem', color: 'var(--accent-primary)' }}>
-                  {selectedStarter.partner}
+                <div className="main-menu-step-badge">3</div>
+                <SonsotyoKicker style={{ marginTop: '8px' }}>Review & begin</SonsotyoKicker>
+                <div style={{ marginTop: '12px', fontFamily: 'var(--font-display)', fontSize: '1.15rem', color: 'var(--text-secondary)' }}>
+                  Pilot <span style={{ color: 'var(--accent-secondary)' }}>{normalizedName || '—'}</span>
                 </div>
-                <p className="sonsotyo-copy" style={{ marginTop: '14px' }}>{selectedStarter.summary}</p>
-                <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
+                <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.75rem', color: 'var(--accent-primary)' }}>
+                  {selectedStarter.title} · {selectedStarter.partner}
+                </div>
+                <p className="sonsotyo-copy" style={{ marginTop: '14px', lineHeight: 1.55 }}>
+                  {selectedStarter.summary}
+                </p>
+                <ul className="main-menu-starter-bullets">
                   {selectedStarter.bullets.map((bullet) => (
-                    <SonsotyoDiagnosticRow key={bullet} label={bullet} value="Ready" />
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </div>
-                <button className="neo-button primary" onClick={handleCreateCareer} style={{ marginTop: '28px', width: '100%' }}>
-                  Initialize Sync Cycle
+                </ul>
+                <button
+                  type="submit"
+                  className="neo-button primary"
+                  disabled={!canSubmitCareer}
+                  style={{ marginTop: '22px', width: '100%' }}
+                >
+                  Begin at apartment
                 </button>
               </SonsotyoPanel>
             </div>
-          </div>
+          </form>
         </div>
       )}
 

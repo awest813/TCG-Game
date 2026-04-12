@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { audioManager } from '../core/AudioManager';
 import { ShopItem } from '../core/types';
@@ -6,6 +6,7 @@ import { isShopVeteranUnlocked } from '../core/circuitProgression';
 import { formatCredits, getBracketEconomyCaption, getBracketSweepPot } from '../core/economy';
 import { TOURNAMENT_TIERS } from '../core/TournamentManager';
 import { getCardById, resolveCardImage } from '../data/cards';
+import { SystemMenu } from '../ui/SystemMenu';
 import '../styles/SonsotyoScenes.css';
 
 const SHOP_INVENTORY: ShopItem[] = [
@@ -18,17 +19,11 @@ const SHOP_INVENTORY: ShopItem[] = [
 
 export const CardShop: React.FC = () => {
   const { state, updateProfile, updateGameState, setScene } = useGame();
+  const [showSettings, setShowSettings] = useState(false);
   const { profile } = state;
   const shopBeginner = TOURNAMENT_TIERS.find((t) => t.id === 'shop-beginner-circuit');
   const shopMini = TOURNAMENT_TIERS.find((t) => t.id === 'storefront-mini');
   const shopVet = TOURNAMENT_TIERS.find((t) => t.id === 'shop-veteran-gauntlet');
-
-  React.useEffect(() => {
-    audioManager.playBGM('SHOP');
-    return () => {
-      audioManager.playBGM('TOWN');
-    };
-  }, []);
 
   const buyItem = (item: ShopItem) => {
     if (profile.currency < item.cost) {
@@ -63,6 +58,7 @@ export const CardShop: React.FC = () => {
         position: 'relative'
       }}
     >
+      {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
       <div className="shop-boutique-layer" aria-hidden />
       <div className="sonsotyo-overlay" />
       <div className="scanlines" />
@@ -177,7 +173,7 @@ export const CardShop: React.FC = () => {
                 <div className="sonsotyo-pill">100 CR Entry</div>
               </div>
               <p className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.9rem' }}>
-                A quick 2-round bracket for local regulars. {shopMini ? `Sweep ${formatCredits(getBracketSweepPot(shopMini))}. ${getBracketEconomyCaption(shopMini)}` : 'Fast cycles and immediate settlement.'}
+                A four-round bracket for local regulars. {shopMini ? `Sweep ${formatCredits(getBracketSweepPot(shopMini))}. ${getBracketEconomyCaption(shopMini)}` : 'Fast cycles and immediate settlement.'}
               </p>
               <button 
                 className="neo-button" 
@@ -197,7 +193,7 @@ export const CardShop: React.FC = () => {
                 <div className="sonsotyo-pill">250 CR Entry</div>
               </div>
               <p className="sonsotyo-copy" style={{ marginTop: '12px', fontSize: '0.9rem' }}>
-                Three-match escalation after you clear the mini bracket — last annex gate before the terminal issues a Club License.
+                Five-match escalation after you clear the mini bracket — last annex gate before the terminal issues a Club License.
                 {shopVet ? ` Sweep ${formatCredits(getBracketSweepPot(shopVet))}. ${getBracketEconomyCaption(shopVet)}` : ''}
               </p>
               <button
@@ -215,8 +211,20 @@ export const CardShop: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ marginTop: 'auto', paddingTop: '18px', textAlign: 'center' }}>
-          <button className="neo-button" onClick={() => setScene('DISTRICT_EXPLORE')}>Return to district</button>
+        <div style={{ marginTop: 'auto', paddingTop: '18px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button type="button" className="neo-button" onClick={() => setScene('DISTRICT_EXPLORE')}>
+            Return to district
+          </button>
+          <button
+            type="button"
+            className="neo-button"
+            onClick={() => {
+              audioManager.playSFX('menu_open');
+              setShowSettings(true);
+            }}
+          >
+            System
+          </button>
         </div>
       </div>
 

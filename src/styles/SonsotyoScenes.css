@@ -5,6 +5,33 @@
   color: var(--text-bright);
 }
 
+/* Title screen: hero + grid often exceeds the phone viewport — scroll instead of clipping menu buttons */
+.main-menu-scene.sonsotyo-scene {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.main-menu-content .sonsotyo-hero {
+  flex-shrink: 0;
+}
+
+/* Full-screen modal shell (settings, new game, etc.) */
+.system-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: auto;
+  background: rgba(4, 6, 14, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 .sonsotyo-scene::before,
 .sonsotyo-scene::after {
   content: '';
@@ -169,6 +196,255 @@
   opacity: 0.82;
 }
 
+.main-menu-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 22px;
+  /* Do not shrink to zero when the hero block is tall — keep the menu grid reachable */
+  flex: 1 1 auto;
+  min-height: min(520px, 52vh);
+}
+
+.main-menu-path-panel .main-menu-path-list {
+  margin: 14px 0 0;
+  padding-left: 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.main-menu-path-list li {
+  margin-bottom: 8px;
+}
+
+.main-menu-onboarding-modal .main-menu-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--bg-primary);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  margin-bottom: 8px;
+}
+
+.main-menu-starter-bullets {
+  margin: 16px 0 0;
+  padding-left: 1.2rem;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.main-menu-starter-bullets li {
+  margin-bottom: 6px;
+}
+
+.main-menu-name-input:focus-visible {
+  outline: 2px solid rgba(126, 242, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.main-menu-name-hint {
+  color: rgba(255, 179, 120, 0.95);
+}
+
+.apartment-onboarding-rail {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 125;
+  max-width: min(520px, calc(100vw - 40px));
+  pointer-events: none;
+}
+
+.apartment-onboarding-rail-inner {
+  padding: 12px 16px;
+  border: 1px solid rgba(126, 242, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.apartment-onboarding-rail strong {
+  font-weight: 700;
+}
+
+/* First-session stack: rail above, VN anchored below — avoids rail overlapping VN on short viewports. */
+/* Floating first-session checklist (Transit, district) — below TutorialGuide (140) */
+.first-session-checklist-floating {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 115;
+  width: min(540px, calc(100vw - 28px));
+  pointer-events: none;
+}
+
+.first-session-checklist-floating-card {
+  pointer-events: auto;
+  max-height: min(34vh, 260px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 900px) {
+  .first-session-checklist-floating-card {
+    max-height: min(30vh, 220px);
+  }
+}
+
+.transit-app-scene:has(.first-session-checklist-floating) .sonsotyo-content {
+  padding-top: clamp(88px, 14vh, 160px);
+}
+
+.explore-container:has(.first-session-checklist-floating) .sonsotyo-content {
+  padding-top: clamp(96px, 15vh, 170px);
+}
+
+.apartment-first-session-shell {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  pointer-events: none;
+  z-index: 128;
+}
+
+.apartment-onboarding-rail.apartment-onboarding-rail--stacked {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  z-index: 1;
+  max-width: 100%;
+  width: 100%;
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  padding: 10px 16px 0;
+  box-sizing: border-box;
+}
+
+.apartment-onboarding-checklist {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.apartment-onboarding-checklist-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(126, 242, 255, 0.12);
+  background: rgba(5, 8, 20, 0.35);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--text-secondary);
+}
+
+.apartment-onboarding-step-badge {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display, system-ui);
+  font-weight: 800;
+  font-size: 0.72rem;
+  color: var(--accent-primary);
+  background: rgba(126, 242, 255, 0.08);
+  border: 1px solid rgba(126, 242, 255, 0.2);
+}
+
+.apartment-onboarding-checklist-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.apartment-onboarding-checklist-item.is-done {
+  opacity: 0.88;
+  border-color: rgba(80, 220, 160, 0.35);
+}
+
+.apartment-onboarding-checklist-item.is-done .apartment-onboarding-step-badge {
+  color: rgba(80, 220, 160, 0.95);
+  border-color: rgba(80, 220, 160, 0.45);
+  background: rgba(80, 220, 160, 0.1);
+  font-size: 0.8rem;
+}
+
+.apartment-onboarding-checklist-item.is-current {
+  border-color: rgba(126, 242, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(126, 242, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.apartment-onboarding-checklist-label {
+  font-family: var(--font-display, system-ui);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--text-primary);
+}
+
+.apartment-onboarding-checklist-detail {
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.apartment-onboarding-objective {
+  margin-top: 10px;
+}
+
+.apartment-first-session-vn {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 2;
+  padding: 0 12px max(10px, env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  min-height: 0;
+}
+
+.apartment-first-session-vn-inner {
+  pointer-events: auto;
+  max-width: min(720px, 100%);
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .apartment-onboarding-rail--stacked .apartment-onboarding-rail-inner {
+    max-height: min(36vh, 240px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    pointer-events: auto;
+  }
+
+  .apartment-first-session-shell {
+    /* Leave room for bottom hub bar so VN + rail do not crush controls */
+    padding-bottom: min(22vh, 180px);
+  }
+}
+
 .sonsotyo-side-stack {
   display: flex;
   flex-direction: column;
@@ -221,6 +497,10 @@
 }
 
 @media (max-width: 1100px) {
+  .main-menu-body {
+    grid-template-columns: 1fr;
+  }
+
   .sonsotyo-hero,
   .sonsotyo-grid.two,
   .sonsotyo-starter-grid {

@@ -18,6 +18,11 @@ export function sanitizeGameState(state: GameState): GameState {
     changed = true;
   }
 
+  if (next.bracketVictoryToast != null) {
+    next.bracketVictoryToast = null;
+    changed = true;
+  }
+
   if (next.activeTournament) {
     const { tierId, wins } = next.activeTournament;
     if (!tierIds.has(tierId)) {
@@ -26,7 +31,8 @@ export function sanitizeGameState(state: GameState): GameState {
       changed = true;
     } else if (typeof wins !== 'number' || !Number.isFinite(wins) || wins < 0) {
       const clamped = Math.max(0, Math.floor(Number(wins) || 0));
-      next.activeTournament = { ...next.activeTournament!, wins: clamped };
+      const current = next.activeTournament;
+      next.activeTournament = { ...current, wins: clamped };
       changed = true;
     }
   }

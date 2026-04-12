@@ -5,6 +5,13 @@ export type CircuitFlagMap = Record<string, ProgressFlagValue>;
 
 export const hasShopBeginnerCleared = (f: CircuitFlagMap) => Boolean(f.shopBeginnerCleared);
 export const hasShopMiniCleared = (f: CircuitFlagMap) => Boolean(f.shopMiniCleared);
+
+/** Lucy apartment VN finished (unlocks district / transit objective). */
+export const hasLucyOnboardingComplete = (f: CircuitFlagMap) => Boolean(f.onboardingComplete);
+
+/** Transit grid intro or briefing dismissed — see `TransitStation`. */
+export const hasTransitOnboardingComplete = (f: CircuitFlagMap) =>
+  Boolean(f.transitLucyGridIntroDone || f.transitLucyBriefingDismissed);
 export const hasShopVeteranCleared = (f: CircuitFlagMap) => Boolean(f.shopVeteranCleared);
 
 /** Issued after all three boutique brackets are cleared — unlocks sanctioned city events. */
@@ -58,6 +65,11 @@ export function migrateCircuitFlags(flags: CircuitFlagMap): CircuitFlagMap {
     next.clubLicenseIssued = true;
   }
   return next;
+}
+
+/** First-session rail until the free Card Annex beginner bracket is cleared. */
+export function shouldShowFirstSessionChecklist(flags: CircuitFlagMap): boolean {
+  return !hasShopBeginnerCleared(migrateCircuitFlags(flags));
 }
 
 export function mergeFlagsAfterTournamentVictory(tierId: string, flags: CircuitFlagMap): CircuitFlagMap {
@@ -117,12 +129,14 @@ export function unlockedDistrictsAfterVictory(
  * Player-facing objective line (sidebar / frame). Mirrors classic card-RPG structure:
  * tutorial → annex ladders → club license → regional → pro-am → elite → crown.
  */
-export function nextCircuitQuest(flags: CircuitFlagMap): string {
+/** @param titlesWon — completed finite brackets (shop + district majors); drives endgame copy. */
+export function nextCircuitQuest(flags: CircuitFlagMap, titlesWon = 0): string {
   const f = migrateCircuitFlags(flags);
-  if (!f.onboardingComplete) {
+  const titles = Math.max(0, Math.floor(titlesWon));
+  if (!hasLucyOnboardingComplete(f)) {
     return "Tutorial: Finish Lucy's apartment briefing and optional deck check.";
   }
-  if (!f.transitLucyGridIntroDone && !f.transitLucyBriefingDismissed) {
+  if (!hasTransitOnboardingComplete(f)) {
     return "Tutorial: Open Transit (from the apartment) and finish Lucy's grid orientation.";
   }
   if (!hasShopBeginnerCleared(f)) {
@@ -132,7 +146,7 @@ export function nextCircuitQuest(flags: CircuitFlagMap): string {
     return 'Novice circuit: clear the Storefront Mini-Tourney (100 CR entry) at the Card Annex.';
   }
   if (!hasShopVeteranCleared(f)) {
-    return 'Novice circuit: clear the Counter Run Gauntlet (three matches, 250 CR) at the Card Annex.';
+    return 'Novice circuit: clear the Counter Run Gauntlet (five matches, 250 CR) at the Card Annex.';
   }
   if (!hasRookieScrimCleared(f)) {
     return 'Major event: clear the Casual Under-Circuit (free entry) at the Sunset Circuit Terminal — bank credits for the 500 CR Market bracket.';
@@ -142,6 +156,9 @@ export function nextCircuitQuest(flags: CircuitFlagMap): string {
   }
   if (!hasNeonNightCleared(f)) {
     return 'Elite arc: clear Neon Night Elite after Neon Mission unlocks on your rail map.';
+  }
+  if (titles > 6) {
+    return `Repeat champion sync: ${titles} bracket clears on file. Crown Gauntlet still scales forever—stack credits there or re-sweep any lobby tier for rivalry reps.`;
   }
   return 'Endgame: the Unlimited Crown Gauntlet at Civic Crown—each win scales the pot until you cash out or fall.';
 }

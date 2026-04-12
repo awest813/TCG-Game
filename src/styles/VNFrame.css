@@ -1,0 +1,275 @@
+/**
+ * Visual novel presentation HUD — non-interactive overlay.
+ * Center column is intentionally empty so scene CTAs stay in the clear.
+ */
+
+.vn-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  pointer-events: none;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  --vn-pad-x: clamp(6px, 1vw, 12px);
+  --vn-pad-y: clamp(6px, 1vw, 10px);
+  --vn-rail-l: clamp(148px, 17vw, 260px);
+  --vn-rail-r: clamp(128px, 15vw, 220px);
+  --vn-bottom-safe: min(22vh, 200px);
+
+  display: grid;
+  grid-template-columns: var(--vn-rail-l) minmax(0, 1fr) var(--vn-rail-r);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  column-gap: clamp(8px, 1.2vw, 16px);
+  row-gap: clamp(6px, 1vw, 10px);
+  padding: var(--vn-pad-y) var(--vn-pad-x) max(var(--vn-pad-y), var(--vn-bottom-safe));
+}
+
+/* Decorative corners — sit behind rails */
+.vn-frame-corners {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.vn-frame-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(126, 242, 255, 0.38);
+  border-style: solid;
+  border-width: 0;
+  opacity: 0.85;
+}
+
+.vn-frame-corner.top-left {
+  top: 4px;
+  left: 4px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  border-radius: 3px 0 0 0;
+}
+
+.vn-frame-corner.top-right {
+  top: 4px;
+  right: 4px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+  border-radius: 0 3px 0 0;
+}
+
+.vn-frame-corner.bottom-left {
+  bottom: max(4px, env(safe-area-inset-bottom, 0px));
+  left: 4px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  border-radius: 0 0 0 3px;
+}
+
+.vn-frame-corner.bottom-right {
+  bottom: max(4px, env(safe-area-inset-bottom, 0px));
+  right: 4px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  border-radius: 0 0 3px 0;
+}
+
+.vn-frame-top {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  position: relative;
+  z-index: 1;
+  padding: 8px 10px 10px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(8, 12, 24, 0.72), rgba(5, 8, 16, 0.55));
+  border: 1px solid rgba(126, 242, 255, 0.14);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.vn-frame-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.vn-frame-topline + .vn-frame-topline {
+  margin-top: 6px;
+}
+
+.vn-frame-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-ice);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.vn-frame-title {
+  font-family: var(--font-display);
+  font-size: clamp(0.72rem, 1.5vw, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-bright);
+  line-height: 1.2;
+  max-width: min(52ch, 100%);
+}
+
+.vn-frame-micro {
+  font-family: var(--font-mono);
+  font-size: clamp(0.55rem, 1.1vw, 0.65rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(229, 235, 255, 0.72);
+  white-space: nowrap;
+}
+
+.vn-frame-sidebar {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  max-height: min(58vh, 480px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 12px 12px;
+  border-radius: 14px;
+  background: linear-gradient(165deg, rgba(12, 16, 30, 0.78), rgba(6, 9, 18, 0.62));
+  border: 1px solid rgba(126, 242, 255, 0.12);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.vn-frame-sidebar--left {
+  grid-column: 1;
+  grid-row: 2;
+  border-left: 2px solid rgba(126, 242, 255, 0.22);
+}
+
+.vn-frame-sidebar--right {
+  grid-column: 3;
+  grid-row: 2;
+  border-right: 2px solid rgba(255, 138, 198, 0.2);
+}
+
+.vn-frame-kicker {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: 6px;
+}
+
+.vn-frame-sidebar-copy {
+  font-size: clamp(0.68rem, 1.15vw, 0.8rem);
+  line-height: 1.45;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.vn-frame-divider {
+  height: 1px;
+  margin: 10px 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+}
+
+.vn-frame-bottom {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  position: relative;
+  z-index: 1;
+  padding: 8px 12px 10px;
+  border-radius: 12px;
+  background: linear-gradient(0deg, rgba(8, 10, 20, 0.78), rgba(6, 8, 16, 0.52));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: min(96%, 72ch);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vn-frame-bottom-copy {
+  font-size: clamp(0.62rem, 1.05vw, 0.74rem);
+  line-height: 1.45;
+  color: rgba(229, 235, 255, 0.78);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .vn-frame {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    --vn-bottom-safe: min(20vh, 160px);
+  }
+
+  .vn-frame-sidebar--left {
+    grid-column: 1;
+    grid-row: 2;
+    max-height: min(32vh, 280px);
+  }
+
+  .vn-frame-sidebar--right {
+    grid-column: 2;
+    grid-row: 2;
+    max-height: min(32vh, 280px);
+  }
+
+  .vn-frame-bottom {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    max-width: 100%;
+  }
+
+  .vn-frame-title {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .vn-frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    row-gap: 6px;
+    --vn-bottom-safe: min(24vh, 180px);
+  }
+
+  .vn-frame-sidebar--left {
+    grid-column: 1;
+    grid-row: 2;
+    max-height: min(26vh, 220px);
+  }
+
+  .vn-frame-sidebar--right {
+    grid-column: 1;
+    grid-row: 3;
+    max-height: min(22vh, 200px);
+  }
+
+  .vn-frame-bottom {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .vn-frame-micro {
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-frame-sidebar {
+    scroll-behavior: auto;
+  }
+}

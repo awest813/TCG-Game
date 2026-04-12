@@ -4,17 +4,24 @@ import { useGame } from '../core/GameContext';
 import { Card } from '../core/types';
 import {
   mergeFlagsAfterTournamentVictory,
+  migrateCircuitFlags,
   nextCircuitQuest,
   unlockedDistrictsAfterVictory
 } from '../core/circuitProgression';
 import { getBracketPotAtWins } from '../core/economy';
-import { getTournamentBracketSize, getTournamentOpponent, TOURNAMENT_TIERS } from '../core/TournamentManager';
+import {
+  getTournamentBracketSize,
+  getTournamentOpponent,
+  getTournamentRoundLabel,
+  TOURNAMENT_TIERS
+} from '../core/TournamentManager';
 import { applyTrainerRelationshipDelta, getTrainerById, mergeSocialState } from '../data/trainers';
 import { getCardById, getCardPalette } from '../data/cards';
 import { NPCS } from '../npc/npcs';
 import { audioManager } from '../core/AudioManager';
 import { BattleArena3D } from './BattleArena3D';
 import { BattleEntity } from './BattleEngine';
+import { SystemMenu } from '../ui/SystemMenu';
 import './BattleBoard.css';
 
 type FieldTheme = {
@@ -30,10 +37,15 @@ export const BattleBoard: React.FC = () => {
   const [hoveredCard, setHoveredCard] = useState<Card | null>(null);
   const [damageMarkers, setDamageMarkers] = useState<{ id: string; value: number; x: number; y: number }[]>([]);
   const [boardShake, setBoardShake] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const activeTournament = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
   const tournamentTier = activeTournament ? TOURNAMENT_TIERS.find((entry) => entry.id === activeTournament.tierId) : null;
+  const bracketContext =
+    activeTournament && tournamentTier
+      ? `${tournamentTier.name} · ${getTournamentRoundLabel(activeTournament.tierId, activeTournament.wins)} · Match wins ${activeTournament.wins}`
+      : null;
   const opponentId = activeTournament?.currentOpponentId ?? 'kaizen';
   const opponent = NPCS.find((entry) => entry.id === opponentId);
   const trainer = getTrainerById(opponentId);
@@ -60,7 +72,6 @@ export const BattleBoard: React.FC = () => {
   const opponentPrizesTaken = 3 - battleState.opponent.prizes;
 
   useEffect(() => {
-    audioManager.playBGM('BATTLE');
     audioManager.playSFX('vs_impact');
     const timer = window.setTimeout(() => setShowVS(false), 2200);
     return () => window.clearTimeout(timer);
@@ -175,13 +186,15 @@ export const BattleBoard: React.FC = () => {
       const expandedDistricts =
         unlockedDistrictsAfterVictory(activeTournament.tierId, state.profile.progress.unlockedDistricts) ??
         state.profile.progress.unlockedDistricts;
+      const nextTitles = state.profile.stats.tournamentsWon + 1;
 
       updateProfile({
         currency: state.profile.currency + finalReward,
         stats: {
           ...state.profile.stats,
           wins: state.profile.stats.wins + 1,
-          tournamentsWon: state.profile.stats.tournamentsWon + 1
+          winStreak: state.profile.stats.winStreak + 1,
+          tournamentsWon: nextTitles
         },
         social: socialWithTrainer,
         progress: {
@@ -190,33 +203,70 @@ export const BattleBoard: React.FC = () => {
           unlockedDistricts: expandedDistricts
         }
       });
-      updateGameState({ activeTournament: null, currentQuest: nextCircuitQuest(mergedFlags) });
+      updateGameState({
+        activeTournament: null,
+        currentQuest: nextCircuitQuest(mergedFlags, nextTitles),
+        bracketVictoryToast: { tierId: activeTournament.tierId, credits: finalReward }
+      });
       setScene('TOURNAMENT');
       return;
     }
 
+    const socialMid = trainer
+      ? applyTrainerRelationshipDelta(state.profile, trainer.id, { affinity: 1, rivalry: 0, respect: 1, lastResult: 'WIN' })
+      : social;
+    updateProfile({
+      stats: {
+        ...state.profile.stats,
+        wins: state.profile.stats.wins + 1,
+        winStreak: state.profile.stats.winStreak + 1
+      },
+      social: socialMid
+    });
     updateGameState({
       activeTournament: {
         ...activeTournament,
         wins: nextWins,
         currentOpponentId: getTournamentOpponent(activeTournament.tierId, nextWins)
-      }
+      },
+      currentQuest: nextCircuitQuest(migrateCircuitFlags(state.profile.progress.flags), state.profile.stats.tournamentsWon)
     });
     setScene('TOURNAMENT');
   };
 
   const handleDefeatExit = () => {
     if (activeTournament) {
-      updateProfile({ stats: { ...state.profile.stats, losses: state.profile.stats.losses + 1 } });
+      const socialLoss = trainer
+        ? applyTrainerRelationshipDelta(state.profile, trainer.id, { affinity: 0, rivalry: 2, respect: -1, lastResult: 'LOSS' })
+        : social;
+      updateProfile({
+        stats: {
+          ...state.profile.stats,
+          losses: state.profile.stats.losses + 1,
+          winStreak: 0
+        },
+        social: socialLoss
+      });
       updateGameState({
         activeTournament: null,
-        currentQuest: nextCircuitQuest(state.profile.progress.flags)
+        currentQuest: nextCircuitQuest(migrateCircuitFlags(state.profile.progress.flags), state.profile.stats.tournamentsWon)
       });
       setScene('TOURNAMENT');
       return;
     }
     setScene('APARTMENT');
   };
+
+  const endModalBody =
+    activeTournament && tournamentTier
+      ? {
+          win: 'Result logged to this bracket. Exit returns to the tournament lobby for the next pairing or to settle your run.',
+          loss: 'Exit returns to the tournament lobby. Entry fees are not refunded on bracket losses.'
+        }
+      : {
+          win: 'Exit returns to your apartment hub.',
+          loss: 'Exit returns to your apartment hub.'
+        };
 
   if (showVS) {
     return <VSDisplay playerAvatar="/avatar_player.png" opponentAvatar={opponentAvatar} opponentName={opponentName.toUpperCase()} />;
@@ -268,8 +318,41 @@ export const BattleBoard: React.FC = () => {
                 ))}
               </div>
               <div className="battle-turn-pill" style={{ color: isPlayerTurn ? 'var(--accent-primary)' : 'var(--accent-secondary)' }}>
-                <span>{isPlayerTurn ? 'Player Tempo' : 'Rival Tempo'}</span>
+                <span>{isPlayerTurn ? 'Your tempo' : 'Rival tempo'}</span>
                 <strong>TURN {battleState.turn}</strong>
+              </div>
+              <div
+                style={{
+                  marginTop: '14px',
+                  paddingTop: '12px',
+                  borderTop: '1px solid rgba(255,255,255,0.08)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '10px',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {bracketContext ? (
+                  <div className="sonsotyo-caption" style={{ flex: '1 1 160px', lineHeight: 1.45, textTransform: 'none', letterSpacing: '0.06em' }}>
+                    {bracketContext}
+                  </div>
+                ) : (
+                  <div className="sonsotyo-caption" style={{ flex: '1 1 120px', opacity: 0.65, textTransform: 'none' }}>
+                    Exhibition sync — results stay in your career stats.
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className="neo-button"
+                  style={{ flexShrink: 0, padding: '8px 16px', fontSize: '0.72rem' }}
+                  onClick={() => {
+                    audioManager.playSFX('menu_open');
+                    setShowSettings(true);
+                  }}
+                >
+                  System
+                </button>
               </div>
             </div>
           </div>
@@ -291,8 +374,8 @@ export const BattleBoard: React.FC = () => {
             </div>
 
             <div className="battle-sidebar">
-              <LifePointTracker value={battleState.opponent.prizes} name="Enemy Prizes" color="var(--accent-secondary)" />
-              <LifePointTracker value={battleState.player.prizes} name="Local Prizes" color="var(--accent-primary)" />
+              <LifePointTracker value={battleState.opponent.prizes} name="Rival prizes" color="var(--accent-secondary)" />
+              <LifePointTracker value={battleState.player.prizes} name="Your prizes" color="var(--accent-primary)" />
               <div className="glass-panel battle-energy">
                 <div className="battle-mini-label">Energy Weave</div>
                 <div className="battle-energy-bar">
@@ -311,8 +394,8 @@ export const BattleBoard: React.FC = () => {
             <div className="glass-panel battle-hand">
               <div className="battle-hand-header">
                 <div>
-                  <div className="battle-mini-label">Hand Array</div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem' }}>Playable Pulse</div>
+                  <div className="battle-mini-label">Hand</div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem' }}>Your hand</div>
                 </div>
                 <div className="battle-field-chip">
                   <span>Cards</span>
@@ -338,7 +421,9 @@ export const BattleBoard: React.FC = () => {
 
             <div className="glass-panel battle-controls">
               <div className="battle-mini-label">Command</div>
-              <div className="battle-controls-copy">Strike from the active unit or fade the tempo and pass control when the sequence feels right.</div>
+              <div className="battle-controls-copy">
+                When your active creature is ready, use strike damage on the rival active. End sync to pass — the rival AI runs after a short beat.
+              </div>
               <button
                 className="neo-button primary"
                 onClick={() => {
@@ -365,8 +450,13 @@ export const BattleBoard: React.FC = () => {
         </div>
       ))}
 
-      {battleState.winner === 'player' && <EndMatchModal title="VICTORY" color="var(--accent-primary)" onExit={handleVictoryExit} />}
-      {battleState.winner === 'opponent' && <EndMatchModal title="DEFEAT" color="var(--accent-secondary)" onExit={handleDefeatExit} />}
+      {battleState.winner === 'player' && (
+        <EndMatchModal title="Victory" color="var(--accent-primary)" body={endModalBody.win} onExit={handleVictoryExit} />
+      )}
+      {battleState.winner === 'opponent' && (
+        <EndMatchModal title="Defeat" color="var(--accent-secondary)" body={endModalBody.loss} onExit={handleDefeatExit} />
+      )}
+      {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
 
       <style>{`
         @keyframes float-up {
@@ -479,22 +569,24 @@ const VSDisplay: React.FC<{ playerAvatar: string; opponentAvatar: string; oppone
   </div>
 );
 
-const EndMatchModal: React.FC<{ title: string; color: string; onExit: () => void }> = ({ title, color, onExit }) => (
+const EndMatchModal: React.FC<{ title: string; color: string; body: string; onExit: () => void }> = ({ title, color, body, onExit }) => (
   <div className="battle-modal">
     <div className="glass-panel battle-modal-panel">
       <div className="battle-modal-title" style={{ color }}>{title}</div>
-      <div className="battle-modal-copy">The sequence has settled. Step back into the city and carry the result forward.</div>
-      <button className="neo-button primary" style={{ padding: '18px 42px', margin: '32px auto 0' }} onClick={onExit}>Exit Circuit</button>
+      <div className="battle-modal-copy">{body}</div>
+      <button type="button" className="neo-button primary" style={{ padding: '18px 42px', margin: '32px auto 0' }} onClick={onExit}>
+        Continue
+      </button>
     </div>
   </div>
 );
 
 const IdleInspector: React.FC<{ opponentName: string; fieldLabel: string }> = ({ opponentName, fieldLabel }) => (
   <div className="glass-panel battle-inspector">
-    <div className="battle-mini-label">Hover Readout</div>
+    <div className="battle-mini-label">Card readout</div>
     <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.4rem' }}>Sonsotyo Lens</div>
     <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-      Float over a card to inspect its dreamprint. {opponentName} is currently threading the {fieldLabel} channel.
+      Hover any card to inspect stats and rules. {opponentName} is holding the {fieldLabel} field channel.
     </div>
   </div>
 );

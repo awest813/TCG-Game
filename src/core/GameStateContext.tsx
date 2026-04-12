@@ -3,6 +3,7 @@ import { GameContext } from './GameContext';
 import { GameState, NewGameConfig, PlayerProfile, SceneType, TimeOfDay } from './types';
 import { migrateCircuitFlags } from './circuitProgression';
 import { DEFAULT_STARTING_CREDITS } from './economy';
+import { AUTOSAVE_STORAGE_KEY, parsePersistedGameState } from './gameStatePersistence';
 import { sanitizeGameState } from './gameStateSanitize';
 import { createDefaultSocialState, mergeSocialState } from '../data/trainers';
 
@@ -101,13 +102,18 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
     currentScene: config || !startInMenu ? 'APARTMENT' : 'MAIN_MENU',
     location: 'APARTMENT',
     timeOfDay: 'MORNING',
-currentQuest: config ? STARTER_LOADOUTS[starter].quest : startInMenu ? 'Explore Sunset Terminal' : INITIAL_QUEST,
+    currentQuest: config
+      ? STARTER_LOADOUTS[starter].quest
+      : startInMenu
+        ? 'Title screen: Continue loads your autosave. New game opens the apartment tutorial (Lucy), then Transit and the Card Annex.'
+        : INITIAL_QUEST,
     activeTournament: null,
     pendingTournamentId: null,
     tournamentLobbyReturn: null,
     deckEditorReturn: null,
     transitReturn: null,
     profileReturn: null,
+    bracketVictoryToast: null,
     vnSession: null,
     visuals: {
       presentationTier: 'HIGH'
@@ -153,39 +159,6 @@ const normalizeProfile = (profile: PlayerProfile): PlayerProfile => {
       chapter: profile.progress?.chapter ?? 1
     }
   };
-};
-
-const isTimeOfDay = (value: unknown): value is TimeOfDay =>
-  value === 'MORNING' || value === 'AFTERNOON' || value === 'EVENING';
-
-const isSceneType = (value: unknown): value is SceneType =>
-  [
-    'MAIN_MENU',
-    'APARTMENT',
-    'DISTRICT_EXPLORE',
-    'DECK_EDITOR',
-    'PACK_OPENING',
-    'STORE',
-    'BATTLE',
-    'REWARD',
-    'SOCIAL',
-    'TOURNAMENT',
-    'TRANSIT',
-    'SAVE_LOAD',
-    'PROFILE',
-    'VN_SCENE'
-  ].includes(String(value));
-
-const isGameState = (value: unknown): value is GameState => {
-  if (!value || typeof value !== 'object') return false;
-  const candidate = value as Partial<GameState>;
-  return (
-    !!candidate.profile &&
-    typeof candidate.location === 'string' &&
-    typeof candidate.currentQuest === 'string' &&
-    isSceneType(candidate.currentScene) &&
-    isTimeOfDay(candidate.timeOfDay)
-  );
 };
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -244,34 +217,43 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setState((prev) => ({ ...prev, timeOfDay: times[nextIndex] }));
   };
 
+  const applyLoadedGame = (loaded: GameState) => {
+    const sanitized = sanitizeGameState(loaded);
+    setState({
+      ...sanitized,
+      profile: normalizeProfile(sanitized.profile),
+      tournamentLobbyReturn: sanitized.tournamentLobbyReturn ?? null,
+      deckEditorReturn: sanitized.deckEditorReturn ?? null,
+      transitReturn: sanitized.transitReturn ?? null,
+      profileReturn: sanitized.profileReturn ?? null
+    });
+  };
+
   const saveGame = () => {
-    localStorage.setItem('neo_sf_save', JSON.stringify(state));
-    console.log('Game Saved');
+    localStorage.setItem(AUTOSAVE_STORAGE_KEY, JSON.stringify(state));
   };
 
   const loadGame = () => {
-    const saved = localStorage.getItem('neo_sf_save');
-    if (saved) {
-      const parsed: unknown = JSON.parse(saved);
-      if (isGameState(parsed)) {
-        const loaded = sanitizeGameState(parsed as GameState);
-        setState({
-          ...loaded,
-          profile: normalizeProfile(loaded.profile),
-          tournamentLobbyReturn: loaded.tournamentLobbyReturn ?? null,
-          deckEditorReturn: loaded.deckEditorReturn ?? null,
-          transitReturn: loaded.transitReturn ?? null,
-          profileReturn: loaded.profileReturn ?? null
-        });
-        return true;
-      }
-    }
-    return false;
+    const saved = localStorage.getItem(AUTOSAVE_STORAGE_KEY);
+    const parsed = saved ? parsePersistedGameState(saved) : null;
+    if (!parsed) return false;
+    applyLoadedGame(parsed);
+    return true;
+  };
+
+  const hydrateGameState = (loaded: GameState) => {
+    applyLoadedGame(loaded);
   };
 
   const resetGame = (config?: NewGameConfig) => {
     setState(createInitialState(config ?? { name: 'Neo_Rookie', starter: 'Pulse' }, false));
   };
 
-  return <GameContext.Provider value={{ state, setScene, updateProfile, updateGameState, advanceTime, saveGame, loadGame, resetGame }}>{children}</GameContext.Provider>;
+  return (
+    <GameContext.Provider
+      value={{ state, setScene, updateProfile, updateGameState, advanceTime, saveGame, loadGame, hydrateGameState, resetGame }}
+    >
+      {children}
+    </GameContext.Provider>
+  );
 };

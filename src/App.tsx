@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { audioManager } from './core/AudioManager';
 import { useGame } from './core/GameContext';
 import { MainMenu } from './ui/MainMenu';
 import { DevConsole } from './ui/DevConsole';
@@ -66,19 +67,14 @@ const SaveLoad = React.lazy(async () => {
 });
 
 const SceneLoadingFallback: React.FC = () => (
-  <div
-    className="fade-in"
-    style={{
-      height: '100%',
-      display: 'grid',
-      placeItems: 'center',
-      background: '#050508'
-    }}
-  >
-    <div className="glass-panel" style={{ width: '400px', padding: '28px 30px', textAlign: 'center' }}>
-      <div style={{ fontSize: '0.6rem', color: 'var(--accent-primary)', letterSpacing: '0.3rem' }}>SYSTEM_BOOT</div>
-      <div style={{ margin: '14px 0', fontSize: '1.2rem', fontWeight: 900 }}>LOADING_DATA...</div>
-      <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>Retrieving sector packets.</div>
+  <div className="app-scene-suspense fade-in" role="status" aria-live="polite" aria-busy="true">
+    <div className="glass-panel app-scene-suspense-card">
+      <div className="app-scene-suspense-kicker">System boot</div>
+      <div className="app-scene-suspense-title">Loading scene…</div>
+      <p className="app-scene-suspense-copy">Retrieving sector packets.</p>
+      <div className="app-scene-suspense-bar" aria-hidden="true">
+        <div className="app-scene-suspense-bar-fill" />
+      </div>
     </div>
   </div>
 );
@@ -94,6 +90,10 @@ const App: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  React.useEffect(() => {
+    audioManager.syncAmbientMusicForScene(state.currentScene);
+  }, [state.currentScene]);
 
   const renderScene = () => {
     switch (state.currentScene) {
@@ -130,13 +130,18 @@ const App: React.FC = () => {
 
   return (
     <PhoneFrame>
-        <div className="app-container" style={{ height: '100%' }}>
-          <Suspense fallback={<SceneLoadingFallback />}>
+      <a href="#main-content" className="skip-to-content">
+        Skip to game
+      </a>
+      <div className="app-container" style={{ height: '100%', position: 'relative' }}>
+        <Suspense fallback={<SceneLoadingFallback />}>
+          <main id="main-content" className="app-main" tabIndex={-1}>
             {renderScene()}
-          </Suspense>
-          <VisualNovelFrame />
-          {showDev && <DevConsole onClose={() => setShowDev(false)} />}
-        </div>
+          </main>
+        </Suspense>
+        <VisualNovelFrame />
+        {showDev && <DevConsole onClose={() => setShowDev(false)} />}
+      </div>
     </PhoneFrame>
   );
 };

@@ -2,16 +2,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { VNRunner } from '../ui/VNRunner';
 import { VNEngineState } from '../engine/types';
-import { nextCircuitQuest } from '../core/circuitProgression';
+import { hasLucyOnboardingComplete, hasShopBeginnerCleared, migrateCircuitFlags, nextCircuitQuest } from '../core/circuitProgression';
+import { FirstSessionChecklist } from '../ui/FirstSessionChecklist';
+import { SystemMenu } from '../ui/SystemMenu';
 import { createApartmentOnboardingSession } from '../visual-novel/scriptRegistry';
+import { audioManager } from '../core/AudioManager';
 import '../styles/SonsotyoScenes.css';
 
 export const ApartmentHub: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { state, setScene, saveGame, advanceTime, updateProfile, updateGameState } = useGame();
   const [showWakeUp, setShowWakeUp] = useState(state.timeOfDay === 'MORNING');
+  const [showSettings, setShowSettings] = useState(false);
   const [statusText, setStatusText] = useState('Apartment systems online.');
-  const needsOnboarding = !state.profile.progress.flags.onboardingComplete;
+  const circuitFlags = migrateCircuitFlags(state.profile.progress.flags);
+  const showFirstSessionShell = !hasShopBeginnerCleared(circuitFlags);
+  const needsLucyVN = !hasLucyOnboardingComplete(circuitFlags);
   const starter = state.profile.progress.flags.onboardingStarter as string | undefined;
   const canvasId = 'apartment-babylon-canvas';
   const onboardingSession = createApartmentOnboardingSession(starter, canvasId);
@@ -113,6 +119,7 @@ export const ApartmentHub: React.FC = () => {
 
   return (
     <div className="apartment-container sonsotyo-scene fade-in" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+      {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
       <canvas id={canvasId} ref={canvasRef} style={{ width: '100%', height: '100%', outline: 'none' }} />
       <div className="sonsotyo-overlay" />
 
@@ -133,6 +140,16 @@ export const ApartmentHub: React.FC = () => {
         <div />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-end', justifyContent: 'center', pointerEvents: 'auto' }}>
+          <button
+            type="button"
+            className="neo-button"
+            onClick={() => {
+              audioManager.playSFX('menu_open');
+              setShowSettings(true);
+            }}
+          >
+            System
+          </button>
           <button
             className="neo-button"
             onClick={() => {
@@ -158,6 +175,16 @@ export const ApartmentHub: React.FC = () => {
 
         <div className="glass-panel sonsotyo-panel" style={{ gridColumn: '1 / span 2', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'auto' }}>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="neo-button"
+              onClick={() => {
+                audioManager.playSFX('menu_open');
+                setShowSettings(true);
+              }}
+            >
+              System
+            </button>
             <button className="neo-button" onClick={() => { saveGame(); setStatusText('Progress encrypted and saved.'); }}>Save State</button>
             <button
               className="neo-button"
@@ -187,66 +214,79 @@ export const ApartmentHub: React.FC = () => {
         </div>
       )}
 
-      {needsOnboarding && (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'end', justifyContent: 'center', pointerEvents: 'none', zIndex: 140 }}>
-          <div style={{ pointerEvents: 'auto' }}>
-            <VNRunner
-              scriptUrl={onboardingSession.scriptUrl}
-              canvasId={canvasId}
-              title={onboardingSession.title}
-              subtitle={onboardingSession.subtitle}
-              onStateSync={(vnState: VNEngineState) => {
-                const reviewedDeck = Boolean(vnState.flags.reviewedDeck);
-                const combatResolved = Boolean(vnState.pluginResults.start_3d_combat);
-                const playerMood = typeof vnState.variables.playerMood === 'string' ? vnState.variables.playerMood : state.profile.progress.flags.playerMood ?? null;
+      {showFirstSessionShell && (
+        <div className="apartment-first-session-shell" aria-live="polite">
+          <FirstSessionChecklist
+            placement="stacked"
+            lucyStepDetail="Apartment briefing (story panel below when active)"
+          />
 
-                updateProfile({
-                  progress: {
-                    ...state.profile.progress,
-                    flags: {
+          {needsLucyVN && (
+            <div className="apartment-first-session-vn">
+              <div className="apartment-first-session-vn-inner">
+                <VNRunner
+                  scriptUrl={onboardingSession.scriptUrl}
+                  canvasId={canvasId}
+                  title={onboardingSession.title}
+                  subtitle={onboardingSession.subtitle}
+                  onStateSync={(vnState: VNEngineState) => {
+                    const reviewedDeck = Boolean(vnState.flags.reviewedDeck);
+                    const combatResolved = Boolean(vnState.pluginResults.start_3d_combat);
+                    const playerMood =
+                      typeof vnState.variables.playerMood === 'string' ? vnState.variables.playerMood : state.profile.progress.flags.playerMood ?? null;
+
+                    updateProfile({
+                      progress: {
+                        ...state.profile.progress,
+                        flags: {
+                          ...state.profile.progress.flags,
+                          reviewedDeck,
+                          combatResolved,
+                          playerMood
+                        }
+                      }
+                    });
+
+                    updateGameState({
+                      currentQuest: nextCircuitQuest(
+                        {
+                          ...state.profile.progress.flags,
+                          reviewedDeck,
+                          combatResolved,
+                          playerMood
+                        },
+                        state.profile.stats.tournamentsWon
+                      )
+                    });
+
+                    if (combatResolved) setStatusText('Babylon plugin handoff complete. Narrative link restored.');
+                  }}
+                  onComplete={(vnState: VNEngineState) => {
+                    const mergedFlags = {
                       ...state.profile.progress.flags,
-                      reviewedDeck,
-                      combatResolved,
-                      playerMood
+                      onboardingComplete: true,
+                      reviewedDeck: Boolean(vnState.flags.reviewedDeck),
+                      combatResolved: Boolean(vnState.pluginResults.start_3d_combat)
+                    };
+                    updateProfile({
+                      progress: {
+                        ...state.profile.progress,
+                        flags: mergedFlags
+                      }
+                    });
+                    updateGameState({ currentQuest: nextCircuitQuest(mergedFlags, state.profile.stats.tournamentsWon) });
+
+                    setStatusText('Lucy completed the onboarding route.');
+                    if (vnState.flags.reviewedDeck) {
+                      updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
+                    } else {
+                      setScene('DISTRICT_EXPLORE');
                     }
-                  }
-                });
-
-                updateGameState({
-                  currentQuest: nextCircuitQuest({
-                    ...state.profile.progress.flags,
-                    reviewedDeck,
-                    combatResolved,
-                    playerMood
-                  })
-                });
-
-                if (combatResolved) setStatusText('Babylon plugin handoff complete. Narrative link restored.');
-              }}
-              onComplete={(vnState: VNEngineState) => {
-                const mergedFlags = {
-                  ...state.profile.progress.flags,
-                  onboardingComplete: true,
-                  reviewedDeck: Boolean(vnState.flags.reviewedDeck),
-                  combatResolved: Boolean(vnState.pluginResults.start_3d_combat)
-                };
-                updateProfile({
-                  progress: {
-                    ...state.profile.progress,
-                    flags: mergedFlags
-                  }
-                });
-                updateGameState({ currentQuest: nextCircuitQuest(mergedFlags) });
-
-                setStatusText('Lucy completed the onboarding route.');
-                if (vnState.flags.reviewedDeck) {
-                  updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
-                } else {
-                  setScene('DISTRICT_EXPLORE');
-                }
-              }}
-            />
-          </div>
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
 

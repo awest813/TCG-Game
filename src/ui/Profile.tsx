@@ -59,8 +59,9 @@ export const Profile: React.FC = () => {
             </div>
             <div style={{ marginTop: '18px' }}>
               <SonsotyoDiagnosticRow label="Collection" value={`${collectionProgress}%`} />
-              <SonsotyoDiagnosticRow label="Wins" value={profile.stats.wins} />
-              <SonsotyoDiagnosticRow label="Win Streak" value={profile.stats.winStreak} />
+              <SonsotyoDiagnosticRow label="Duels won" value={profile.stats.wins} />
+              <SonsotyoDiagnosticRow label="Bracket titles" value={profile.stats.tournamentsWon} />
+              <SonsotyoDiagnosticRow label="Win streak" value={profile.stats.winStreak} />
             </div>
           </SonsotyoPanel>
         </div>
@@ -102,8 +103,10 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
         </div>
         <div style={{ marginTop: '-16px', fontFamily: 'var(--font-display)', fontSize: '1.5rem' }}>Rank {profile.level}</div>
         <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <PassportStat label="Wins" value={profile.stats.wins} />
+          <PassportStat label="Duels" value={profile.stats.wins} />
+          <PassportStat label="Titles" value={profile.stats.tournamentsWon} />
           <PassportStat label="Symbols" value={profile.badges.length} />
+          <PassportStat label="Losses" value={profile.stats.losses} />
         </div>
         <div style={{ marginTop: '18px' }}>
           <SonsotyoKicker>Credit Balance</SonsotyoKicker>
@@ -114,11 +117,28 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
       </SonsotyoPanel>
 
       <SonsotyoPanel>
-        <SonsotyoKicker>Faction Rep</SonsotyoKicker>
-        <div style={{ marginTop: '14px', display: 'grid', gap: '10px' }}>
-          {FACTIONS.map((faction) => (
-            <SonsotyoDiagnosticRow key={faction.id} label={<span style={{ color: faction.accentColor }}>{faction.name}</span>} value={social.factions[faction.id].score} />
-          ))}
+        <SonsotyoKicker>Faction standing</SonsotyoKicker>
+        <p className="sonsotyo-copy" style={{ marginTop: '10px', fontSize: '0.82rem', lineHeight: 1.5 }}>
+          Rep rises from story beats and circuit results. Rank gates how NPCs read you on the street.
+        </p>
+        <div style={{ marginTop: '14px', display: 'grid', gap: '12px' }}>
+          {FACTIONS.map((faction) => {
+            const rep = social.factions[faction.id];
+            return (
+              <SonsotyoDiagnosticRow
+                key={faction.id}
+                label={
+                  <span>
+                    <span style={{ color: faction.accentColor }}>{faction.name}</span>
+                    <span className="sonsotyo-caption" style={{ display: 'block', marginTop: '4px', textTransform: 'none', letterSpacing: '0.04em', opacity: 0.78, lineHeight: 1.4 }}>
+                      {faction.slogan}
+                    </span>
+                  </span>
+                }
+                value={`${rep.rank} · ${rep.score}`}
+              />
+            );
+          })}
         </div>
       </SonsotyoPanel>
     </div>
@@ -154,11 +174,10 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
                   </div>
                 </div>
               </div>
-              {trainer.personality && (
-                <div style={{ padding: '8px 14px 10px', borderTop: `1px solid rgba(255,255,255,0.06)`, fontSize: '0.7rem', opacity: 0.55, lineHeight: 1.5 }}>
-                  {trainer.personality}
-                </div>
-              )}
+              <div style={{ padding: '8px 14px 10px', borderTop: `1px solid rgba(255,255,255,0.06)` }}>
+                <div className="sonsotyo-caption" style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.5, marginBottom: '4px' }}>PERSONALITY</div>
+                <div style={{ fontSize: '0.72rem', opacity: 0.78, lineHeight: 1.5 }}>{trainer.personality}</div>
+              </div>
             </div>
           );
         })}
@@ -210,9 +229,12 @@ const AnalyticsView: React.FC<{ stats: PlayerProfile['stats'] }> = ({ stats }) =
       <SonsotyoKicker>Performance Metrics</SonsotyoKicker>
       <div style={{ marginTop: '16px', display: 'grid', gap: '12px' }}>
         <AnalyticsRow label="Active Sync Time" value={`${stats.playTime} MINUTES`} />
-        <AnalyticsRow label="Max Win Streak" value={String(stats.winStreak)} />
+        <AnalyticsRow label="Current win streak" value={String(stats.winStreak)} />
         <AnalyticsRow label="Cards Discovered" value={String(stats.cardsCollected)} />
-        <AnalyticsRow label="Global Win Rate" value={`${Math.round((stats.wins / (stats.wins + stats.losses || 1)) * 100)}%`} />
+        <AnalyticsRow
+          label="Duel win rate"
+          value={`${Math.round((stats.wins / Math.max(1, stats.wins + stats.losses)) * 100)}%`}
+        />
       </div>
     </SonsotyoPanel>
 

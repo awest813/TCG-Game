@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useGame } from '../core/GameContext';
 import { SceneType } from '../core/types';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
+import '../styles/VNFrame.css';
 
 const SCENE_LABELS: Record<SceneType, { chapter: string; label: string; tone: string }> = {
   MAIN_MENU: { chapter: 'Prologue', label: 'Title Screen', tone: 'Awaiting input' },
@@ -42,14 +43,16 @@ export const VisualNovelFrame: React.FC = () => {
 
   return (
     <div className="vn-frame" aria-hidden="true">
-      <div className="vn-frame-corner top-left" />
-      <div className="vn-frame-corner top-right" />
-      <div className="vn-frame-corner bottom-left" />
-      <div className="vn-frame-corner bottom-right" />
+      <div className="vn-frame-corners">
+        <div className="vn-frame-corner top-left" />
+        <div className="vn-frame-corner top-right" />
+        <div className="vn-frame-corner bottom-left" />
+        <div className="vn-frame-corner bottom-right" />
+      </div>
 
-      <div className="vn-frame-top">
+      <header className="vn-frame-top">
         <div className="vn-frame-topline">
-          <span className="vn-frame-chip" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>{sceneMeta.chapter}</span>
+          <span className="vn-frame-chip">{sceneMeta.chapter}</span>
           <span className="vn-frame-title">{displayLabel}</span>
         </div>
         <div className="vn-frame-topline">
@@ -58,14 +61,14 @@ export const VisualNovelFrame: React.FC = () => {
           <span className="vn-frame-micro">{state.location.replace(/_/g, ' ')}</span>
           {districtProfile && <span className="vn-frame-micro">{districtProfile.travelLabel}</span>}
         </div>
-      </div>
+      </header>
 
-      <div className="vn-frame-sidebar left">
+      <aside className="vn-frame-sidebar vn-frame-sidebar--left">
         <div className="vn-frame-kicker">Current Route</div>
-        <div className="vn-frame-sidebar-copy" style={{ color: 'var(--text-secondary)' }}>{state.currentQuest}</div>
+        <div className="vn-frame-sidebar-copy">{state.currentQuest}</div>
         <div className="vn-frame-divider" />
         <div className="vn-frame-kicker">Scene Tone</div>
-        <div className="vn-frame-sidebar-copy" style={{ color: 'var(--text-secondary)' }}>{sceneMeta.tone}</div>
+        <div className="vn-frame-sidebar-copy">{sceneMeta.tone}</div>
         {districtProfile && (
           <>
             <div className="vn-frame-divider" />
@@ -73,9 +76,9 @@ export const VisualNovelFrame: React.FC = () => {
             <div className="vn-frame-sidebar-copy">{districtProfile.slogan}</div>
           </>
         )}
-      </div>
+      </aside>
 
-      <div className="vn-frame-sidebar right">
+      <aside className="vn-frame-sidebar vn-frame-sidebar--right">
         <div className="vn-frame-kicker">Partner Link</div>
         <div className="vn-frame-sidebar-copy">{partnerName}</div>
         <div className="vn-frame-divider" />
@@ -85,12 +88,14 @@ export const VisualNovelFrame: React.FC = () => {
           <>
             <div className="vn-frame-divider" />
             <div className="vn-frame-kicker">Route Champion</div>
-            <div className="vn-frame-sidebar-copy">{districtChampion.name} // {districtChampion.role}</div>
+            <div className="vn-frame-sidebar-copy">
+              {districtChampion.name} // {districtChampion.role}
+            </div>
           </>
         )}
-      </div>
+      </aside>
 
-      <div className="vn-frame-bottom">
+      <footer className="vn-frame-bottom">
         <div className="vn-frame-kicker">Narration Feed</div>
         <div className="vn-frame-bottom-copy">
           {state.currentScene === 'BATTLE'
@@ -99,7 +104,7 @@ export const VisualNovelFrame: React.FC = () => {
               ? `${districtProfile.arcTitle}: ${districtProfile.atmosphere}`
               : 'Every scene now plays inside a character-forward presentation frame built to feel like a visual novel.'}
         </div>
-      </div>
+      </footer>
     </div>
   );
 };

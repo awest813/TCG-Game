@@ -3,6 +3,7 @@ import { useGame } from '../core/GameContext';
 import { Card, CreatureType } from '../core/types';
 import { getCardById, getCardPalette, CARD_POOL, resolveCardImage } from '../data/cards';
 import { audioManager } from '../core/AudioManager';
+import { SystemMenu } from '../ui/SystemMenu';
 import '../styles/SonsotyoScenes.css';
 
 type CardTypeFilter = 'ALL' | CreatureType | 'SUPPORT';
@@ -11,6 +12,7 @@ export const DeckEditor: React.FC = () => {
   const { state, updateProfile, updateGameState } = useGame();
   const [filter, setFilter] = useState<CardTypeFilter>('ALL');
   const [search, setSearch] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
 
   const deck = state.profile.inventory.deck;
 
@@ -53,18 +55,44 @@ export const DeckEditor: React.FC = () => {
         : 'Save & return to apartment';
 
   return (
-    <div className="deck-builder-container fade-in" style={{ height: '100vh', display: 'grid', gridTemplateColumns: '1fr 380px', background: 'linear-gradient(180deg, rgba(8,10,18,0.86), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.12), transparent 22%), url(/assets/bg/deck-terminal.svg)', backgroundSize: 'cover', color: 'white', overflow: 'hidden' }}>
+    <div
+      className="deck-builder-container fade-in"
+      style={{
+        height: '100vh',
+        display: 'grid',
+        gridTemplateColumns: '1fr 380px',
+        background:
+          'linear-gradient(180deg, rgba(8,10,18,0.86), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.12), transparent 22%), url(/assets/bg/deck-terminal.svg)',
+        backgroundSize: 'cover',
+        color: 'white',
+        overflow: 'hidden',
+        position: 'relative'
+      }}
+    >
+      {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
       <main className="collection-monitor" style={{ padding: '40px', overflowY: 'auto', borderRight: '1px solid rgba(121,247,255,0.08)' }}>
         <header style={{ marginBottom: '40px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', flexWrap: 'wrap', gap: '16px' }}>
             <div>
               <div className="sonsotyo-kicker" style={{ color: 'var(--accent-primary)' }}>Tech Bay / Archive Access</div>
               <h1 className="sonsotyo-title" style={{ fontSize: '3.2rem', marginTop: '10px' }}>Lineup Sync</h1>
             </div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="neo-button"
+                onClick={() => {
+                  audioManager.playSFX('menu_open');
+                  setShowSettings(true);
+                }}
+              >
+                System
+              </button>
             <div className="glass-panel" style={{ padding: '12px 20px', background: 'rgba(255,255,255,0.03)', display: 'flex', gap: '20px', borderRadius: '22px' }}>
               <Metric label="AVG COST" value={`${averageCost} EN`} accent="var(--accent-yellow)" />
               <Metric label="CREATURES" value={`${creatureCount}`} accent="var(--accent-cyan)" />
               <Metric label="SUPPORT" value={`${supportCount}`} accent="var(--accent-magenta)" />
+            </div>
             </div>
           </div>
 

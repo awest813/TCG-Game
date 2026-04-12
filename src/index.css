@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Sora:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
+  color-scheme: dark;
   --bg-deep: #050508;
   --bg-phone-shell: #1a1a24;
   --bg-dream: #0b1020;
@@ -110,6 +111,165 @@ html, body, #root {
   box-shadow: none;
 }
 
+.neo-button:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+.neo-button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+input[type='range']:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100000;
+  padding: 12px 20px;
+  background: var(--accent-primary);
+  color: #04101a;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 0 0 12px 0;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+.skip-to-content:focus {
+  left: 0;
+  outline: none;
+}
+
+.app-container {
+  isolation: isolate;
+}
+
+.app-main {
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.app-main:focus {
+  outline: none;
+}
+
+.app-main:focus-visible {
+  outline: 2px dashed rgba(126, 242, 255, 0.55);
+  outline-offset: 2px;
+}
+
+.app-scene-suspense {
+  height: 100%;
+  min-height: 200px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 30%, rgba(126, 242, 255, 0.08), transparent 45%), #050508;
+  padding: 20px;
+}
+
+.app-scene-suspense-card {
+  width: min(400px, 100%);
+  padding: 28px 30px;
+  text-align: center;
+}
+
+.app-scene-suspense-kicker {
+  font-size: 0.62rem;
+  color: var(--accent-primary);
+  letter-spacing: 0.28rem;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+.app-scene-suspense-title {
+  margin: 14px 0 8px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+}
+
+.app-scene-suspense-copy {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.app-scene-suspense-bar {
+  margin-top: 20px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.app-scene-suspense-bar-fill {
+  height: 100%;
+  width: 40%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  animation: appSuspenseIndeterminate 1.1s ease-in-out infinite;
+}
+
+@keyframes appSuspenseIndeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+.fade-in {
+  animation: sonsotyoSceneFade 0.45s ease-out both;
+}
+
+@keyframes sonsotyoSceneFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-scene-suspense-bar-fill {
+    animation: none;
+    width: 100%;
+    opacity: 0.35;
+  }
+
+  .crt-flicker {
+    animation: none !important;
+  }
+
+  .fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .neo-button {
+    transition: none;
+  }
+
+  .neo-button:hover {
+    transform: none;
+  }
+}
+
 .scanlines {
   position: absolute;
   inset: 0;
@@ -132,6 +292,7 @@ html, body, #root {
 }
 
 .phone-ui-container {
+  position: relative;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -196,6 +357,7 @@ html, body, #root {
   opacity: 0.03;
   position: absolute;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
 }
 

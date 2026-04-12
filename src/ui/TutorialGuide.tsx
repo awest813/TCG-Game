@@ -18,6 +18,8 @@ export const TutorialGuide: React.FC<{
   /** Dim the scene behind the panel; optional click-through to parent via onBackdropClick */
   dimBackdrop?: boolean;
   onBackdropClick?: () => void;
+  /** Stack above dense HUD (e.g. tournament); keep below System menu (~600). */
+  overlayZIndex?: number;
 }> = ({
   title,
   subtitle,
@@ -27,7 +29,8 @@ export const TutorialGuide: React.FC<{
   portraitSrc = '/lucy_tutorial.png',
   portraitAlt = 'Lucy — circuit guide',
   dimBackdrop = false,
-  onBackdropClick
+  onBackdropClick,
+  overlayZIndex = 140
 }) => {
   return (
     <div
@@ -38,7 +41,7 @@ export const TutorialGuide: React.FC<{
         alignItems: 'end',
         justifyContent: 'center',
         pointerEvents: 'none',
-        zIndex: 140
+        zIndex: overlayZIndex
       }}
     >
       {dimBackdrop &&

@@ -1,13 +1,34 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
-import { DISTRICT_LOCATIONS, LocationAction } from '../data/locations';
+import { DISTRICT_LOCATIONS, type LocationAction } from '../data/locations';
 import { NPCS } from '../npc/npcs';
+import { FirstSessionChecklist } from '../ui/FirstSessionChecklist';
 import { SystemMenu } from '../ui/SystemMenu';
 import { SceneType } from '../core/types';
 import { createActionSession, createChampionSession } from '../visual-novel/scriptRegistry';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
 import '../styles/SceneVisuals.css';
 import '../styles/SonsotyoScenes.css';
+
+function actionRouteCaption(action: LocationAction): string {
+  if (action.routeHint) return action.routeHint;
+  switch (action.type) {
+    case 'SCENE_JUMP':
+      return 'Scene link';
+    case 'TALK':
+      return 'Dialogue';
+    case 'DUEL':
+      return 'Sync duel';
+    case 'SHOP':
+      return 'Commerce';
+    case 'TRAVEL':
+      return 'Transit';
+    case 'EVENT':
+      return 'Story beat';
+    default:
+      return 'Route';
+  }
+}
 
 export const DistrictExplore: React.FC = () => {
   const { state, setScene, updateGameState } = useGame();
@@ -160,6 +181,7 @@ export const DistrictExplore: React.FC = () => {
       </div>
 
       <div className="sonsotyo-overlay" />
+      <FirstSessionChecklist placement="floating" />
       <div className="sonsotyo-content" style={{ position: 'absolute', inset: 0, padding: '34px', display: 'grid', gridTemplateColumns: 'minmax(300px, 420px) 1fr minmax(320px, 380px)', gap: '20px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', alignSelf: 'start' }}>
           <div className="glass-panel sonsotyo-panel">
@@ -229,7 +251,7 @@ export const DistrictExplore: React.FC = () => {
                 <span className="sonsotyo-number">0{index + 1}</span>
                 <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
                   <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem' }}>{action.label}</span>
-                  <span className="sonsotyo-caption">{action.type.replace('_', ' ')} route</span>
+                  <span className="sonsotyo-caption">{actionRouteCaption(action)}</span>
                 </span>
               </button>
             ))}

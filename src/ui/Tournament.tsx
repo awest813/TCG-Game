@@ -27,9 +27,27 @@ import {
   getBracketSweepPot,
   getNetProfitAfterSweep
 } from '../core/economy';
+import { SystemMenu } from './SystemMenu';
+import { TutorialGuide } from './TutorialGuide';
 import '../styles/SonsotyoScenes.css';
 
 const TOAST_MS = 4800;
+
+function lucySweepPanelCopy(tierId: string, tierLabel: string): string {
+  const annex =
+    tierId === 'shop-beginner-circuit' || tierId === 'storefront-mini' || tierId === 'shop-veteran-gauntlet';
+  if (annex) {
+    return `${tierLabel}—swept. Annex feed is buzzing and your trophy row just ticked. Cash is banked; queue the next ladder or hit the streets when you want air.`;
+  }
+  return `${tierLabel} cleared end-to-end. That is a serious line on the sanctioned record—catch your breath, tweak the deck if you need to, then pick the next bracket when you want more heat.`;
+}
+
+function lucySweepVoiceLine(tierId: string, tierLabel: string): string {
+  const annex =
+    tierId === 'shop-beginner-circuit' || tierId === 'storefront-mini' || tierId === 'shop-veteran-gauntlet';
+  if (annex) return `${tierLabel} cleared. Annex is cheering you on—nice run.`;
+  return `${tierLabel} cleared. Major trophy synced—I'm proud of that sync.`;
+}
 
 export const Tournament: React.FC = () => {
   const { state, updateGameState, updateProfile, setScene } = useGame();
@@ -38,8 +56,18 @@ export const Tournament: React.FC = () => {
   const social = mergeSocialState(state.profile.social);
 
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+  const [showSettings, setShowSettings] = React.useState(false);
+  const [lucySweep, setLucySweep] = React.useState<{ tierId: string; label: string } | null>(null);
   const toastDismissRef = React.useRef<number | null>(null);
   const banterRivalTimerRef = React.useRef<number | null>(null);
+  const bracketVictoryToastKeyRef = React.useRef<string | null>(null);
+
+  const dismissLucySweep = React.useCallback(() => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    setLucySweep(null);
+  }, []);
+
+  const systemMenuOverlay = showSettings ? <SystemMenu onClose={() => setShowSettings(false)} /> : null;
 
   const showToast = React.useCallback((message: string) => {
     if (toastDismissRef.current !== null) {
@@ -128,6 +156,23 @@ export const Tournament: React.FC = () => {
   }, [activeTourney]);
 
   React.useEffect(() => {
+    const toast = state.bracketVictoryToast;
+    if (!toast) {
+      bracketVictoryToastKeyRef.current = null;
+      return;
+    }
+    const key = `${toast.tierId}:${toast.credits}`;
+    if (bracketVictoryToastKeyRef.current === key) return;
+    bracketVictoryToastKeyRef.current = key;
+    const tier = TOURNAMENT_TIERS.find((t) => t.id === toast.tierId);
+    const label = tier?.name ?? toast.tierId;
+    showToast(`Trophy sync: ${label} cleared — +${formatCredits(toast.credits)} CR`);
+    setLucySweep({ tierId: toast.tierId, label });
+    audioManager.speak(lucySweepVoiceLine(toast.tierId, label), 'lucy');
+    updateGameState({ bracketVictoryToast: null });
+  }, [state.bracketVictoryToast, showToast, updateGameState]);
+
+  React.useEffect(() => {
     if (!activeTourney) return undefined;
     const tier = TOURNAMENT_TIERS.find((e) => e.id === activeTourney.tierId);
     if (!tier) return undefined;
@@ -169,7 +214,7 @@ export const Tournament: React.FC = () => {
     const returnScene: SceneType = tier.locationId === 'card-shop' ? 'STORE' : (state.tournamentLobbyReturn ?? 'DISTRICT_EXPLORE');
     updateGameState({
       activeTournament: null,
-      currentQuest: nextCircuitQuest(state.profile.progress.flags),
+      currentQuest: nextCircuitQuest(state.profile.progress.flags, state.profile.stats.tournamentsWon),
       tournamentLobbyReturn: null
     });
     showToast(`Credited ${formatCredits(finalReward)}. Bracket closed.`);
@@ -181,7 +226,7 @@ export const Tournament: React.FC = () => {
     if (!window.confirm('Forfeit this bracket? Entry fee is not refunded.')) return;
     updateGameState({
       activeTournament: null,
-      currentQuest: nextCircuitQuest(state.profile.progress.flags),
+      currentQuest: nextCircuitQuest(state.profile.progress.flags, state.profile.stats.tournamentsWon),
       tournamentLobbyReturn: null
     });
     showToast('Bracket forfeited. You can start again from the lobby or annex.');
@@ -197,9 +242,11 @@ export const Tournament: React.FC = () => {
     return (
       <>
         {toastNode}
+        {systemMenuOverlay}
       <div
         className="tournament-scene sonsotyo-scene fade-in"
         style={{
+          position: 'relative',
           minHeight: '100vh',
           padding: '40px',
           overflowY: 'auto',
@@ -217,12 +264,17 @@ export const Tournament: React.FC = () => {
               <div className="sonsotyo-kicker">Circuit Access</div>
               <h1 className="sonsotyo-title" style={{ fontSize: 'clamp(2.8rem, 6vw, 4.6rem)', marginTop: '10px' }}>Local Events</h1>
               <p className="sonsotyo-copy" style={{ maxWidth: '52ch', marginTop: '14px' }}>
-                Sanctioned city events unlock like classic handheld card RPGs: clear the Card Annex backroom ladders for your Club License, then climb Sunset → Market → Neon → Crown brackets for medals and credits.
+                Clear all three <strong>Card Annex</strong> backroom brackets to earn your club license, then run the four city majors in order (Sunset → Market → Neon → Crown). Each finite sweep pays credits and adds a <strong>title</strong> to your record; Crown is endless until you cash out.
               </p>
               <div className="sonsotyo-meta-strip">
                 <div className="sonsotyo-pill">Currency {state.profile.currency.toLocaleString('en-US')} CR</div>
                 <div className="sonsotyo-pill">Titles {state.profile.stats.tournamentsWon}</div>
                 <div className="sonsotyo-pill">Sleep Circuit Active</div>
+              </div>
+              <div style={{ marginTop: '14px' }}>
+                <button type="button" className="neo-button" onClick={() => { audioManager.playSFX('menu_open'); setShowSettings(true); }}>
+                  System
+                </button>
               </div>
             </div>
 
@@ -294,7 +346,15 @@ export const Tournament: React.FC = () => {
                     <div className="sonsotyo-copy" style={{ marginTop: '10px' }}>
                       {featuredOpponent?.dialogue[state.timeOfDay] ?? 'The bracket feed is waiting for your handshake.'}
                     </div>
-                    {trainer && <div style={{ marginTop: '10px', color: 'var(--accent-yellow)', lineHeight: 1.5 }}>{trainer.summary}</div>}
+                    {trainer && (
+                      <>
+                        <div style={{ marginTop: '10px', color: 'var(--accent-yellow)', lineHeight: 1.5 }}>{trainer.summary}</div>
+                        <div className="sonsotyo-caption" style={{ marginTop: '10px', lineHeight: 1.55, opacity: 0.82 }}>
+                          <span style={{ letterSpacing: '0.1em', opacity: 0.65 }}>Personality · </span>
+                          {trainer.personality}
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   <div style={{ marginTop: '18px', display: 'flex', justifyContent: 'space-between', gap: '14px', alignItems: 'center' }}>
@@ -312,7 +372,7 @@ export const Tournament: React.FC = () => {
             })}
           </div>
 
-          <div style={{ textAlign: 'center', paddingBottom: '12px' }}>
+          <div style={{ textAlign: 'center', paddingBottom: '12px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
               className="neo-button"
               onClick={() => {
@@ -324,8 +384,25 @@ export const Tournament: React.FC = () => {
             >
               {state.tournamentLobbyReturn === 'STORE' ? 'Return to Card Annex' : 'Return to district'}
             </button>
+            <button type="button" className="neo-button" onClick={() => { audioManager.playSFX('menu_open'); setShowSettings(true); }}>
+              System
+            </button>
           </div>
         </div>
+        {lucySweep && (
+          <TutorialGuide
+            overlayZIndex={520}
+            dimBackdrop
+            onBackdropClick={dismissLucySweep}
+            portraitSrc="/lucy_tutorial.png"
+            portraitAlt="Lucy — circuit guide"
+            title="Lucy · Handler ping"
+            subtitle="Post-bracket"
+            message={lucySweepPanelCopy(lucySweep.tierId, lucySweep.label)}
+            objective={state.currentQuest}
+            actions={[{ label: 'Got it', variant: 'primary', onClick: dismissLucySweep }]}
+          />
+        )}
       </div>
       </>
     );
@@ -336,23 +413,28 @@ export const Tournament: React.FC = () => {
     return (
       <>
         {toastNode}
+        {systemMenuOverlay}
         <div className="tournament-scene sonsotyo-scene fade-in" style={{ minHeight: '100vh', padding: '40px', display: 'grid', placeItems: 'center' }}>
           <div className="glass-panel sonsotyo-panel" style={{ maxWidth: '480px', padding: '28px', textAlign: 'center' }}>
             <div className="sonsotyo-kicker">Bracket sync error</div>
             <p className="sonsotyo-copy" style={{ marginTop: '14px' }}>
               No tier data for this run. Your save may reference a removed event — the bracket has been cleared.
             </p>
-            <button
-              className="neo-button primary"
-              style={{ marginTop: '22px' }}
-              onClick={() => {
-                const dest: SceneType = state.tournamentLobbyReturn === 'STORE' ? 'STORE' : 'DISTRICT_EXPLORE';
-                updateGameState({ activeTournament: null, tournamentLobbyReturn: null });
-                setScene(dest);
-              }}
-            >
-              {state.tournamentLobbyReturn === 'STORE' ? 'Return to Card Annex' : 'Return to district'}
-            </button>
+            <div style={{ marginTop: '22px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button
+                className="neo-button primary"
+                onClick={() => {
+                  const dest: SceneType = state.tournamentLobbyReturn === 'STORE' ? 'STORE' : 'DISTRICT_EXPLORE';
+                  updateGameState({ activeTournament: null, tournamentLobbyReturn: null });
+                  setScene(dest);
+                }}
+              >
+                {state.tournamentLobbyReturn === 'STORE' ? 'Return to Card Annex' : 'Return to district'}
+              </button>
+              <button type="button" className="neo-button" onClick={() => { audioManager.playSFX('menu_open'); setShowSettings(true); }}>
+                System
+              </button>
+            </div>
           </div>
         </div>
       </>
@@ -370,9 +452,11 @@ export const Tournament: React.FC = () => {
   return (
     <>
       {toastNode}
+      {systemMenuOverlay}
     <div
       className="tournament-scene sonsotyo-scene fade-in"
       style={{
+        position: 'relative',
         minHeight: '100vh',
         padding: '40px',
         backgroundImage:
@@ -394,7 +478,7 @@ export const Tournament: React.FC = () => {
               <div className="sonsotyo-pill">Relation {relationshipScore}</div>
             </div>
             <p className="sonsotyo-copy" style={{ marginTop: '14px', maxWidth: '48ch' }}>
-              The room is tuned to rivalry, and the payout grows warmer every round you survive.
+              Each win deepens the bracket and raises your cash-out pot. Lose a duel and the run ends — entry fee is not refunded unless you withdraw first.
             </p>
           </div>
 
@@ -427,7 +511,15 @@ export const Tournament: React.FC = () => {
             <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '2rem' }}>
               {opponent?.name ?? 'Elite Bot'} / {opponent?.role ?? 'Circuit Opponent'}
             </div>
-            {trainer && <div style={{ marginTop: '10px', color: 'var(--accent-yellow)', lineHeight: 1.6 }}>{trainer.summary}</div>}
+            {trainer && (
+              <>
+                <div style={{ marginTop: '10px', color: 'var(--accent-yellow)', lineHeight: 1.6 }}>{trainer.summary}</div>
+                <div className="sonsotyo-caption" style={{ marginTop: '10px', lineHeight: 1.55, opacity: 0.82 }}>
+                  <span style={{ letterSpacing: '0.1em', opacity: 0.65 }}>Personality · </span>
+                  {trainer.personality}
+                </div>
+              </>
+            )}
 
             <div style={{ marginTop: '20px', display: 'grid', gap: '14px' }}>
               <div className="glass-panel sonsotyo-panel" style={{ padding: '16px' }}>
@@ -455,6 +547,14 @@ export const Tournament: React.FC = () => {
                 <div className="sonsotyo-pill">Round {roundLabel}</div>
                 {trainer && <div className="sonsotyo-pill">Faction {trainer.factionId}</div>}
               </div>
+              {trainer && (
+                <>
+                  <div className="sonsotyo-caption" style={{ marginTop: '12px', letterSpacing: '0.1em', opacity: 0.55 }}>
+                    Personality
+                  </div>
+                  <div className="sonsotyo-copy" style={{ marginTop: '6px', lineHeight: 1.55, fontSize: '0.88rem' }}>{trainer.personality}</div>
+                </>
+              )}
             </div>
 
             <div className="glass-panel sonsotyo-panel">
@@ -491,6 +591,9 @@ export const Tournament: React.FC = () => {
               }}
             >
               Abandon bracket
+            </button>
+            <button type="button" className="neo-button" onClick={() => { audioManager.playSFX('menu_open'); setShowSettings(true); }}>
+              System
             </button>
           </div>
         </div>

@@ -4,7 +4,10 @@ import { getTrainerById } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
 import { nextCircuitQuest } from '../core/circuitProgression';
+import { FirstSessionChecklist } from './FirstSessionChecklist';
 import { TutorialGuide } from './TutorialGuide';
+import { SystemMenu } from './SystemMenu';
+import { audioManager } from '../core/AudioManager';
 import '../styles/SonsotyoScenes.css';
 
 type DistrictNode = {
@@ -46,6 +49,7 @@ export const TransitStation: React.FC = () => {
   const [lucyBriefingSessionHidden, setLucyBriefingSessionHidden] = useState(false);
   const [lucyReplayBriefing, setLucyReplayBriefing] = useState(false);
   const [practiceDrillIndex, setPracticeDrillIndex] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
 
   const lucyPortrait = LUCY?.avatarPath ?? '/lucy_tutorial.png';
   const flags = state.profile.progress.flags;
@@ -65,7 +69,7 @@ export const TransitStation: React.FC = () => {
         flags: mergedFlags
       }
     });
-    updateGameState({ currentQuest: nextCircuitQuest(mergedFlags) });
+    updateGameState({ currentQuest: nextCircuitQuest(mergedFlags, state.profile.stats.tournamentsWon) });
     setLucyReplayBriefing(false);
   };
 
@@ -104,7 +108,12 @@ export const TransitStation: React.FC = () => {
         position: 'relative'
       }}
     >
+      {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
       <div className="sonsotyo-overlay" />
+      <FirstSessionChecklist
+        placement="floating"
+        transitStepDetail="Pick a cleared node, read District Intel, then Board Train. Use Lucy&apos;s Continue to grid until orientation locks."
+      />
       <div className="sonsotyo-content" style={{ position: 'absolute', inset: 0, padding: '30px', display: 'grid', gridTemplateRows: 'auto auto 1fr auto', gap: '18px' }}>
         <div className="sonsotyo-hero">
           <div className="glass-panel sonsotyo-hero-card">
@@ -226,6 +235,16 @@ export const TransitStation: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className="neo-button"
+            onClick={() => {
+              audioManager.playSFX('menu_open');
+              setShowSettings(true);
+            }}
+          >
+            System
+          </button>
           <button className="neo-button" onClick={exitTransit}>
             {state.transitReturn === 'DISTRICT_EXPLORE' ? 'Back to streets' : 'Back to apartment'}
           </button>
