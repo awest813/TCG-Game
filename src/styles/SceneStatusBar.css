@@ -1,0 +1,104 @@
+/**
+ * Thin read-only strip — operator, active quest, time/location.
+ * Lives in flex layout above <main> (does not overlay the scene).
+ */
+
+.scene-status-bar {
+  flex-shrink: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 12px;
+  padding: max(4px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) 6px max(10px, env(safe-area-inset-left, 0px));
+  min-height: 32px;
+  box-sizing: border-box;
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+  color: rgba(229, 235, 255, 0.82);
+  background: linear-gradient(180deg, rgba(4, 6, 14, 0.88), rgba(4, 6, 14, 0.72));
+  border-bottom: 1px solid rgba(126, 242, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.scene-status-bar__operator {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(245, 248, 255, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scene-status-bar__operator-label {
+  display: block;
+  font-size: 0.5rem;
+  letter-spacing: 0.1rem;
+  color: rgba(160, 175, 210, 0.55);
+  margin-bottom: 1px;
+}
+
+.scene-status-bar__quest {
+  text-align: center;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.scene-status-bar__quest-label {
+  display: block;
+  font-size: 0.5rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  color: rgba(126, 242, 255, 0.55);
+  margin-bottom: 1px;
+}
+
+.scene-status-bar__quest-text {
+  font-size: 0.66rem;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: rgba(210, 220, 240, 0.88);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.scene-status-bar__meta {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  text-transform: uppercase;
+  color: rgba(180, 190, 215, 0.72);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .scene-status-bar {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    text-align: center;
+  }
+
+  .scene-status-bar__operator,
+  .scene-status-bar__meta {
+    text-align: center;
+  }
+
+  .scene-status-bar__quest {
+    padding: 4px 0;
+    order: -1;
+  }
+
+  .scene-status-bar__quest-text {
+    -webkit-line-clamp: 2;
+  }
+
+  .scene-status-bar {
+    min-height: auto;
+  }
+}

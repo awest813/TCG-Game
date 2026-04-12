@@ -303,6 +303,7 @@ export const TransitStation: React.FC = () => {
 
       {showLucyIntroOverlay && (
         <TutorialGuide
+          variant="vn"
           dimBackdrop
           onBackdropClick={() => {
             if (lucyReplayBriefing) setLucyReplayBriefing(false);

@@ -19,14 +19,10 @@ export const Profile: React.FC = () => {
 
   return (
     <div
-      className="profile-scene sonsotyo-scene sonsotyo-scene--bounded fade-in"
+      className="profile-scene sonsotyo-scene sonsotyo-scene--bounded sonsotyo-scene-surface--apartments fade-in"
       style={{
         padding: '36px',
-        paddingBottom: 'max(36px, env(safe-area-inset-bottom, 0px))',
-        background:
-          'linear-gradient(180deg, rgba(8,10,18,0.82), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.14), transparent 22%), url(/sunset_apartments_bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        paddingBottom: 'max(36px, env(safe-area-inset-bottom, 0px))'
       }}
     >
       <div className="sonsotyo-overlay" />

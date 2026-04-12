@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useGame } from '../core/GameContext';
 import { SceneType } from '../core/types';
+import { EasyVNHost } from '../vn/EasyVNHost';
 import '../styles/SonsotyoScenes.css';
 
 export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { setScene, updateProfile, updateGameState } = useGame();
+  const [showEasyVN, setShowEasyVN] = React.useState(false);
 
   const scenes: SceneType[] = [
     'MAIN_MENU',
@@ -29,6 +31,10 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  if (showEasyVN) {
+    return <EasyVNHost onClose={() => setShowEasyVN(false)} />;
+  }
 
   return (
     <div
@@ -78,6 +84,9 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </button>
           <button type="button" className="neo-button primary" onClick={() => updateProfile({ xp: 5000 })}>
             Max sync XP
+          </button>
+          <button type="button" className="neo-button" onClick={() => setShowEasyVN(true)}>
+            EasyVN demo (npm easyvn)
           </button>
         </div>
 

@@ -65,10 +65,10 @@ export const SystemMenu: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         aria-modal="true"
         aria-labelledby="system-menu-title"
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '20px', alignItems: 'flex-start', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '14px', alignItems: 'flex-start', marginBottom: '18px' }}>
           <div>
             <div className="sonsotyo-kicker">Sleep Future · System</div>
-            <h2 id="system-menu-title" className="sonsotyo-title" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', marginTop: '8px' }}>
+            <h2 id="system-menu-title" className="sonsotyo-title" style={{ fontSize: 'clamp(1.75rem, 4.2vw, 3rem)', marginTop: '6px', lineHeight: 1.05 }}>
               Audio & options
             </h2>
             <p className="sonsotyo-copy system-menu-intro">

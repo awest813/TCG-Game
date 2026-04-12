@@ -56,13 +56,10 @@ export const DeckEditor: React.FC = () => {
 
   return (
     <div
-      className="deck-builder-container fade-in deck-builder-root"
+      className="deck-builder-container fade-in deck-builder-root sonsotyo-scene-surface--deck"
       style={{
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1fr) minmax(260px, 380px)',
-        background:
-          'linear-gradient(180deg, rgba(8,10,18,0.86), rgba(4,6,10,0.94)), radial-gradient(circle at 16% 18%, rgba(126,242,255,0.12), transparent 22%), url(/assets/bg/deck-terminal.svg)',
-        backgroundSize: 'cover',
         color: 'white',
         overflow: 'hidden',
         position: 'relative'

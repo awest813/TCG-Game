@@ -223,7 +223,7 @@ export const BattleArena3D: React.FC<BattleArena3DProps> = ({
       sceneRef.current = null;
       engine.dispose();
     };
-  }, [tier]);
+  }, [tier, field]);
 
   return (
     <canvas

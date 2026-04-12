@@ -159,7 +159,7 @@ describe('playthrough smoke: battle rules', () => {
   it('garden haze increases Bloom max health without healing every turn', () => {
     const state = BattleEngine.createInitialState(['mosshop', 'garden-haze', 'verdajack'], ['ziprail', 'neon-striker']);
     const fieldCard = getCardById('garden-haze');
-    expect(fieldCard).toBeDefined();
+    if (!fieldCard) throw new Error('expected garden-haze card');
     state.player.active = {
       id: 'mosshop',
       cardId: 'mosshop',
@@ -175,7 +175,7 @@ describe('playthrough smoke: battle rules', () => {
     state.player.mana = 3;
     state.player.maxMana = 3;
 
-    const afterField = BattleEngine.playCard(state, fieldCard!, 'player');
+    const afterField = BattleEngine.playCard(state, fieldCard, 'player');
     expect(afterField.player.active?.maxHealth).toBe(6);
     expect(afterField.player.active?.currentHealth).toBe(4);
 
@@ -193,11 +193,11 @@ describe('playthrough smoke: battle rules', () => {
   it('void rift discards from both hands at end of turn', () => {
     const state = BattleEngine.createInitialState(['ziprail', 'void-rift', 'neon-striker', 'signalmite'], ['mosshop', 'verdajack', 'wharfin']);
     const fieldCard = getCardById('void-rift');
-    expect(fieldCard).toBeDefined();
+    if (!fieldCard) throw new Error('expected void-rift card');
     state.player.mana = 5;
     state.player.maxMana = 5;
 
-    const afterField = BattleEngine.playCard(state, fieldCard!, 'player');
+    const afterField = BattleEngine.playCard(state, fieldCard, 'player');
     afterField.player.hand = ['ziprail'];
     afterField.opponent.hand = ['mosshop'];
     const playerHandBefore = afterField.player.hand.length;

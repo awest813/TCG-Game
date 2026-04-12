@@ -9,7 +9,7 @@
       "steps": [
         {
           "type": "visual",
-          "background": "/neon_mission_tileset.png",
+          "background": "/market_arcade_bg.png",
           "portrait": "/portrait_luna.svg",
           "bustLeft": "/avatar_player.png",
           "bustRight": "/bust_luna.svg",

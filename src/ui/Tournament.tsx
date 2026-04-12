@@ -400,6 +400,7 @@ export const Tournament: React.FC = () => {
         </div>
         {lucySweep && (
           <TutorialGuide
+            variant="vn"
             overlayZIndex={520}
             dimBackdrop
             onBackdropClick={dismissLucySweep}

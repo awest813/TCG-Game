@@ -67,7 +67,7 @@ const serializeVNSessionState = (vnState: VNEngineState) => {
 };
 
 export const VNScene: React.FC = () => {
-  const { state, setScene, updateGameState, updateProfile, advanceTime } = useGame();
+  const { state, updateGameState, updateProfile, advanceTime } = useGame();
   const session = state.vnSession;
   const initialStateRef = React.useRef<{ key: string; state?: Partial<VNEngineState> }>({ key: '' });
   const sessionKey = session ? `${session.scriptUrl}:${session.sourceId ?? ''}` : '';

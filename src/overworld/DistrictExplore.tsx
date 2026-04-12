@@ -33,7 +33,7 @@ function actionRouteCaption(action: LocationAction): string {
 }
 
 export const DistrictExplore: React.FC = () => {
-  const { state, setScene, updateGameState } = useGame();
+  const { state, updateGameState } = useGame();
   const [currentLocId, setCurrentLocId] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);

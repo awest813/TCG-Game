@@ -45,14 +45,10 @@ export const CardShop: React.FC = () => {
 
   return (
     <div
-      className="shop-scene sonsotyo-scene sonsotyo-scene--bounded fade-in"
+      className="shop-scene sonsotyo-scene sonsotyo-scene--bounded sonsotyo-scene-surface--shop fade-in"
       style={{
         padding: '40px',
         paddingBottom: 'max(40px, env(safe-area-inset-bottom, 0px))',
-        background:
-          'linear-gradient(180deg, rgba(8,10,18,0.82), rgba(4,6,10,0.94)), radial-gradient(circle at 18% 18%, rgba(126,242,255,0.12), transparent 22%), url(/assets/bg/card-annex.svg), url(/market_arcade_bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative'

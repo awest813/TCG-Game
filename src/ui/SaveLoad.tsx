@@ -167,14 +167,10 @@ export const SaveLoad: React.FC = () => {
 
   return (
     <div
-      className="save-load-scene sonsotyo-scene sonsotyo-scene--bounded fade-in"
+      className="save-load-scene sonsotyo-scene sonsotyo-scene--bounded sonsotyo-scene-surface--terminal fade-in"
       style={{
         padding: '40px',
-        paddingBottom: 'max(40px, env(safe-area-inset-bottom, 0px))',
-        background:
-          'linear-gradient(180deg, rgba(8,10,18,0.84), rgba(4,6,10,0.94)), radial-gradient(circle at 18% 18%, rgba(126,242,255,0.14), transparent 22%), url(/sunset_terminal_bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        paddingBottom: 'max(40px, env(safe-area-inset-bottom, 0px))'
       }}
     >
       <div className="sonsotyo-overlay" />

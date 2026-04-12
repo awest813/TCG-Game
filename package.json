@@ -14,6 +14,7 @@
   "dependencies": {
     "@babylonjs/core": "^6.11.2",
     "babylonjs-hook": "^0.1.1",
+    "easyvn": "^0.1.1",
     "pepjs": "^0.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

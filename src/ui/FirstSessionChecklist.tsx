@@ -8,6 +8,7 @@ import {
   migrateCircuitFlags
 } from '../core/circuitProgression';
 import '../styles/SonsotyoScenes.css';
+import '../styles/VNPresentation.css';
 
 const DEFAULT_LUCY_DETAIL = 'Briefing with Lucy at the apartment';
 const DEFAULT_TRANSIT_DETAIL = "Open Transit from the apartment; finish Lucy's grid orientation.";
@@ -17,6 +18,8 @@ export type FirstSessionChecklistPlacement = 'stacked' | 'floating';
 
 export type FirstSessionChecklistProps = {
   placement: FirstSessionChecklistPlacement;
+  /** Slim step strip + one quest line — use during Lucy VN to avoid stacking dense panels. */
+  variant?: 'default' | 'compact';
   /** Apartment-only copy when the VN story panel is on-screen */
   lucyStepDetail?: string;
   /** Optional override (e.g. Transit scene-specific line) */
@@ -25,6 +28,7 @@ export type FirstSessionChecklistProps = {
 
 export const FirstSessionChecklist: React.FC<FirstSessionChecklistProps> = ({
   placement,
+  variant = 'default',
   lucyStepDetail = DEFAULT_LUCY_DETAIL,
   transitStepDetail = DEFAULT_TRANSIT_DETAIL
 }) => {
@@ -36,6 +40,22 @@ export const FirstSessionChecklist: React.FC<FirstSessionChecklistProps> = ({
   const transitDone = hasTransitOnboardingComplete(circuitFlags);
   const annexBeginnerDone = hasShopBeginnerCleared(circuitFlags);
   const nextStep = getCircuitNextStep(circuitFlags, state.profile.stats.tournamentsWon);
+
+  const compactBody = (
+    <>
+      <div className="first-session-compact-track" aria-label="First session progress">
+        <span className={`first-session-compact-dot${lucyDone ? ' is-done' : !lucyDone ? ' is-current' : ''}`} />
+        <span className="first-session-compact-label">Lucy</span>
+        <span style={{ opacity: 0.35 }}>·</span>
+        <span className={`first-session-compact-dot${transitDone ? ' is-done' : lucyDone && !transitDone ? ' is-current' : ''}`} />
+        <span className="first-session-compact-label">Transit</span>
+        <span style={{ opacity: 0.35 }}>·</span>
+        <span className={`first-session-compact-dot${annexBeginnerDone ? ' is-done' : lucyDone && transitDone && !annexBeginnerDone ? ' is-current' : ''}`} />
+        <span className="first-session-compact-label">Annex</span>
+      </div>
+      <p className="first-session-compact-quest">{state.currentQuest}</p>
+    </>
+  );
 
   const body = (
     <>
@@ -91,17 +111,23 @@ export const FirstSessionChecklist: React.FC<FirstSessionChecklistProps> = ({
     </>
   );
 
+  const main = variant === 'compact' ? compactBody : body;
+
   if (placement === 'floating') {
     return (
       <div className="first-session-checklist-floating" aria-live="polite">
-        <div className="glass-panel apartment-onboarding-rail-inner first-session-checklist-floating-card">{body}</div>
+        <div
+          className={`glass-panel apartment-onboarding-rail-inner first-session-checklist-floating-card${variant === 'compact' ? ' first-session-checklist--compact' : ''}`}
+        >
+          {main}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="apartment-onboarding-rail apartment-onboarding-rail--stacked" aria-live="polite">
-      <div className="glass-panel apartment-onboarding-rail-inner">{body}</div>
+      <div className={`glass-panel apartment-onboarding-rail-inner${variant === 'compact' ? ' first-session-checklist--compact' : ''}`}>{main}</div>
     </div>
   );
 };

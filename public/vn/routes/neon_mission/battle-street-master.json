@@ -7,7 +7,7 @@
       "id": "opening",
       "title": "Neon Showdown",
       "steps": [
-        { "type": "visual", "background": "/neon_mission_bg.png", "transition": "zoom" },
+        { "type": "visual", "background": "/market_arcade_bg.png", "transition": "zoom" },
         { "type": "dialogue", "speakerId": "crowd", "text": "The arcade lights dim just enough to frame the arena. Everyone here wants a spectacle." },
         {
           "type": "choice",

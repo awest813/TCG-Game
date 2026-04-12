@@ -1,6 +1,7 @@
 import React from 'react';
 import { VNActionId, VNDialogueBeat } from '../visual-novel/types';
 import '../styles/SonsotyoScenes.css';
+import '../styles/VNPresentation.css';
 
 export const VNDialogueOverlay: React.FC<{
   beat: VNDialogueBeat;
@@ -10,48 +11,50 @@ export const VNDialogueOverlay: React.FC<{
 }> = ({ beat, typedText, onAction, onDismiss }) => {
   return (
     <div
-      className="dialogue-overlay vn-dialogue-overlay fade-in"
-      style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px', backdropFilter: 'blur(10px)' }}
+      className="vn-dialogue-overlay vn-dialogue-overlay--minimal fade-in"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        padding: '12px'
+      }}
     >
-      <div style={{ position: 'relative', width: '100%', maxWidth: '1100px', display: 'flex', flexDirection: 'column', gap: '26px' }}>
-        <div className="vn-dialogue-shell">
-          <div className="vn-dialogue-portrait">
-            <div className="vn-dialogue-portrait-label">Active Speaker</div>
-            <div className="vn-dialogue-portrait-name">{beat.speaker}</div>
-            <div style={{ marginTop: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{beat.role}</div>
-            <div style={{ marginTop: '1rem', fontSize: '0.72rem', letterSpacing: '0.16rem', textTransform: 'uppercase', color: 'var(--accent-yellow)' }}>
-              {beat.timeOfDay} // {beat.mood}
-            </div>
+      <div className="vn-dialogue-shell--minimal">
+        <div
+          className="vn-dialogue-box vn-dialogue-box--minimal"
+          onClick={onDismiss}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') onDismiss();
+          }}
+        >
+          <span className="vn-ren-name">{beat.speaker}</span>
+          <div className="vn-dialogue-text vn-dialogue-text--minimal vn-ren-body" style={{ color: 'var(--text-bright)' }}>
+            {typedText}
           </div>
-
-          <div className="vn-dialogue-box" onClick={onDismiss}>
-            <div className="vn-dialogue-name-tag" style={{ background: beat.accentColor }}>
-              {beat.speaker.toUpperCase()} // {beat.role.toUpperCase()}
-            </div>
-            <div className="vn-dialogue-signal-strip">
-              <span>{beat.timeOfDay}</span>
-              <span>{beat.mood}</span>
-              <span>Tap To Advance</span>
-            </div>
-            <div className="vn-dialogue-text" style={{ color: 'var(--text-bright)' }}>{typedText}</div>
-            <div className="vn-dialogue-advance">
-              CLICK TO ADVANCE
-            </div>
-          </div>
+          <span className="vn-dialogue-advance vn-dialogue-advance--minimal vn-ren-cue vn-ren-cue--ready" aria-hidden>
+            ▶
+          </span>
         </div>
 
-        <div className="vn-dialogue-actions">
-          {beat.choices.map((choice) => (
-            <button
-              key={choice.id}
-              className={choice.variant === 'secondary' ? 'neo-button' : 'neo-button primary'}
-              style={{ width: choice.id === 'DUEL' ? '250px' : '180px' }}
-              onClick={() => onAction(choice.id)}
-            >
-              {choice.label}
-            </button>
-          ))}
-        </div>
+        {beat.choices.length > 0 && (
+          <div className="vn-dialogue-actions vn-dialogue-actions--minimal">
+            {beat.choices.map((choice) => (
+              <button
+                key={choice.id}
+                type="button"
+                className={choice.variant === 'secondary' ? 'neo-button' : 'neo-button primary'}
+                onClick={() => onAction(choice.id)}
+              >
+                {choice.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

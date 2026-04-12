@@ -1,5 +1,6 @@
 import { TOURNAMENT_TIERS } from '../core/TournamentManager';
 
+/** Backgrounds must exist under `/public` (served from site root). Reuse shared art when a bespoke plate is not shipped. */
 const tierDisplayName = (id: string) => TOURNAMENT_TIERS.find((t) => t.id === id)?.name ?? id;
 
 /** Shop annex brackets (Card Annex). */
@@ -31,7 +32,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "home-bedroom",
             name: "Rookie Sync-Den",
             districtId: "SUNSET_TERMINAL",
-            backgroundImage: "/apt_bedroom_bg.png",
+            backgroundImage: "/sunset_apartments_bg.png",
             description: "Your training room. Posters of Legendary Sync-Masters line the walls. Here, you and your partners prepare to conquer the Neo-Circuit!",
             actions: [
                 { label: "Rest with Partners", type: "EVENT" },
@@ -43,7 +44,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "sunset-station",
             name: "Sunset Club Gates",
             districtId: "SUNSET_TERMINAL",
-            backgroundImage: "/train_arrival_bg.png",
+            backgroundImage: "/sunset_terminal_bg.png",
             description: "The gateway to your legend! Board the NEORail to find the 8 Grand Medals and reach the Civic Crown!",
             actions: [
                 { label: "Card Annex", type: "SCENE_JUMP", targetId: "store", routeHint: SHOP_BRACKET_ROUTE_HINT },
@@ -73,7 +74,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "market-street",
             name: "The Pulse Club",
             districtId: "MARKET_CENTRAL",
-            backgroundImage: "/market_street_bg.png",
+            backgroundImage: "/market_arcade_bg.png",
             description: "The pulsing heart of the league! Masters of the Pulse-type gather here to test their speed in high-velocity duels.",
             actions: [
                 { label: "Challenge Club Master", type: "TALK", targetId: "vex" },
@@ -85,7 +86,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "market-plaza",
             name: "Championship Square",
             districtId: "MARKET_CENTRAL",
-            backgroundImage: "/civic_square_bg.png",
+            backgroundImage: "/civic_crown_bg.png",
             description: "Where aspiring duelists dream of greatness. The huge screen tracks the world's most powerful Sync-Bonds!",
             actions: [
                 { label: "Watch Master Duel", type: "EVENT" },
@@ -98,7 +99,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "neon-plaza",
             name: "The Neon Club",
             districtId: "NEON_MISSION",
-            backgroundImage: "/neon_mission_bg.png",
+            backgroundImage: "/market_arcade_bg.png",
             description: "A neon-lit arena where the flashy Veil-type masters rule the night. Are you brave enough to take their Medal?",
             actions: [
                 { label: "Battle Street Master", type: "DUEL" },
@@ -111,7 +112,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "redwood-garden",
             name: "The Bloom Club",
             districtId: "REDWOOD_HEIGHTS",
-            backgroundImage: "/redwood_park_bg.png",
+            backgroundImage: "/redwood_heights_bg.png",
             description: "An elegant rooftop sanctuary for those who master the Bloom-types. Only the most graceful duelists survive here.",
             actions: [
                 { label: "Challenge Master Valerious", type: "TALK", targetId: "valerious" },
@@ -124,7 +125,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "crown-street",
             name: "Champion Road",
             districtId: "CIVIC_CROWN",
-            backgroundImage: "/crown_main_bg.png",
+            backgroundImage: "/civic_crown_bg.png",
             description: "The final road to glory! Only those with 8 Medals may pass these gates into the Hall of Champions!",
             actions: [
                 { label: "Show Medals to Guard", type: "EVENT" },
@@ -135,7 +136,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "crown-plaza",
             name: "Hall of Champions",
             districtId: "CIVIC_CROWN",
-            backgroundImage: "/civic_crown_ext_bg.png",
+            backgroundImage: "/civic_crown_bg.png",
             description: "The threshold of destiny. The greatest Sync-Masters in history are waiting for you inside.",
             actions: [
                 { label: "Challenge Elite Four", type: "EVENT" },
@@ -146,7 +147,7 @@ export const DISTRICT_LOCATIONS: Record<string, SceneLocation[]> = {
             id: "crown-arena",
             name: "The Grand Stadium",
             districtId: "CIVIC_CROWN",
-            backgroundImage: "/civic_crown_arena_bg.png",
+            backgroundImage: "/civic_crown_bg.png",
             description: "The ultimate arena! 100,000 fans are cheering your name. Unleash your soul and become the Neo SF Champion!",
             actions: [
                 { label: "FINAL DUEL: ZENO", type: "TALK", targetId: "zeno" }

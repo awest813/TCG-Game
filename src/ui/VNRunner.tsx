@@ -3,6 +3,26 @@ import { Engine } from '../engine/Engine';
 import { BabylonCombatPlugin } from '../engine/plugins/BabylonCombatPlugin';
 import { NarrativeScript, NarrativeStep, VNEngineState } from '../engine/types';
 import '../styles/SonsotyoScenes.css';
+import '../styles/VNPresentation.css';
+import { VNQuickMenu } from '../vn/VNQuickMenu';
+import {
+  readAutoDelayMs,
+  readTextSpeed,
+  readWindowAlpha,
+  VN_TEXT_CPS,
+  writeAutoDelayMs,
+  writeTextSpeed,
+  writeWindowAlpha
+} from '../vn/vnPreferences';
+import type { VNTextSpeed } from '../vn/vnPreferences';
+import {
+  dialogueLineKey,
+  isDialogueLineSeen,
+  markDialogueLineSeen,
+  scriptFingerprint
+} from '../vn/vnSeenLines';
+import { readPersisted, writePersisted } from '../vn/vnStorage';
+import { useVNLineReveal } from '../vn/useVNLineReveal';
 
 const isInteractiveStep = (step: NarrativeStep | null) =>
   step?.type === 'dialogue' || step?.type === 'choice';
@@ -21,12 +41,25 @@ const formatPresentationLabel = (value: string) =>
     .replace(/[_-]/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
+/** With Skip on, advance dialogue lines this fast (instant text + short gap). */
+const VN_SKIP_ADVANCE_MS = 95;
+
+const ROLLBACK_STACK_CAP = 24;
+
+const readVnToggle = (key: string): boolean => readPersisted(key) === '1';
+
+const writeVnToggle = (key: string, on: boolean) => {
+  writePersisted(key, on ? '1' : '0');
+};
+
 export const VNRunner: React.FC<{
   scriptUrl: string;
   canvasId?: string;
   storageKey?: string;
   title?: string;
   subtitle?: string;
+  /** `immersive` hides debug telemetry and uses a single glass sheet — for story scenes. */
+  presentationMode?: 'default' | 'immersive';
   initialState?: Partial<VNEngineState>;
   onStateSync?: (state: VNEngineState) => void;
   onComplete?: (state: VNEngineState) => void;
@@ -37,6 +70,7 @@ export const VNRunner: React.FC<{
   storageKey = 'vn_runner_save',
   title = 'Scene Runner',
   subtitle = 'Narrative Engine',
+  presentationMode = 'default',
   initialState,
   onStateSync,
   onComplete,
@@ -50,6 +84,46 @@ export const VNRunner: React.FC<{
   const [isResolving, setIsResolving] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [showBacklog, setShowBacklog] = React.useState(false);
+  const [showQuickMenu, setShowQuickMenu] = React.useState(false);
+  /** Ren’Py-style: advance after each line completes. */
+  const [autoPlay, setAutoPlay] = React.useState(() => readVnToggle('vn-immersive-auto'));
+  /** Rush mode: full line at once + fast advance. */
+  const [skipMode, setSkipMode] = React.useState(() => readVnToggle('vn-immersive-skip'));
+  const [textSpeed, setTextSpeed] = React.useState<VNTextSpeed>(() => readTextSpeed());
+  const [autoDelayMs, setAutoDelayMs] = React.useState(() => readAutoDelayMs());
+  const [windowAlpha, setWindowAlpha] = React.useState(() => readWindowAlpha());
+  const rollbackStackRef = React.useRef<VNEngineState[]>([]);
+  const [, bumpRollbackUi] = React.useReducer((x: number) => x + 1, 0);
+  const immersive = presentationMode === 'immersive';
+  const scriptFp = React.useMemo(() => scriptFingerprint(scriptUrl), [scriptUrl]);
+  const [ctrlHeld, setCtrlHeld] = React.useState(false);
+  const [hideChrome, setHideChrome] = React.useState(false);
+  const longPressTimerRef = React.useRef<number | null>(null);
+
+  const clearLongPressTimer = React.useCallback(() => {
+    if (longPressTimerRef.current !== null) {
+      window.clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }, []);
+
+  const onTouchStartLongPress = React.useCallback(
+    (e: React.TouchEvent) => {
+      if (showQuickMenu) return;
+      const t = e.target as HTMLElement | null;
+      if (t?.closest?.('button, a, input, textarea, select, [role="dialog"]')) return;
+      clearLongPressTimer();
+      longPressTimerRef.current = window.setTimeout(() => {
+        longPressTimerRef.current = null;
+        setShowQuickMenu(true);
+      }, 560);
+    },
+    [clearLongPressTimer, showQuickMenu]
+  );
+
+  const onTouchEndLongPress = React.useCallback(() => {
+    clearLongPressTimer();
+  }, [clearLongPressTimer]);
 
   const syncExternalState = React.useCallback(
     (state: VNEngineState) => {
@@ -82,6 +156,8 @@ export const VNRunner: React.FC<{
       try {
         setIsLoading(true);
         setError(null);
+        rollbackStackRef.current = [];
+        bumpRollbackUi();
 
         const response = await fetch(scriptUrl);
         if (!response.ok) {
@@ -127,7 +203,7 @@ export const VNRunner: React.FC<{
       cancelled = true;
       engineRef.current = null;
     };
-  }, [advanceToInteractive, canvasId, initialState, scriptUrl, syncExternalState]);
+  }, [advanceToInteractive, bumpRollbackUi, canvasId, initialState, scriptUrl, syncExternalState]);
 
   const handleAdvance = async (choiceId?: string) => {
     const engine = engineRef.current;
@@ -136,6 +212,8 @@ export const VNRunner: React.FC<{
     setIsResolving(true);
     try {
       await advanceToInteractive(engine);
+      const rollbackSnapshot = engine.stateManager.getState();
+      const stepBefore = engine.getCurrentStep();
       if (choiceId) {
         await engine.advance(choiceId);
         await advanceToInteractive(engine);
@@ -143,6 +221,16 @@ export const VNRunner: React.FC<{
         await engine.advance();
         await advanceToInteractive(engine);
       }
+      rollbackStackRef.current.push(rollbackSnapshot);
+      if (rollbackStackRef.current.length > ROLLBACK_STACK_CAP) {
+        rollbackStackRef.current.shift();
+      }
+      if (stepBefore?.type === 'dialogue') {
+        markDialogueLineSeen(
+          dialogueLineKey(scriptFp, rollbackSnapshot.currentSceneId, rollbackSnapshot.currentStepIndex)
+        );
+      }
+      bumpRollbackUi();
       engine.save(storageKey);
     } catch (caughtError: unknown) {
       setError(caughtError instanceof Error ? caughtError.message : 'Failed to advance script');
@@ -151,15 +239,202 @@ export const VNRunner: React.FC<{
     }
   };
 
+  const handleRollback = React.useCallback(() => {
+    const engine = engineRef.current;
+    if (!engine || isResolving) return;
+    const snap = rollbackStackRef.current.pop();
+    if (!snap) return;
+
+    setIsResolving(true);
+    void (async () => {
+      try {
+        engine.stateManager.replace(snap);
+        await advanceToInteractive(engine);
+        bumpRollbackUi();
+        engine.save(storageKey);
+      } catch (caughtError: unknown) {
+        setError(caughtError instanceof Error ? caughtError.message : 'Rollback failed');
+      } finally {
+        setIsResolving(false);
+      }
+    })();
+  }, [advanceToInteractive, bumpRollbackUi, isResolving, storageKey]);
+
+  const dialogueLine =
+    currentStep?.type === 'dialogue'
+      ? currentStep.text
+      : currentStep?.type === 'choice'
+        ? currentStep.prompt
+        : '';
+
+  const lineStepKey = engineState
+    ? `${engineState.currentSceneId}|${currentStep?.type ?? 'idle'}|${dialogueLine.length}|${dialogueLine.slice(0, 80)}`
+    : 'idle';
+
+  const dialogueSeenKey =
+    immersive && engineState && currentStep?.type === 'dialogue'
+      ? dialogueLineKey(scriptFp, engineState.currentSceneId, engineState.currentStepIndex)
+      : null;
+  const lineSeen = dialogueSeenKey ? isDialogueLineSeen(dialogueSeenKey) : true;
+  const restrictSkipToSeenOnly = skipMode && ctrlHeld;
+  const lineRevealEnabled = Boolean(
+    immersive &&
+      currentStep?.type === 'dialogue' &&
+      (!skipMode || (restrictSkipToSeenOnly && !lineSeen))
+  );
+
+  const lineCharsPerSec = VN_TEXT_CPS[textSpeed];
+
+  const { shown: lineShown, complete: lineComplete, forceReveal } = useVNLineReveal(
+    dialogueLine,
+    lineStepKey,
+    lineRevealEnabled,
+    lineCharsPerSec
+  );
+
+  const handleAdvanceRef = React.useRef(handleAdvance);
+  React.useEffect(() => {
+    handleAdvanceRef.current = handleAdvance;
+  });
+
+  React.useEffect(() => {
+    if (!immersive || currentStep?.type !== 'dialogue') return undefined;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const el = e.target as HTMLElement | null;
+      if (el?.closest?.('input, textarea, select')) return;
+      if (showQuickMenu) return;
+      e.preventDefault();
+      if (hideChrome && currentStep?.type === 'dialogue') {
+        setHideChrome(false);
+        return;
+      }
+      if (!lineComplete) forceReveal();
+      else void handleAdvanceRef.current();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [immersive, currentStep?.type, lineComplete, forceReveal, showQuickMenu, hideChrome]);
+
+  React.useEffect(() => {
+    if (!immersive) return;
+    if (currentStep?.type !== 'dialogue') setHideChrome(false);
+  }, [immersive, currentStep?.type]);
+
+  /** Track Ctrl for “skip read text only” (Ctrl + Skip). */
+  React.useEffect(() => {
+    if (!immersive) return undefined;
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'Control') setCtrlHeld(true);
+    };
+    const up = (e: KeyboardEvent) => {
+      if (e.key === 'Control') setCtrlHeld(false);
+    };
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, [immersive]);
+
+  React.useEffect(() => {
+    if (!immersive) return undefined;
+    const onBlur = () => setCtrlHeld(false);
+    window.addEventListener('blur', onBlur);
+    return () => window.removeEventListener('blur', onBlur);
+  }, [immersive]);
+
+  /** Auto / Skip: timed advance after line is ready (dialogue only; choices stay manual). */
+  React.useEffect(() => {
+    if (!immersive || currentStep?.type !== 'dialogue') return undefined;
+    if (showQuickMenu) return undefined;
+    if (!lineComplete || isResolving) return undefined;
+    if (!autoPlay && !skipMode) return undefined;
+    if (restrictSkipToSeenOnly && !lineSeen) return undefined;
+
+    const delayMs = skipMode ? VN_SKIP_ADVANCE_MS : autoDelayMs;
+    const id = window.setTimeout(() => {
+      void handleAdvanceRef.current();
+    }, delayMs);
+    return () => window.clearTimeout(id);
+  }, [
+    immersive,
+    currentStep?.type,
+    lineStepKey,
+    lineComplete,
+    isResolving,
+    autoPlay,
+    skipMode,
+    autoDelayMs,
+    showQuickMenu,
+    restrictSkipToSeenOnly,
+    lineSeen
+  ]);
+
+  /** Esc / Alt+R / H / Tab — Ren’Py-style shortcuts (immersive). */
+  React.useEffect(() => {
+    if (!immersive) return undefined;
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el?.closest?.('input, textarea, select')) return;
+
+      if (e.key === 'Tab' || e.key === '`') {
+        if (showQuickMenu) return;
+        e.preventDefault();
+        setHideChrome((v) => !v);
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        if (showQuickMenu) setShowQuickMenu(false);
+        else if (showBacklog) setShowBacklog(false);
+        else setShowQuickMenu(true);
+        return;
+      }
+
+      if (e.altKey && e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        handleRollback();
+        return;
+      }
+
+      if (e.key === 'h' || e.key === 'H') {
+        e.preventDefault();
+        setShowBacklog((v) => !v);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [handleRollback, immersive, showBacklog, showQuickMenu]);
+
+  React.useEffect(() => {
+    return () => clearLongPressTimer();
+  }, [clearLongPressTimer]);
+
   if (isLoading) {
     return (
-      <div className="tutorial-guide-shell">
-        <div className="glass-panel tutorial-guide-panel" style={{ gridTemplateColumns: '1fr', minHeight: '220px' }}>
-          <div className="tutorial-guide-content">
-            <div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--accent-cyan)', letterSpacing: '0.24rem' }}>{subtitle}</div>
-              <h2 style={{ marginTop: '10px', fontSize: '2.2rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>Loading Script</h2>
-              <div className="tutorial-guide-message">Preparing the narrative runner, plugin bridge, and current route state.</div>
+      <div className={immersive ? 'tutorial-guide-shell vn-immersive-shell' : 'tutorial-guide-shell'}>
+        <div
+          className={`glass-panel tutorial-guide-panel vn-runner-panel${immersive ? ' vn-runner-panel--immersive' : ''}`}
+          style={{ gridTemplateColumns: '1fr', minHeight: immersive ? '100px' : '220px', padding: immersive ? '18px 20px' : undefined }}
+        >
+          <div className="tutorial-guide-content" style={{ minHeight: 0 }}>
+            <div className={immersive ? 'vn-immersive-body' : undefined}>
+              <div className="vn-immersive-kicker">{subtitle}</div>
+              <h2
+                style={
+                  immersive
+                    ? { marginTop: 8, fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-main)' }
+                    : { marginTop: '10px', fontSize: '2.2rem', fontWeight: 800, fontFamily: 'var(--font-display)' }
+                }
+              >
+                Loading…
+              </h2>
+              {!immersive && (
+                <div className="tutorial-guide-message">Preparing the narrative runner, plugin bridge, and current route state.</div>
+              )}
             </div>
           </div>
         </div>
@@ -169,13 +444,26 @@ export const VNRunner: React.FC<{
 
   if (error) {
     return (
-      <div className="tutorial-guide-shell">
-        <div className="glass-panel tutorial-guide-panel" style={{ gridTemplateColumns: '1fr', minHeight: '220px' }}>
-          <div className="tutorial-guide-content">
-            <div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--accent-magenta)', letterSpacing: '0.24rem' }}>{subtitle}</div>
-              <h2 style={{ marginTop: '10px', fontSize: '2.2rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>Runner Error</h2>
-              <div className="tutorial-guide-message">{error}</div>
+      <div className={immersive ? 'tutorial-guide-shell vn-immersive-shell' : 'tutorial-guide-shell'}>
+        <div
+          className={`glass-panel tutorial-guide-panel vn-runner-panel${immersive ? ' vn-runner-panel--immersive' : ''}`}
+          style={{ gridTemplateColumns: '1fr', minHeight: immersive ? 'auto' : '220px', padding: immersive ? '18px 20px' : undefined }}
+        >
+          <div className="tutorial-guide-content" style={{ minHeight: 0 }}>
+            <div className={immersive ? 'vn-immersive-body' : undefined}>
+              <div className="vn-immersive-kicker" style={{ color: 'rgba(255, 138, 198, 0.85)' }}>
+                {subtitle}
+              </div>
+              <h2
+                style={
+                  immersive
+                    ? { marginTop: 8, fontSize: '1.05rem', fontWeight: 700, fontFamily: 'var(--font-main)' }
+                    : { marginTop: '10px', fontSize: '2.2rem', fontWeight: 800, fontFamily: 'var(--font-display)' }
+                }
+              >
+                {immersive ? 'Couldn’t load story' : 'Runner Error'}
+              </h2>
+              <div className={immersive ? 'vn-immersive-dialogue' : 'tutorial-guide-message'}>{error}</div>
             </div>
           </div>
         </div>
@@ -197,6 +485,239 @@ export const VNRunner: React.FC<{
         backgroundPosition: 'center'
       }
     : undefined;
+
+  const backlogBlock =
+    showBacklog && recentTranscript.length > 0 ? (
+      <div className={immersive ? 'vn-immersive-backlog' : 'vn-runner-backlog-panel'} style={immersive ? undefined : { marginBottom: '16px', padding: '14px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        {!immersive && (
+          <div style={{ fontSize: '0.66rem', letterSpacing: '0.16rem', color: 'var(--accent-yellow)', textTransform: 'uppercase' }}>Backlog</div>
+        )}
+        <div style={{ marginTop: immersive ? 0 : '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {recentTranscript.map((entry) => (
+            <div key={entry.id} style={{ color: 'var(--text-secondary)', lineHeight: 1.5, fontSize: immersive ? '0.85rem' : undefined }}>
+              <strong style={{ color: 'var(--text-primary)' }}>{entry.speakerId ?? entry.type}</strong> {entry.text}
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : null;
+
+  if (immersive) {
+    const effectiveHideChrome = hideChrome && currentStep.type === 'dialogue';
+
+    const onRenMessageActivate = () => {
+      if (currentStep.type !== 'dialogue') return;
+      if (!lineComplete) {
+        forceReveal();
+        return;
+      }
+      void handleAdvance();
+    };
+
+    return (
+      <div
+        className="tutorial-guide-shell vn-immersive-shell"
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setShowQuickMenu(true);
+        }}
+        onTouchStart={onTouchStartLongPress}
+        onTouchEnd={onTouchEndLongPress}
+        onTouchCancel={onTouchEndLongPress}
+      >
+        <div
+          className={`glass-panel tutorial-guide-panel vn-runner-panel vn-runner-panel--immersive vn-ren-frame${
+            effectiveHideChrome ? ' vn-ren-frame--chrome-hidden' : ''
+          }`}
+          style={{ gridTemplateColumns: '1fr' }}
+        >
+          {hasStageVisuals && (
+            <div
+              className="vn-runner-stage vn-runner-stage--immersive vn-ren-stage"
+              style={stageStyle}
+              onClick={effectiveHideChrome ? () => setHideChrome(false) : undefined}
+              onKeyDown={effectiveHideChrome ? (ev) => ev.key === 'Enter' && setHideChrome(false) : undefined}
+              role={effectiveHideChrome ? 'button' : undefined}
+              tabIndex={effectiveHideChrome ? 0 : undefined}
+              aria-label={effectiveHideChrome ? 'Show story controls' : undefined}
+            >
+              <div className="vn-runner-stage-overlay" />
+              <div className="vn-runner-stage-grid">
+                <div className={`vn-runner-bust left ${focusSide === 'left' ? 'focus' : ''} ${!bustLeft ? 'empty' : ''}`}>
+                  {bustLeft ? (
+                    <img src={bustLeft} alt="" />
+                  ) : (
+                    <div className="vn-runner-bust-fallback">
+                      <span> </span>
+                    </div>
+                  )}
+                </div>
+                <div className="vn-runner-portrait-column">
+                  {portrait ? (
+                    <div className={`vn-runner-center-portrait ${focusSide === 'center' ? 'focus' : ''}`}>
+                      <img src={portrait} alt="" />
+                    </div>
+                  ) : (
+                    <div className="vn-runner-stage-copy">
+                      <div className="vn-immersive-kicker" style={{ textAlign: 'center' }}>
+                        {scriptTitle}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className={`vn-runner-bust right ${focusSide === 'right' ? 'focus' : ''} ${!bustRight ? 'empty' : ''}`}>
+                  {bustRight ? (
+                    <img src={bustRight} alt="" />
+                  ) : (
+                    <div className="vn-runner-bust-fallback">
+                      <span> </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="vn-ren-toolbar" role="toolbar" aria-label="Story tools">
+            <div className="vn-ren-toolbar-cluster" role="group" aria-label="Reading mode">
+              <button
+                type="button"
+                className={`vn-ren-tool${autoPlay ? ' vn-ren-tool--on' : ''}`}
+                aria-pressed={autoPlay}
+                onClick={() => {
+                  const next = !autoPlay;
+                  setAutoPlay(next);
+                  writeVnToggle('vn-immersive-auto', next);
+                }}
+              >
+                Auto
+              </button>
+              <button
+                type="button"
+                className={`vn-ren-tool${skipMode ? ' vn-ren-tool--on' : ''}`}
+                aria-pressed={skipMode}
+                onClick={() => {
+                  const next = !skipMode;
+                  setSkipMode(next);
+                  writeVnToggle('vn-immersive-skip', next);
+                }}
+              >
+                Skip
+              </button>
+            </div>
+            <div className="vn-ren-toolbar-cluster">
+              <button type="button" className="vn-ren-tool" onClick={() => setShowQuickMenu(true)}>
+                Menu
+              </button>
+              <button
+                type="button"
+                className={`vn-ren-tool${effectiveHideChrome ? ' vn-ren-tool--on' : ''}`}
+                aria-pressed={effectiveHideChrome}
+                onClick={() => setHideChrome((v) => !v)}
+              >
+                Hide UI
+              </button>
+              <button type="button" className="vn-ren-tool" onClick={() => setShowBacklog((v) => !v)}>
+                {showBacklog ? 'Hide log' : 'History'}
+              </button>
+              <button
+                type="button"
+                className="vn-ren-tool"
+                onClick={() => {
+                  const engine = engineRef.current;
+                  if (!engine) return;
+                  engine.save(storageKey);
+                }}
+              >
+                Save
+              </button>
+              {onExit && (
+                <button type="button" className="vn-ren-tool" onClick={() => onExit(engineState)}>
+                  Exit
+                </button>
+              )}
+            </div>
+          </div>
+
+          {currentStep.type === 'dialogue' ? (
+            <button
+              type="button"
+              className="vn-ren-message"
+              style={{ opacity: windowAlpha }}
+              onClick={onRenMessageActivate}
+              disabled={isResolving}
+              aria-label={lineComplete ? 'Advance dialogue' : 'Reveal line'}
+            >
+              <span className="vn-ren-name">{speakerLabel}</span>
+              <span className="vn-ren-body">{lineShown}</span>
+              <span className={`vn-ren-cue ${lineComplete ? 'vn-ren-cue--ready' : ''}`} aria-hidden>
+                ▶
+              </span>
+            </button>
+          ) : (
+            <div className="vn-ren-message vn-ren-message--static" style={{ opacity: windowAlpha }} aria-live="polite">
+              <span className="vn-ren-name">Decision</span>
+              <span className="vn-ren-body">{lineShown}</span>
+            </div>
+          )}
+
+          {backlogBlock}
+
+          {currentStep.type === 'choice' && (
+            <div className="vn-immersive-actions vn-immersive-actions--choices">
+              {currentStep.options.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className="vn-immersive-btn vn-immersive-btn--primary"
+                  onClick={() => {
+                    void handleAdvance(option.id);
+                  }}
+                  disabled={isResolving}
+                >
+                  {option.text}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <VNQuickMenu
+          open={showQuickMenu}
+          onClose={() => setShowQuickMenu(false)}
+          textSpeed={textSpeed}
+          onTextSpeed={(s) => {
+            setTextSpeed(s);
+            writeTextSpeed(s);
+          }}
+          autoDelayMs={autoDelayMs}
+          onAutoDelayMs={(ms) => {
+            setAutoDelayMs(ms);
+            writeAutoDelayMs(ms);
+          }}
+          windowAlpha={windowAlpha}
+          onWindowAlpha={(a) => {
+            setWindowAlpha(a);
+            writeWindowAlpha(a);
+          }}
+          rollbackAvailable={rollbackStackRef.current.length > 0}
+          onRollback={() => {
+            setShowQuickMenu(false);
+            handleRollback();
+          }}
+          onFullscreen={() => {
+            void document.documentElement.requestFullscreen?.().catch(() => undefined);
+          }}
+        />
+
+        {effectiveHideChrome && (
+          <button type="button" className="vn-chrome-restore neo-button" onClick={() => setHideChrome(false)}>
+            Show UI
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="tutorial-guide-shell">
@@ -255,8 +776,7 @@ export const VNRunner: React.FC<{
             )}
 
             <div className="tutorial-guide-message" style={{ color: 'var(--text-bright)' }}>
-              {currentStep.type === 'dialogue' && currentStep.text}
-              {currentStep.type === 'choice' && currentStep.prompt}
+              {dialogueLine}
             </div>
 
             <div style={{ marginTop: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
@@ -288,18 +808,7 @@ export const VNRunner: React.FC<{
           </div>
 
           <div>
-            {showBacklog && recentTranscript.length > 0 && (
-              <div className="vn-runner-backlog-panel" style={{ marginBottom: '16px', padding: '14px 16px', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <div style={{ fontSize: '0.66rem', letterSpacing: '0.16rem', color: 'var(--accent-yellow)', textTransform: 'uppercase' }}>Backlog</div>
-                <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {recentTranscript.map((entry) => (
-                    <div key={entry.id} style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                      <strong style={{ color: 'var(--text-primary)' }}>{entry.speakerId ?? entry.type}</strong> {entry.text}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {backlogBlock}
 
             {currentStep.type === 'choice' ? (
               <div className="tutorial-guide-actions">

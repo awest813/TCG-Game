@@ -37,7 +37,7 @@ export const SocialHangout: React.FC = () => {
 
   return (
     <div
-      className="social-scene sonsotyo-scene fade-in"
+      className="social-scene sonsotyo-scene sonsotyo-scene-surface--photo-terminal fade-in"
       style={{
         height: '100%',
         maxHeight: '100%',
@@ -48,8 +48,7 @@ export const SocialHangout: React.FC = () => {
         padding: '42px',
         paddingBottom: 'max(42px, env(safe-area-inset-bottom, 0px))',
         overflow: 'hidden',
-        position: 'relative',
-        background: 'url("/sunset_terminal_bg.png") center/cover'
+        position: 'relative'
       }}
     >
       <div className="sonsotyo-overlay" />

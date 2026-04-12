@@ -91,7 +91,7 @@ export const MainMenu: React.FC = () => {
       className="main-menu-scene launcher-scene sonsotyo-scene sonsotyo-scene--bounded fade-in"
       style={{
         height: '100%',
-        padding: '20px',
+        padding: '14px',
         paddingBottom: 'max(24px, env(safe-area-inset-bottom, 0px))'
       }}
     >

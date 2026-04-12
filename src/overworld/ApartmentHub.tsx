@@ -9,6 +9,7 @@ import { SystemMenu } from '../ui/SystemMenu';
 import { createApartmentOnboardingSession } from '../visual-novel/scriptRegistry';
 import { audioManager } from '../core/AudioManager';
 import '../styles/SonsotyoScenes.css';
+import '../styles/VNPresentation.css';
 
 export const ApartmentHub: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,6 +20,7 @@ export const ApartmentHub: React.FC = () => {
   const circuitFlags = migrateCircuitFlags(state.profile.progress.flags);
   const showFirstSessionShell = !hasShopBeginnerCleared(circuitFlags);
   const needsLucyVN = !hasLucyOnboardingComplete(circuitFlags);
+  const lucyStoryFocus = showFirstSessionShell && needsLucyVN;
   const nextStep = getCircuitNextStep(circuitFlags, state.profile.stats.tournamentsWon);
   const starter = state.profile.progress.flags.onboardingStarter as string | undefined;
   const canvasId = 'apartment-babylon-canvas';
@@ -124,16 +126,31 @@ export const ApartmentHub: React.FC = () => {
       isDisposed = true;
       cleanup?.();
     };
-  }, [advanceTime, state.timeOfDay, updateGameState]);
+  }, [advanceTime, state.currentScene, state.timeOfDay, updateGameState]);
 
   return (
-    <div className="apartment-container sonsotyo-scene fade-in" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+    <div
+      className={`apartment-container sonsotyo-scene fade-in${lucyStoryFocus ? ' apartment-container--lucy-story' : ''}`}
+      style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}
+    >
       {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
       <canvas id={canvasId} ref={canvasRef} style={{ width: '100%', height: '100%', outline: 'none' }} />
       <div className="sonsotyo-overlay" />
 
-      <div className="sonsotyo-content" style={{ position: 'absolute', inset: 0, padding: '34px', display: 'grid', gridTemplateColumns: '360px 1fr 120px', gridTemplateRows: '1fr auto', gap: '20px', pointerEvents: 'none' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', pointerEvents: 'auto' }}>
+      <div
+        className="sonsotyo-content"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          padding: lucyStoryFocus ? '24px 20px' : '34px',
+          display: 'grid',
+          gridTemplateColumns: lucyStoryFocus ? 'minmax(0, 1fr) 120px' : '360px 1fr 120px',
+          gridTemplateRows: '1fr auto',
+          gap: '20px',
+          pointerEvents: 'none'
+        }}
+      >
+        <div style={{ display: lucyStoryFocus ? 'none' : 'flex', flexDirection: 'column', gap: '16px', pointerEvents: 'auto' }}>
           <div className="glass-panel sonsotyo-panel">
             <div className="sonsotyo-kicker">Apartment Hub</div>
             <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '2rem' }}>{state.timeOfDay}</div>
@@ -205,7 +222,16 @@ export const ApartmentHub: React.FC = () => {
           </button>
         </div>
 
-        <div className="glass-panel sonsotyo-panel" style={{ gridColumn: '1 / span 2', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'auto' }}>
+        <div
+          className="glass-panel sonsotyo-panel apartment-hub-bottom-bar"
+          style={{
+            gridColumn: '1 / span 2',
+            display: lucyStoryFocus ? 'none' : 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            pointerEvents: 'auto'
+          }}
+        >
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button
               type="button"
@@ -264,6 +290,7 @@ export const ApartmentHub: React.FC = () => {
         <div className="apartment-first-session-shell" aria-live="polite">
           <FirstSessionChecklist
             placement="stacked"
+            variant={needsLucyVN ? 'compact' : 'default'}
             lucyStepDetail="Apartment briefing (story panel below when active)"
           />
 
@@ -271,6 +298,7 @@ export const ApartmentHub: React.FC = () => {
             <div className="apartment-first-session-vn">
               <div className="apartment-first-session-vn-inner">
                 <VNRunner
+                  presentationMode="immersive"
                   scriptUrl={onboardingSession.scriptUrl}
                   canvasId={canvasId}
                   title={onboardingSession.title}

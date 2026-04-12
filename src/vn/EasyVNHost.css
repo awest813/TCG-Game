@@ -1,0 +1,100 @@
+/* Host shell for the easyvn package — IDs must match library expectations. */
+.easyvn-host-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(20px, env(safe-area-inset-bottom, 0px));
+  background: rgba(3, 5, 12, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.easyvn-host-frame {
+  width: min(520px, 100%);
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  background: rgba(8, 10, 18, 0.5);
+}
+
+.easyvn-stage {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #05060c;
+  overflow: hidden;
+}
+
+.easyvn-stage #background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.easyvn-stage #character {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-height: 78%;
+  width: auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.easyvn-textbox {
+  cursor: pointer;
+  padding: 14px 16px 12px;
+  background: linear-gradient(180deg, rgba(12, 14, 22, 0.92), rgba(6, 8, 14, 0.96));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 96px;
+}
+
+.easyvn-speaker {
+  font-size: 0.68rem;
+  letter-spacing: 0.14rem;
+  text-transform: uppercase;
+  color: rgba(180, 200, 230, 0.75);
+  font-weight: 600;
+}
+
+.easyvn-dialogue {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: rgba(245, 247, 252, 0.95);
+  font-family: var(--font-main, system-ui, sans-serif);
+}
+
+.easyvn-choices {
+  padding: 10px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.easyvn-choices .choice-btn {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(245, 247, 252, 0.95);
+  font-family: var(--font-main, system-ui, sans-serif);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.easyvn-host-toolbar {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  width: min(520px, 100%);
+}

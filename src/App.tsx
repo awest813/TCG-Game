@@ -4,8 +4,8 @@ import { useGame } from './core/GameContext';
 import { SceneTransition } from './core/types';
 import { MainMenu } from './ui/MainMenu';
 import { DevConsole } from './ui/DevConsole';
-import { VisualNovelFrame } from './ui/VisualNovelFrame';
 import { PhoneFrame } from './ui/PhoneFrame';
+import { SceneStatusBar } from './ui/SceneStatusBar';
 
 const ApartmentHub = React.lazy(async () => {
   const module = await import('./overworld/ApartmentHub');
@@ -274,14 +274,17 @@ const App: React.FC = () => {
       <a href="#main-content" className="skip-to-content">
         Skip to game
       </a>
-      <div className="app-container" style={{ height: '100%', position: 'relative' }}>
+      <div
+        className="app-container"
+        style={{ height: '100%', position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0 }}
+      >
+        <SceneStatusBar />
         <Suspense fallback={<SceneLoadingFallback transition={state.sceneTransition} />}>
-          <main id="main-content" className="app-main" tabIndex={-1}>
+          <main id="main-content" className="app-main" tabIndex={-1} style={{ flex: 1, minHeight: 0, height: 'auto' }}>
             {renderScene()}
           </main>
         </Suspense>
         {state.sceneTransition && <SceneTransitionOverlay transition={state.sceneTransition} />}
-        <VisualNovelFrame />
         {showDev && <DevConsole onClose={() => setShowDev(false)} />}
       </div>
     </PhoneFrame>
