@@ -12,7 +12,7 @@
           "background": "/sunset_terminal_bg.png",
           "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_kaizen.svg",
+          "bustRight": "/bust_kaizen.svg",
           "focusSide": "right",
           "transition": "fade"
         },
@@ -27,7 +27,7 @@
           "text": "You made it. Good. Sunset Terminal feels too small when we are both standing still.",
           "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_kaizen.svg",
+          "bustRight": "/bust_kaizen.svg",
           "focusSide": "right"
         },
         {
@@ -94,7 +94,7 @@
           ],
           "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_kaizen.svg",
+          "bustRight": "/bust_kaizen.svg",
           "focusSide": "right"
         },
         {
@@ -109,7 +109,7 @@
           ],
           "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_kaizen.svg",
+          "bustRight": "/bust_kaizen.svg",
           "focusSide": "right"
         },
         {
@@ -124,7 +124,7 @@
           ],
           "portrait": "/portrait_kaizen.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_kaizen.svg",
+          "bustRight": "/bust_kaizen.svg",
           "focusSide": "right"
         }
       ]

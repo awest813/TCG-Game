@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 620" width="420" height="620">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0c140d"/><stop offset="100%" stop-color="#040705"/></linearGradient><linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#d3ffca"/><stop offset="50%" stop-color="#5cbc77"/><stop offset="100%" stop-color="#16371d"/></linearGradient></defs>
+  <rect width="420" height="620" fill="url(#bg)"/><ellipse cx="210" cy="198" rx="170" ry="180" fill="#8effa7" opacity="0.08"/>
+  <path d="M44 620 Q60 474 122 414 Q164 372 210 370 Q256 372 300 414 Q362 474 378 620 Z" fill="#08110a"/>
+  <path d="M70 620 Q92 468 150 424 Q182 400 210 398 Q240 400 272 424 Q330 468 350 620 Z" fill="#2d5e3a"/>
+  <path d="M126 620 Q146 518 186 474 Q202 462 220 474 Q260 518 282 620 Z" fill="#e3f0db"/>
+  <path d="M188 338 L188 392 L232 392 L232 338 Z" fill="#ead4c0"/>
+  <ellipse cx="210" cy="264" rx="86" ry="98" fill="#ead4c0"/>
+  <path d="M124 248 Q108 156 154 92 Q206 42 266 78 Q312 122 296 248 Q252 214 210 210 Q168 214 124 248 Z" fill="url(#hair)"/>
+  <path d="M124 246 Q98 294 108 378 Q112 450 126 522 Q112 454 118 324 Q120 274 136 248 Z" fill="#4ca763"/>
+  <path d="M296 246 Q322 294 312 378 Q308 450 294 522 Q308 454 302 324 Q300 274 284 248 Z" fill="#4ca763"/>
+  <path d="M146 194 Q166 150 190 146 Q198 156 192 182 Q176 198 158 208 Z" fill="#d6ffd0"/>
+  <path d="M194 188 Q206 150 222 148 Q232 156 228 182 Q214 196 202 202 Z" fill="#8ed99d"/>
+  <path d="M228 188 Q248 154 272 160 Q278 172 270 192 Q252 202 238 208 Z" fill="#c4ffbb"/>
+  <path d="M162 218 Q178 210 196 214" stroke="#1f5630" stroke-width="4" stroke-linecap="round"/><path d="M228 214 Q246 210 260 218" stroke="#1f5630" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="178" cy="246" rx="22" ry="19" fill="#09140c"/><ellipse cx="178" cy="246" rx="18" ry="15" fill="#85dd97"/><ellipse cx="178" cy="246" rx="11" ry="10" fill="#25613a"/><ellipse cx="171" cy="239" rx="4" ry="3" fill="#fff"/>
+  <ellipse cx="242" cy="246" rx="22" ry="19" fill="#09140c"/><ellipse cx="242" cy="246" rx="18" ry="15" fill="#85dd97"/><ellipse cx="242" cy="246" rx="11" ry="10" fill="#25613a"/><ellipse cx="235" cy="239" rx="4" ry="3" fill="#fff"/>
+  <path d="M204 286 Q210 294 216 286" stroke="#bf9b84" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M178 318 Q194 306 210 308 Q228 306 244 318" stroke="#ae7a6a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <rect y="568" width="420" height="52" fill="#040705" opacity="0.94"/>
+  <text x="210" y="590" text-anchor="middle" font-family="monospace" font-size="18" fill="#8effa7" letter-spacing="6">VALERIOUS</text>
+  <text x="210" y="608" text-anchor="middle" font-family="monospace" font-size="11" fill="#729579" letter-spacing="3">BLOOM ELITE MASTER</text>
+</svg>

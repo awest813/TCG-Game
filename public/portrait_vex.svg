@@ -1,108 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="200" height="300">
-  <defs>
-    <radialGradient id="bg_vex" cx="50%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#04121a"/>
-      <stop offset="100%" stop-color="#020608"/>
-    </radialGradient>
-    <radialGradient id="skin_vex" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#f2d4b0"/>
-      <stop offset="100%" stop-color="#dab888"/>
-    </radialGradient>
-    <linearGradient id="hair_vex" x1="20%" y1="0%" x2="80%" y2="100%">
-      <stop offset="0%" stop-color="#7de8e8"/>
-      <stop offset="30%" stop-color="#1aa8b8"/>
-      <stop offset="100%" stop-color="#062830"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Background -->
-  <rect width="200" height="300" fill="url(#bg_vex)"/>
-  <ellipse cx="100" cy="100" rx="70" ry="80" fill="#7dd7dd" opacity="0.07"/>
-  <!-- Speed lines -->
-  <line x1="0" y1="80" x2="30" y2="82" stroke="#7dd7dd" stroke-width="0.5" opacity="0.15"/>
-  <line x1="0" y1="100" x2="25" y2="101" stroke="#7dd7dd" stroke-width="0.5" opacity="0.12"/>
-  <line x1="170" y1="75" x2="200" y2="77" stroke="#7dd7dd" stroke-width="0.5" opacity="0.15"/>
-  <line x1="175" y1="95" x2="200" y2="96" stroke="#7dd7dd" stroke-width="0.5" opacity="0.12"/>
-
-  <!-- Faction accent bar -->
-  <rect x="0" y="0" width="200" height="3" fill="#7dd7dd" opacity="0.9"/>
-
-  <!-- Body - tech/sporty outfit -->
-  <path d="M 26 300 Q 40 236 65 213 Q 84 200 100 198 Q 116 200 135 213 Q 160 236 174 300 Z" fill="#04121a"/>
-  <!-- High-tech jacket -->
-  <path d="M 65 213 Q 85 202 100 200 Q 115 202 135 213 L 130 237 Q 112 224 100 222 Q 88 224 70 237 Z" fill="#0a4050"/>
-  <!-- Cyan accent trim -->
-  <path d="M 65 213 Q 70 218 70 237" stroke="#7dd7dd" stroke-width="1.5" fill="none" opacity="0.7"/>
-  <path d="M 135 213 Q 130 218 130 237" stroke="#7dd7dd" stroke-width="1.5" fill="none" opacity="0.7"/>
-  <path d="M 91 200 L 100 222 L 109 200" fill="#7dd7dd" opacity="0.4"/>
-  <path d="M 70 237 Q 88 226 100 224 Q 112 226 130 237 L 124 263 Q 106 254 100 252 Q 94 254 76 263 Z" fill="#030e14"/>
-
-  <!-- Neck -->
-  <path d="M 88 191 L 88 212 L 112 212 L 112 191 Z" fill="url(#skin_vex)"/>
-
-  <!-- Head -->
-  <ellipse cx="100" cy="155" rx="43" ry="46" fill="url(#skin_vex)"/>
-
-  <!-- Hair - short and sleek with undercut feel -->
-  <path d="M 58 140 Q 52 115 56 88 Q 62 60 82 49 Q 100 41 118 49 Q 138 60 144 88 Q 148 115 142 140 Z" fill="#062830"/>
-  <!-- Main hair -->
-  <path d="M 60 143 Q 55 118 58 90 Q 64 62 82 51 Q 100 43 118 51 Q 136 62 142 90 Q 145 118 140 143 Q 122 128 100 126 Q 78 128 60 143 Z" fill="url(#hair_vex)"/>
-  <!-- Sleek side-swept bangs -->
-  <path d="M 60 143 Q 56 126 58 110 Q 62 92 70 84 Q 76 78 82 82 Q 86 86 82 98 Q 78 110 72 120 Q 66 132 62 142 Z" fill="#1aa8b8"/>
-  <!-- Right side short -->
-  <path d="M 140 143 Q 144 126 142 110 Q 140 95 134 88 Q 130 84 126 88 Q 124 95 128 108 Z" fill="#0a6878"/>
-  <!-- Top hair smooth -->
-  <path d="M 70 84 Q 80 68 100 64 Q 120 68 130 84 Q 118 78 100 76 Q 82 78 70 84 Z" fill="#7de8e8" opacity="0.5"/>
-  <!-- Asymmetric fringe bang over left eye -->
-  <path d="M 64 126 Q 68 108 78 98 Q 86 90 92 94 Q 96 100 90 112 Q 84 122 76 128 Z" fill="#1aa8b8"/>
-  <path d="M 76 128 Q 80 118 86 112 Q 90 107 93 109 Q 94 114 90 120 Q 86 126 80 130 Z" fill="#7de8e8" opacity="0.6"/>
-  <!-- Hair shine -->
-  <ellipse cx="98" cy="68" rx="14" ry="5" fill="#b0f0f8" opacity="0.35" transform="rotate(-5 98 68)"/>
-
-  <!-- Eyebrows - sharp, one slightly raised -->
-  <path d="M 74 128 Q 82 123 91 126" stroke="#0a3040" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-  <path d="M 109 125 Q 118 121 126 125" stroke="#0a3040" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-
-  <!-- Eyes - sharp cyan -->
-  <ellipse cx="83" cy="139" rx="11" ry="9" fill="#020c10"/>
-  <ellipse cx="83" cy="139" rx="10" ry="8" fill="#1ac8d0"/>
-  <ellipse cx="83" cy="139" rx="7" ry="6" fill="#0888a0"/>
-  <ellipse cx="83" cy="139" rx="3.8" ry="3.8" fill="#020c10"/>
-  <ellipse cx="80" cy="136" rx="2.2" ry="1.8" fill="white" opacity="0.95"/>
-  <ellipse cx="86" cy="142" rx="0.9" ry="0.9" fill="white" opacity="0.5"/>
-  <path d="M 72 132 Q 83 127 94 132" stroke="#0a3040" stroke-width="1.8" fill="none"/>
-  <!-- sharp lower lid -->
-  <path d="M 73 146 Q 83 149 93 146" stroke="#0a3040" stroke-width="0.8" fill="none"/>
-
-  <ellipse cx="117" cy="139" rx="11" ry="9" fill="#020c10"/>
-  <ellipse cx="117" cy="139" rx="10" ry="8" fill="#1ac8d0"/>
-  <ellipse cx="117" cy="139" rx="7" ry="6" fill="#0888a0"/>
-  <ellipse cx="117" cy="139" rx="3.8" ry="3.8" fill="#020c10"/>
-  <ellipse cx="114" cy="136" rx="2.2" ry="1.8" fill="white" opacity="0.95"/>
-  <ellipse cx="120" cy="142" rx="0.9" ry="0.9" fill="white" opacity="0.5"/>
-  <path d="M 106 132 Q 117 127 128 132" stroke="#0a3040" stroke-width="1.8" fill="none"/>
-  <path d="M 107 146 Q 117 149 127 146" stroke="#0a3040" stroke-width="0.8" fill="none"/>
-
-  <!-- Nose -->
-  <path d="M 97 153 Q 100 156 103 153" stroke="#b09070" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-
-  <!-- Mouth - confident slight smirk -->
-  <path d="M 87 166 Q 94 162 100 163 Q 107 162 113 166" stroke="#a07858" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  <path d="M 94 162 Q 100 158 106 162" stroke="#c09070" stroke-width="0.8" fill="none"/>
-
-  <!-- Blush -->
-  <ellipse cx="73" cy="154" rx="7" ry="4" fill="#60d0e0" opacity="0.16"/>
-  <ellipse cx="127" cy="154" rx="7" ry="4" fill="#60d0e0" opacity="0.16"/>
-
-  <!-- Ears -->
-  <ellipse cx="58" cy="150" rx="5" ry="7" fill="#dab888"/>
-  <ellipse cx="142" cy="150" rx="5" ry="7" fill="#dab888"/>
-  <!-- Small geometric earring -->
-  <rect x="55" y="159" width="6" height="6" rx="1" fill="#7dd7dd" opacity="0.7" transform="rotate(45 58 162)"/>
-
-  <!-- Name plate -->
-  <rect x="0" y="270" width="200" height="30" fill="#020608" opacity="0.9"/>
-  <rect x="0" y="270" width="200" height="1" fill="#7dd7dd" opacity="0.7"/>
+  <defs><linearGradient id="vbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#071116"/><stop offset="100%" stop-color="#020507"/></linearGradient><linearGradient id="vhair" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#9dfcff"/><stop offset="48%" stop-color="#26b8c0"/><stop offset="100%" stop-color="#0c3940"/></linearGradient></defs>
+  <rect width="200" height="300" fill="url(#vbg)"/><ellipse cx="100" cy="110" rx="82" ry="92" fill="#7dd7dd" opacity="0.1"/><rect width="200" height="4" fill="#7dd7dd"/>
+  <path d="M24 300 Q36 244 60 214 Q82 196 100 194 Q122 196 144 214 Q168 244 176 300 Z" fill="#041014"/>
+  <path d="M42 300 Q58 234 86 212 Q100 206 118 212 Q144 234 160 300 Z" fill="#123940"/>
+  <path d="M70 300 Q82 248 98 234 Q100 232 110 234 Q126 248 136 300 Z" fill="#d7f6f8"/>
+  <path d="M88 188 L88 212 L112 212 L112 188 Z" fill="#efd8c4"/>
+  <ellipse cx="100" cy="150" rx="42" ry="48" fill="#efd8c4"/>
+  <path d="M58 148 Q54 100 80 64 Q102 42 126 58 Q148 80 140 148 Q120 132 100 130 Q80 132 58 148 Z" fill="url(#vhair)"/>
+  <path d="M60 146 Q48 178 56 230 Q58 252 66 272 Q58 234 62 176 Q64 156 70 146 Z" fill="#1aa8b4"/>
+  <path d="M140 146 Q152 178 144 230 Q142 252 134 272 Q142 234 138 176 Q136 156 130 146 Z" fill="#1aa8b4"/>
+  <path d="M74 120 Q88 92 110 96 Q106 118 86 126 Z" fill="#c0ffff"/>
+  <path d="M100 120 Q118 92 130 104 Q126 122 110 128 Z" fill="#59d9df"/>
+  <path d="M76 128 Q84 124 92 126" stroke="#0d5660" stroke-width="2" stroke-linecap="round"/><path d="M108 126 Q116 124 124 128" stroke="#0d5660" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="84" cy="140" rx="10" ry="9" fill="#041114"/><ellipse cx="84" cy="140" rx="8" ry="7" fill="#48d3de"/><ellipse cx="84" cy="140" rx="5" ry="5" fill="#0f6670"/><ellipse cx="81" cy="137" rx="2" ry="1.5" fill="#fff"/>
+  <ellipse cx="116" cy="140" rx="10" ry="9" fill="#041114"/><ellipse cx="116" cy="140" rx="8" ry="7" fill="#48d3de"/><ellipse cx="116" cy="140" rx="5" ry="5" fill="#0f6670"/><ellipse cx="113" cy="137" rx="2" ry="1.5" fill="#fff"/>
+  <path d="M98 154 Q100 158 102 154" stroke="#bf9580" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M88 166 Q94 162 100 163 Q106 162 112 166" stroke="#bb7268" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <rect y="270" width="200" height="30" fill="#020507" opacity="0.94"/>
   <text x="100" y="284" text-anchor="middle" font-family="monospace" font-size="9" fill="#7dd7dd" letter-spacing="3">VEX</text>
-  <text x="100" y="295" text-anchor="middle" font-family="monospace" font-size="7" fill="#406870" letter-spacing="2">PULSE CLUB MASTER</text>
+  <text x="100" y="295" text-anchor="middle" font-family="monospace" font-size="7" fill="#6a9598" letter-spacing="2">PULSE CLUB MASTER</text>
 </svg>

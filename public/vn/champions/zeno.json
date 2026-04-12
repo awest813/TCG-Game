@@ -12,7 +12,7 @@
           "background": "/civic_crown_bg.png",
           "portrait": "/portrait_zeno.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_zeno.svg",
+          "bustRight": "/bust_zeno.svg",
           "focusSide": "center",
           "transition": "fade"
         },
@@ -27,7 +27,7 @@
           "text": "You have climbed far enough to stand beneath the Crown. Now speak like someone ready to carry its weight.",
           "portrait": "/portrait_zeno.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_zeno.svg",
+          "bustRight": "/bust_zeno.svg",
           "focusSide": "right"
         },
         {
@@ -94,7 +94,7 @@
           ],
           "portrait": "/portrait_zeno.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_zeno.svg",
+          "bustRight": "/bust_zeno.svg",
           "focusSide": "right"
         },
         {
@@ -109,7 +109,7 @@
           ],
           "portrait": "/portrait_zeno.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_zeno.svg",
+          "bustRight": "/bust_zeno.svg",
           "focusSide": "right"
         },
         {
@@ -124,7 +124,7 @@
           ],
           "portrait": "/portrait_zeno.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_zeno.svg",
+          "bustRight": "/bust_zeno.svg",
           "focusSide": "right"
         }
       ]

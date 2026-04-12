@@ -15,6 +15,7 @@ import { getTrainerById, mergeSocialState } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
 import { audioManager } from '../core/AudioManager';
 import {
+  getCircuitNextStep,
   districtTournamentsForLobby,
   districtUnlockReason,
   isDistrictTournamentUnlocked,
@@ -54,6 +55,7 @@ export const Tournament: React.FC = () => {
   const pendingTierId = state.pendingTournamentId;
   const activeTourney: ActiveTournament | null = state.activeTournament;
   const social = mergeSocialState(state.profile.social);
+  const nextStep = getCircuitNextStep(state.profile.progress.flags, state.profile.stats.tournamentsWon);
 
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
   const [showSettings, setShowSettings] = React.useState(false);
@@ -265,6 +267,11 @@ export const Tournament: React.FC = () => {
               <p className="sonsotyo-copy" style={{ maxWidth: '52ch', marginTop: '14px' }}>
                 Clear all three <strong>Card Annex</strong> backroom brackets to earn your club license, then run the four city majors in order (Sunset → Market → Neon → Crown). Each finite sweep pays credits and adds a <strong>title</strong> to your record; Crown is endless until you cash out.
               </p>
+              <div className="tournament-sweep-explainer">
+                <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>What counts as a sweep?</div>
+                <div className="tournament-sweep-explainer-title">Finish every round in the bracket without cashing out or losing.</div>
+                <div className="sonsotyo-copy" style={{ marginTop: '6px' }}>{nextStep.detail}</div>
+              </div>
               <div className="sonsotyo-meta-strip">
                 <div className="sonsotyo-pill">Currency {state.profile.currency.toLocaleString('en-US')} CR</div>
                 <div className="sonsotyo-pill">Titles {state.profile.stats.tournamentsWon}</div>
@@ -330,10 +337,12 @@ export const Tournament: React.FC = () => {
                         {tier.entryFee > 0 ? formatCredits(tier.entryFee) : 'Free'}
                       </div>
                     </div>
-                    <div className="glass-panel sonsotyo-panel" style={{ padding: '16px' }}>
-                      <div className="sonsotyo-kicker">Sweep cap</div>
-                      <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>{formatCredits(getBracketSweepPot(tier))}</div>
-                      <div className="sonsotyo-caption" style={{ marginTop: '8px', lineHeight: 1.45 }}>{getBracketEconomyCaption(tier)}</div>
+                  <div className="glass-panel sonsotyo-panel" style={{ padding: '16px' }}>
+                    <div className="sonsotyo-kicker">Sweep cap</div>
+                    <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>{formatCredits(getBracketSweepPot(tier))}</div>
+                      <div className="sonsotyo-caption" style={{ marginTop: '8px', lineHeight: 1.45 }}>
+                        {getBracketEconomyCaption(tier)} Full sweep required.
+                      </div>
                     </div>
                   </div>
 
@@ -393,7 +402,7 @@ export const Tournament: React.FC = () => {
             overlayZIndex={520}
             dimBackdrop
             onBackdropClick={dismissLucySweep}
-            portraitSrc="/lucy_tutorial.png"
+            portraitSrc="/bust_lucy.svg"
             portraitAlt="Lucy — circuit guide"
             title="Lucy · Handler ping"
             subtitle="Post-bracket"
@@ -479,6 +488,11 @@ export const Tournament: React.FC = () => {
             <p className="sonsotyo-copy" style={{ marginTop: '14px', maxWidth: '48ch' }}>
               Each win deepens the bracket and raises your cash-out pot. Lose a duel and the run ends — entry fee is not refunded unless you withdraw first.
             </p>
+            <div className="tournament-sweep-explainer">
+              <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>Current objective</div>
+              <div className="tournament-sweep-explainer-title">{nextStep.title}</div>
+              <div className="sonsotyo-copy" style={{ marginTop: '6px' }}>Stay in the run to chase the full sweep, or withdraw if you want to lock today&apos;s pot early.</div>
+            </div>
           </div>
 
           <div className="glass-panel sonsotyo-panel">

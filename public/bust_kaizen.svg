@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 620" width="420" height="620">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#16080c"/><stop offset="100%" stop-color="#050406"/></linearGradient><linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffabc7"/><stop offset="50%" stop-color="#d44b71"/><stop offset="100%" stop-color="#4c0c20"/></linearGradient></defs>
+  <rect width="420" height="620" fill="url(#bg)"/><ellipse cx="210" cy="200" rx="170" ry="180" fill="#cf6547" opacity="0.1"/>
+  <path d="M42 620 Q62 470 122 416 Q164 378 214 372 Q264 378 302 416 Q360 470 378 620 Z" fill="#12060a"/>
+  <path d="M70 620 Q92 470 150 426 Q182 402 214 400 Q246 402 274 426 Q332 470 350 620 Z" fill="#6f1430"/>
+  <path d="M128 620 Q146 518 186 476 Q202 462 226 476 Q262 518 282 620 Z" fill="#f3c1cf"/>
+  <path d="M188 338 L188 394 L232 394 L232 338 Z" fill="#f0ccb8"/>
+  <ellipse cx="210" cy="266" rx="86" ry="98" fill="#f0ccb8"/>
+  <path d="M124 248 Q110 156 154 94 Q206 42 270 82 Q312 124 296 248 Q252 214 210 212 Q168 214 124 248 Z" fill="url(#hair)"/>
+  <path d="M126 246 Q98 292 108 376 Q112 448 128 520 Q112 452 118 322 Q120 276 138 248 Z" fill="#c7466a"/>
+  <path d="M294 246 Q322 292 312 376 Q308 448 292 520 Q308 452 302 322 Q300 276 282 248 Z" fill="#c7466a"/>
+  <path d="M150 194 Q176 152 214 160 Q198 194 166 212 Z" fill="#ffb4cc"/>
+  <path d="M196 188 Q224 152 262 164 Q258 196 226 212 Z" fill="#ee6794"/>
+  <path d="M162 220 Q178 210 196 214" stroke="#591025" stroke-width="4" stroke-linecap="round"/><path d="M228 214 Q246 210 260 220" stroke="#591025" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="178" cy="246" rx="22" ry="19" fill="#20070e"/><ellipse cx="178" cy="246" rx="18" ry="15" fill="#ef6b98"/><ellipse cx="178" cy="246" rx="11" ry="10" fill="#7d173d"/><ellipse cx="171" cy="239" rx="4" ry="3" fill="#fff"/>
+  <ellipse cx="242" cy="246" rx="22" ry="19" fill="#20070e"/><ellipse cx="242" cy="246" rx="18" ry="15" fill="#ef6b98"/><ellipse cx="242" cy="246" rx="11" ry="10" fill="#7d173d"/><ellipse cx="235" cy="239" rx="4" ry="3" fill="#fff"/>
+  <path d="M204 286 Q210 294 216 286" stroke="#bc8d7d" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M178 320 Q194 308 210 310 Q228 308 244 320" stroke="#d56f7f" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <rect y="568" width="420" height="52" fill="#070406" opacity="0.94"/>
+  <text x="210" y="590" text-anchor="middle" font-family="monospace" font-size="18" fill="#ff8ba9" letter-spacing="6">KAIZEN</text>
+  <text x="210" y="608" text-anchor="middle" font-family="monospace" font-size="11" fill="#9e6675" letter-spacing="4">RIVAL DUELIST</text>
+</svg>

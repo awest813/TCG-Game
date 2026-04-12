@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useGame } from '../core/GameContext';
-import { FACTIONS, getFactionById, TRAINERS, mergeSocialState } from '../data/trainers';
+import { FACTIONS, getFactionById, getTrainerRelationshipSignal, TRAINERS, mergeSocialState } from '../data/trainers';
 import { getCardById, getCardPalette, CARD_POOL, resolveCardImage } from '../data/cards';
 import { Card, CreatureType, PlayerProfile, SocialState } from '../core/types';
 import { SonsotyoDiagnosticRow, SonsotyoHeroCard, SonsotyoKicker, SonsotyoPanel, SonsotyoPill, SonsotyoTitle } from './SonsotyoUI';
@@ -148,15 +148,16 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
         {TRAINERS.map((trainer) => {
           const relationship = social.trainers[trainer.id];
           const faction = getFactionById(trainer.factionId);
+          const signal = getTrainerRelationshipSignal(trainer, relationship);
           return (
-            <div key={trainer.id} className="glass-panel sonsotyo-panel" style={{ padding: '0', borderLeft: `3px solid ${faction.accentColor}`, overflow: 'hidden' }}>
+            <div key={trainer.id} className="glass-panel sonsotyo-panel trainer-contact-card" style={{ padding: '0', borderLeft: `3px solid ${faction.accentColor}`, overflow: 'hidden' }}>
               <div style={{ display: 'flex', gap: '0' }}>
-                {trainer.portraitPath && (
-                  <div style={{ width: '80px', minWidth: '80px', background: 'rgba(0,0,0,0.4)', overflow: 'hidden', flexShrink: 0 }}>
+                {(trainer.bustPath ?? trainer.portraitPath) && (
+                  <div className="trainer-contact-portrait" style={{ background: 'rgba(0,0,0,0.4)', overflow: 'hidden', flexShrink: 0 }}>
                     <img
-                      src={trainer.portraitPath}
+                      src={trainer.bustPath ?? trainer.portraitPath}
                       alt={trainer.name}
-                      style={{ width: '80px', height: '108px', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
                     />
                   </div>
                 )}
@@ -166,6 +167,10 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
                   {trainer.specialty && (
                     <div className="sonsotyo-caption" style={{ marginTop: '6px', opacity: 0.65, fontSize: '0.7rem', lineHeight: 1.4 }}>{trainer.specialty}</div>
                   )}
+                  <div className="trainer-contact-signal">
+                    <div className="sonsotyo-caption trainer-contact-signal-label">{signal.label}</div>
+                    <div className="sonsotyo-copy" style={{ fontSize: '0.75rem', lineHeight: 1.45 }}>{signal.text}</div>
+                  </div>
                   <div style={{ marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--accent-primary)' }}>AFF {relationship.affinity}</span>
                     <span style={{ fontSize: '0.72rem', color: 'var(--accent-secondary)' }}>RIV {relationship.rivalry}</span>

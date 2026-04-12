@@ -1,97 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="200" height="300">
-  <defs>
-    <radialGradient id="bg_kz" cx="50%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#1a0c06"/>
-      <stop offset="100%" stop-color="#080404"/>
-    </radialGradient>
-    <radialGradient id="skin_kz" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#f0c898"/>
-      <stop offset="100%" stop-color="#d9a070"/>
-    </radialGradient>
-    <linearGradient id="hair_kz" x1="0%" y1="0%" x2="80%" y2="100%">
-      <stop offset="0%" stop-color="#d43810"/>
-      <stop offset="40%" stop-color="#8a1c04"/>
-      <stop offset="100%" stop-color="#2a0800"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Background -->
-  <rect width="200" height="300" fill="url(#bg_kz)"/>
-  <ellipse cx="100" cy="120" rx="75" ry="85" fill="#cf6547" opacity="0.07"/>
-
-  <!-- Faction accent bar -->
-  <rect x="0" y="0" width="200" height="3" fill="#cf6547" opacity="0.9"/>
-
-  <!-- Body / shoulders - sporty jacket -->
-  <path d="M 25 300 Q 38 235 62 215 Q 82 202 100 200 Q 118 202 138 215 Q 162 235 175 300 Z" fill="#1a0a04"/>
-  <!-- Jacket detail -->
-  <path d="M 62 215 Q 82 205 100 203 Q 118 205 138 215 L 132 238 Q 112 226 100 224 Q 88 226 68 238 Z" fill="#cf6547"/>
-  <path d="M 88 203 L 96 224 L 104 203" fill="#ff8060" opacity="0.5"/>
-  <!-- Collar/undershirt -->
-  <path d="M 68 238 Q 88 228 100 226 Q 112 228 132 238 L 126 262 Q 108 254 100 252 Q 92 254 74 262 Z" fill="#0d0604"/>
-
-  <!-- Neck -->
-  <path d="M 87 192 L 87 215 L 113 215 L 113 192 Z" fill="url(#skin_kz)"/>
-
-  <!-- Head -->
-  <ellipse cx="100" cy="158" rx="44" ry="47" fill="url(#skin_kz)"/>
-
-  <!-- Hair - back/wild -->
-  <path d="M 56 138 Q 50 110 55 82 Q 62 55 82 44 Q 100 36 118 44 Q 138 55 145 82 Q 150 110 144 138 Z" fill="#2a0800"/>
-  <!-- Main hair with spiky texture -->
-  <path d="M 58 142 Q 52 112 56 84 Q 62 57 82 46 Q 100 38 118 46 Q 138 57 144 84 Q 148 112 142 142 Q 128 125 100 122 Q 72 125 58 142 Z" fill="url(#hair_kz)"/>
-  <!-- Spiky bangs -->
-  <path d="M 64 118 Q 66 98 74 88 Q 80 80 86 84 Q 89 88 86 98 Q 82 108 78 116 Z" fill="#d43810"/>
-  <path d="M 80 112 Q 84 90 92 84 Q 98 80 102 86 Q 104 93 100 104 Q 96 112 92 116 Z" fill="#c02800"/>
-  <path d="M 98 110 Q 104 88 112 84 Q 118 82 122 88 Q 124 96 120 108 Q 116 116 110 118 Z" fill="#d43810"/>
-  <path d="M 116 116 Q 124 96 132 94 Q 138 94 138 104 Q 136 114 130 120 Z" fill="#b82000"/>
-  <!-- Left spikes going outward -->
-  <path d="M 58 142 Q 48 128 44 115 Q 42 104 48 100 Q 54 98 58 108 Q 60 120 62 132 Z" fill="#8a1c04"/>
-  <!-- Right spike -->
-  <path d="M 142 142 Q 152 128 156 115 Q 158 104 152 100 Q 146 98 142 108 Q 140 120 138 132 Z" fill="#8a1c04"/>
-  <!-- Hair shine -->
-  <ellipse cx="92" cy="66" rx="14" ry="6" fill="#ff6040" opacity="0.3" transform="rotate(-20 92 66)"/>
-
-  <!-- Eyebrows - sharp, expressive -->
-  <path d="M 74 128 Q 82 122 92 126" stroke="#4a0c00" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <path d="M 108 126 Q 118 122 126 128" stroke="#4a0c00" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-
-  <!-- Eyes - intense orange -->
-  <ellipse cx="83" cy="140" rx="11" ry="9" fill="#1a0800"/>
-  <ellipse cx="83" cy="140" rx="10" ry="8" fill="#e05a18"/>
-  <ellipse cx="83" cy="140" rx="7" ry="6.5" fill="#a03010"/>
-  <ellipse cx="83" cy="140" rx="4" ry="4" fill="#080400"/>
-  <ellipse cx="80" cy="137" rx="2.2" ry="1.8" fill="white" opacity="0.9"/>
-  <path d="M 72 133 Q 83 128 94 133 L 93 140 Q 83 136 73 140 Z" fill="#300a00" opacity="0.45"/>
-  <!-- eyelid line -->
-  <path d="M 72 133 Q 78 127 83 128 Q 88 127 94 133" stroke="#2a0800" stroke-width="1.8" fill="none"/>
-
-  <ellipse cx="117" cy="140" rx="11" ry="9" fill="#1a0800"/>
-  <ellipse cx="117" cy="140" rx="10" ry="8" fill="#e05a18"/>
-  <ellipse cx="117" cy="140" rx="7" ry="6.5" fill="#a03010"/>
-  <ellipse cx="117" cy="140" rx="4" ry="4" fill="#080400"/>
-  <ellipse cx="114" cy="137" rx="2.2" ry="1.8" fill="white" opacity="0.9"/>
-  <path d="M 106 133 Q 117 128 128 133 L 127 140 Q 117 136 107 140 Z" fill="#300a00" opacity="0.45"/>
-  <path d="M 106 133 Q 112 127 117 128 Q 122 127 128 133" stroke="#2a0800" stroke-width="1.8" fill="none"/>
-
-  <!-- Nose -->
-  <path d="M 97 154 Q 100 157 103 154" stroke="#b88060" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-
-  <!-- Mouth - smirk -->
-  <path d="M 88 167 Q 96 163 106 166 Q 110 168 112 171" stroke="#b86040" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <path d="M 106 166 Q 112 163 115 167" stroke="#d07050" stroke-width="1" fill="none"/>
-
-  <!-- Cheek blush - faint -->
-  <ellipse cx="74" cy="155" rx="7" ry="4" fill="#e07050" opacity="0.2"/>
-  <ellipse cx="126" cy="155" rx="7" ry="4" fill="#e07050" opacity="0.2"/>
-
-  <!-- Ears -->
-  <ellipse cx="57" cy="152" rx="5" ry="7" fill="#d9a070"/>
-  <ellipse cx="143" cy="152" rx="5" ry="7" fill="#d9a070"/>
-
-  <!-- Name plate -->
-  <rect x="0" y="270" width="200" height="30" fill="#080404" opacity="0.9"/>
-  <rect x="0" y="270" width="200" height="1" fill="#cf6547" opacity="0.7"/>
-  <text x="100" y="284" text-anchor="middle" font-family="monospace" font-size="9" fill="#cf6547" letter-spacing="3">KAIZEN</text>
-  <text x="100" y="295" text-anchor="middle" font-family="monospace" font-size="7" fill="#886655" letter-spacing="2">RIVAL DUELIST</text>
+  <defs><linearGradient id="kbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#17080c"/><stop offset="100%" stop-color="#060406"/></linearGradient><linearGradient id="khair" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff9dbf"/><stop offset="48%" stop-color="#cf476a"/><stop offset="100%" stop-color="#4e0d22"/></linearGradient></defs>
+  <rect width="200" height="300" fill="url(#kbg)"/><ellipse cx="104" cy="110" rx="84" ry="92" fill="#cf6547" opacity="0.12"/><rect width="200" height="4" fill="#cf6547"/>
+  <path d="M24 300 Q34 244 60 216 Q82 198 102 196 Q126 198 146 216 Q170 244 176 300 Z" fill="#12060a"/>
+  <path d="M42 300 Q56 236 86 214 Q100 206 120 214 Q148 236 160 300 Z" fill="#69122c"/>
+  <path d="M70 300 Q80 248 94 236 Q100 230 112 236 Q126 248 136 300 Z" fill="#f2c0ce"/>
+  <path d="M88 190 L88 214 L112 214 L112 190 Z" fill="#f0ccb8"/>
+  <ellipse cx="100" cy="152" rx="42" ry="48" fill="#f0ccb8"/>
+  <path d="M58 148 Q52 100 76 66 Q100 42 128 62 Q148 82 140 148 Q120 134 100 130 Q80 134 58 148 Z" fill="url(#khair)"/>
+  <path d="M60 146 Q44 176 52 224 Q56 250 64 270 Q56 232 60 176 Q62 160 70 146 Z" fill="#c84167"/>
+  <path d="M140 146 Q156 176 148 224 Q144 250 136 270 Q144 232 140 176 Q138 160 130 146 Z" fill="#c84167"/>
+  <path d="M70 120 Q86 92 110 98 Q100 118 84 128 Z" fill="#ffb2cb"/>
+  <path d="M92 118 Q106 94 126 100 Q126 118 108 126 Z" fill="#f06a98"/>
+  <path d="M76 130 Q84 124 92 126" stroke="#5b1026" stroke-width="2" stroke-linecap="round"/><path d="M108 126 Q116 124 124 130" stroke="#5b1026" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="84" cy="142" rx="10" ry="9" fill="#21070f"/><ellipse cx="84" cy="142" rx="8" ry="7" fill="#ef6a97"/><ellipse cx="84" cy="142" rx="5" ry="5" fill="#7d173d"/><ellipse cx="81" cy="139" rx="2" ry="1.5" fill="#fff"/>
+  <ellipse cx="116" cy="142" rx="10" ry="9" fill="#21070f"/><ellipse cx="116" cy="142" rx="8" ry="7" fill="#ef6a97"/><ellipse cx="116" cy="142" rx="5" ry="5" fill="#7d173d"/><ellipse cx="113" cy="139" rx="2" ry="1.5" fill="#fff"/>
+  <path d="M98 154 Q100 158 102 154" stroke="#bc8d7d" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M88 168 Q94 163 100 164 Q106 163 112 168" stroke="#d56f7f" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <ellipse cx="76" cy="156" rx="8" ry="5" fill="#ff8ba9" opacity="0.26"/><ellipse cx="124" cy="156" rx="8" ry="5" fill="#ff8ba9" opacity="0.26"/>
+  <rect y="270" width="200" height="30" fill="#070406" opacity="0.94"/>
+  <text x="100" y="284" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff8ba9" letter-spacing="3">KAIZEN</text>
+  <text x="100" y="295" text-anchor="middle" font-family="monospace" font-size="7" fill="#9e6675" letter-spacing="2">RIVAL DUELIST</text>
 </svg>

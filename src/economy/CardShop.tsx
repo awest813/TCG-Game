@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { audioManager } from '../core/AudioManager';
 import { ShopItem } from '../core/types';
-import { isShopVeteranUnlocked } from '../core/circuitProgression';
+import { getCircuitNextStep, isShopVeteranUnlocked, migrateCircuitFlags } from '../core/circuitProgression';
 import { formatCredits, getBracketEconomyCaption, getBracketSweepPot } from '../core/economy';
 import { TOURNAMENT_TIERS } from '../core/TournamentManager';
 import { getCardById, resolveCardImage } from '../data/cards';
@@ -21,6 +21,7 @@ export const CardShop: React.FC = () => {
   const { state, updateProfile, updateGameState, setScene } = useGame();
   const [showSettings, setShowSettings] = useState(false);
   const { profile } = state;
+  const nextStep = getCircuitNextStep(migrateCircuitFlags(profile.progress.flags), profile.stats.tournamentsWon);
   const shopBeginner = TOURNAMENT_TIERS.find((t) => t.id === 'shop-beginner-circuit');
   const shopMini = TOURNAMENT_TIERS.find((t) => t.id === 'storefront-mini');
   const shopVet = TOURNAMENT_TIERS.find((t) => t.id === 'shop-veteran-gauntlet');
@@ -144,6 +145,13 @@ export const CardShop: React.FC = () => {
           <p className="sonsotyo-copy" style={{ marginTop: '10px', maxWidth: '60ch' }}>
             Three backroom brackets echo Pokémon TCG GBC club packs and early Yu-Gi-Oh shop duels: learn the UI for free, pay-in for a faster mini bracket, then run the gauntlet for your Club License data.
           </p>
+          <div className="shop-sweep-guide">
+            <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>Sweep guide</div>
+            <div className="shop-sweep-guide-title">{nextStep.title}</div>
+            <div className="sonsotyo-copy" style={{ marginTop: '6px' }}>
+              A sweep means you finish the entire bracket in one run. Beginner is the intended first sweep and the cleanest way to finish onboarding.
+            </div>
+          </div>
           
           <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
             <div className="glass-panel shop-product-card" style={{ flex: '1', minWidth: '300px', padding: '20px', background: 'rgba(5,5,15,0.6)' }}>

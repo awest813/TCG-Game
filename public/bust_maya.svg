@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 620" width="420" height="620">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#061018"/><stop offset="100%" stop-color="#020608"/></linearGradient><linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#caefff"/><stop offset="50%" stop-color="#56a7d4"/><stop offset="100%" stop-color="#0c3550"/></linearGradient></defs>
+  <rect width="420" height="620" fill="url(#bg)"/><ellipse cx="210" cy="200" rx="170" ry="180" fill="#76b7ff" opacity="0.08"/>
+  <path d="M44 620 Q60 474 120 414 Q164 376 210 372 Q256 376 300 414 Q360 474 376 620 Z" fill="#061018"/>
+  <path d="M72 620 Q90 468 148 426 Q180 402 210 400 Q240 402 272 426 Q330 468 348 620 Z" fill="#1b476f"/>
+  <path d="M128 620 Q146 520 186 476 Q200 462 220 476 Q260 520 280 620 Z" fill="#dce8ef"/>
+  <path d="M188 338 L188 392 L232 392 L232 338 Z" fill="#ead9c6"/>
+  <ellipse cx="210" cy="266" rx="86" ry="98" fill="#ead9c6"/>
+  <path d="M124 248 Q108 156 154 92 Q206 42 266 80 Q312 124 296 248 Q252 214 210 212 Q168 214 124 248 Z" fill="url(#hair)"/>
+  <path d="M124 248 Q100 292 108 378 Q112 446 126 520 Q112 454 118 326 Q120 276 136 250 Z" fill="#317ea8"/>
+  <path d="M296 248 Q320 292 312 378 Q308 446 294 520 Q308 454 302 326 Q300 276 284 250 Z" fill="#317ea8"/>
+  <path d="M148 194 Q168 154 192 150 Q198 160 192 182 Q178 198 160 206 Z" fill="#d2f0ff"/>
+  <path d="M194 188 Q206 150 222 148 Q232 156 228 182 Q214 196 202 202 Z" fill="#87cbe8"/>
+  <path d="M228 190 Q246 156 270 158 Q280 170 272 192 Q254 204 238 208 Z" fill="#bcecff"/>
+  <path d="M162 220 Q178 210 196 214" stroke="#29516d" stroke-width="4" stroke-linecap="round"/><path d="M226 214 Q244 210 260 220" stroke="#29516d" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="178" cy="246" rx="22" ry="19" fill="#09141f"/><ellipse cx="178" cy="246" rx="18" ry="15" fill="#58acd7"/><ellipse cx="178" cy="246" rx="11" ry="10" fill="#164f73"/><ellipse cx="171" cy="239" rx="4" ry="3" fill="#fff"/>
+  <ellipse cx="242" cy="246" rx="22" ry="19" fill="#09141f"/><ellipse cx="242" cy="246" rx="18" ry="15" fill="#58acd7"/><ellipse cx="242" cy="246" rx="11" ry="10" fill="#164f73"/><ellipse cx="235" cy="239" rx="4" ry="3" fill="#fff"/>
+  <path d="M204 286 Q210 294 216 286" stroke="#bb9d86" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M178 320 Q194 310 210 312 Q228 310 244 320" stroke="#a77a68" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <rect y="568" width="420" height="52" fill="#020608" opacity="0.94"/>
+  <text x="210" y="590" text-anchor="middle" font-family="monospace" font-size="18" fill="#76b7ff" letter-spacing="6">MAYA</text>
+  <text x="210" y="608" text-anchor="middle" font-family="monospace" font-size="11" fill="#63839a" letter-spacing="4">TIDE CLUB MASTER</text>
+</svg>

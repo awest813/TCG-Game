@@ -10,9 +10,9 @@
         {
           "type": "visual",
           "background": "/sunset_apartments_bg.png",
-          "portrait": "/lucy_tutorial.png",
+          "portrait": "/portrait_lucy.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/lucy_tutorial.png",
+          "bustRight": "/bust_lucy.svg",
           "focusSide": "right",
           "transition": "fade"
         },
@@ -25,9 +25,9 @@
           "type": "dialogue",
           "speakerId": "lucy",
           "text": "Morning, rookie. The city is waiting, and so is your first real route.",
-          "portrait": "/lucy_tutorial.png",
+          "portrait": "/portrait_lucy.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/lucy_tutorial.png",
+          "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },
         {
@@ -68,9 +68,9 @@
               "choiceEquals": "inspect_deck"
             }
           ],
-          "portrait": "/lucy_tutorial.png",
+          "portrait": "/portrait_lucy.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/lucy_tutorial.png",
+          "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },
         {
@@ -83,9 +83,9 @@
               "choiceEquals": "rush_out"
             }
           ],
-          "portrait": "/lucy_tutorial.png",
+          "portrait": "/portrait_lucy.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/lucy_tutorial.png",
+          "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },
         {
@@ -110,9 +110,9 @@
           "type": "dialogue",
           "speakerId": "lucy",
           "text": "Good. The narrative layer handed control to the 3D arena and got the result back intact.",
-          "portrait": "/lucy_tutorial.png",
+          "portrait": "/portrait_lucy.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/lucy_tutorial.png",
+          "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },
         {

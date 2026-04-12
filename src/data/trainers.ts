@@ -9,6 +9,7 @@ export interface TrainerRecord {
   deck: string[];
   avatarPath?: string;
   portraitPath?: string;
+  bustPath?: string;
   accentColor: string;
   signatureField?: string;
   summary: string;
@@ -43,6 +44,7 @@ export const TRAINERS: TrainerRecord[] = [
     deck: ['signalmite', 'ziprail', 'mosshop', 'wharfin', 'quick-transfer', 'rooftop-remedy'],
     avatarPath: '/lucy_tutorial.png',
     portraitPath: '/portrait_lucy.svg',
+    bustPath: '/bust_lucy.svg',
     accentColor: '#f0c67c',
     signatureField: 'neon-grid',
     summary: 'Your handler for the early circuit, equal parts mentor, producer, and pressure valve.',
@@ -59,6 +61,7 @@ export const TRAINERS: TrainerRecord[] = [
     deck: ['ziprail', 'ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'signal-boost', 'quick-transfer', 'neon-grid'],
     avatarPath: '/avatar_kaizen.png',
     portraitPath: '/portrait_kaizen.svg',
+    bustPath: '/bust_kaizen.svg',
     accentColor: '#cf6547',
     signatureField: 'neon-grid',
     summary: 'Your headline rival, all acceleration and nerve, obsessed with proving the city has room for only one rising ace.',
@@ -74,6 +77,7 @@ export const TRAINERS: TrainerRecord[] = [
     homeDistrict: 'BAYLINE_WHARF',
     deck: ['wharfin', 'mist-glider', 'coral-guard', 'wave-rider', 'tsunami-core', 'system-refresh', 'rooftop-remedy', 'tidal-nexus'],
     portraitPath: '/portrait_maya.svg',
+    bustPath: '/bust_maya.svg',
     accentColor: '#76b7ff',
     signatureField: 'tidal-nexus',
     summary: 'A control specialist who treats every duel like a tide chart and every mistake like drift.',
@@ -89,6 +93,7 @@ export const TRAINERS: TrainerRecord[] = [
     homeDistrict: 'MARKET_CENTRAL',
     deck: ['ziprail', 'neon-striker', 'voltlynx', 'overdrive-fox', 'shield-drone', 'quick-transfer', 'overclock', 'neon-grid'],
     portraitPath: '/portrait_vex.svg',
+    bustPath: '/bust_vex.svg',
     accentColor: '#7dd7dd',
     signatureField: 'neon-grid',
     summary: 'A speed tyrant whose favorite tactic is making the match feel decided before the board catches up.',
@@ -104,6 +109,7 @@ export const TRAINERS: TrainerRecord[] = [
     homeDistrict: 'NEON_MISSION',
     deck: ['seedling-bot', 'solar-rose', 'bloom-monarch', 'mirror-phantom', 'neon-striker', 'system-refresh', 'signal-boost', 'void-rift'],
     portraitPath: '/portrait_luna.svg',
+    bustPath: '/bust_luna.svg',
     accentColor: '#cf6547',
     signatureField: 'void-rift',
     summary: 'A showrunner duelist who frames every game like a live set and every opponent like a scene partner.',
@@ -119,6 +125,7 @@ export const TRAINERS: TrainerRecord[] = [
     homeDistrict: 'REDWOOD_HEIGHTS',
     deck: ['mosshop', 'verdajack', 'solar-rose', 'bloom-monarch', 'fortress-walker', 'rooftop-remedy', 'system-refresh', 'garden-haze'],
     portraitPath: '/portrait_valerious.svg',
+    bustPath: '/bust_valerious.svg',
     accentColor: '#8effa7',
     signatureField: 'garden-haze',
     summary: 'An aristocratic grinder who turns sustain, board presence, and composure into a very personal kind of threat.',
@@ -134,6 +141,7 @@ export const TRAINERS: TrainerRecord[] = [
     homeDistrict: 'CIVIC_CROWN',
     deck: ['omega-link', 'royal-bloom', 'tsunami-core', 'stream-ace', 'mirror-phantom', 'alloy-foundry', 'recursion-loop', 'master-rank-medal'],
     portraitPath: '/portrait_zeno.svg',
+    bustPath: '/bust_zeno.svg',
     accentColor: '#f0c67c',
     signatureField: 'alloy-foundry',
     summary: 'The reigning apex champion, built from prestige, composure, and a deck that feels engineered to punish impatience.',
@@ -520,4 +528,56 @@ export const applyFactionReputationDelta = (profile: PlayerProfile, factionId: F
     rank: getFactionRank(nextScore)
   };
   return social;
+};
+
+export const getTrainerRelationshipSignal = (
+  trainer: TrainerRecord,
+  relationship: SocialState['trainers'][string]
+): { label: string; text: string } => {
+  if (relationship.lastResult === 'WIN') {
+    return {
+      label: 'Afterglow',
+      text: `${trainer.name} logged your last result and is reading you as a real bracket threat now.`
+    };
+  }
+
+  if (relationship.lastResult === 'LOSS') {
+    return {
+      label: 'Heat',
+      text: `${trainer.name} thinks the rematch still belongs to her unless you prove otherwise on the table.`
+    };
+  }
+
+  if (relationship.affinity >= 3 && relationship.respect >= 2) {
+    return {
+      label: 'Open Channel',
+      text: `${trainer.name} has started treating your route like an ongoing conversation instead of a one-off clash.`
+    };
+  }
+
+  if (relationship.rivalry >= 3) {
+    return {
+      label: 'Live Rivalry',
+      text: `${trainer.name} is measuring your route against her own in real time and wants the next meeting loud.`
+    };
+  }
+
+  if (relationship.respect >= 3) {
+    return {
+      label: 'Professional Read',
+      text: `${trainer.name} respects your sequencing enough to study what you do between matches.`
+    };
+  }
+
+  if (relationship.affinity >= 2) {
+    return {
+      label: 'Warm Signal',
+      text: `${trainer.name} is easing up around you and letting more of her off-stage self show.`
+    };
+  }
+
+  return {
+    label: 'Cold Read',
+    text: `${trainer.name} is still feeling you out, which means every duel and conversation is part of the audition.`
+  };
 };

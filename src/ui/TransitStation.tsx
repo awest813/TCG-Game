@@ -3,7 +3,7 @@ import { useGame } from '../core/GameContext';
 import { getTrainerById } from '../data/trainers';
 import { NPCS } from '../npc/npcs';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
-import { nextCircuitQuest } from '../core/circuitProgression';
+import { getCircuitNextStep, nextCircuitQuest } from '../core/circuitProgression';
 import { FirstSessionChecklist } from './FirstSessionChecklist';
 import { TutorialGuide } from './TutorialGuide';
 import { SystemMenu } from './SystemMenu';
@@ -51,7 +51,7 @@ export const TransitStation: React.FC = () => {
   const [practiceDrillIndex, setPracticeDrillIndex] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
 
-  const lucyPortrait = LUCY?.avatarPath ?? '/lucy_tutorial.png';
+  const lucyPortrait = LUCY?.bustPath ?? LUCY?.avatarPath ?? '/bust_lucy.svg';
   const flags = state.profile.progress.flags;
   const transitGridIntroDone = Boolean(flags.transitLucyGridIntroDone || flags.transitLucyBriefingDismissed);
   const showLucyIntroOverlay =
@@ -74,6 +74,7 @@ export const TransitStation: React.FC = () => {
   };
 
   const unlocked = state.profile.progress.unlockedDistricts;
+  const nextStep = getCircuitNextStep(flags, state.profile.stats.tournamentsWon);
   const activeDistrict = useMemo(() => ALL_DISTRICTS.find((district) => district.id === selected) ?? null, [selected]);
   const activeDistrictProfile = useMemo(() => (selected ? getDistrictProfile(selected) : null), [selected]);
   const activeDistrictChampion = useMemo(() => (selected ? getDistrictChampion(selected) : null), [selected]);
@@ -153,6 +154,13 @@ export const TransitStation: React.FC = () => {
               <div className="sonsotyo-pill" style={{ color: activeDistrictProfile.crestColor }}>{activeDistrictProfile.crest}</div>
             </div>
             <div className="sonsotyo-copy" style={{ marginTop: '12px' }}>{activeDistrictProfile.slogan}</div>
+            <div className="transit-next-step-banner">
+              <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>
+                Next move · {nextStep.phase}
+              </div>
+              <div className="transit-next-step-title">{nextStep.title}</div>
+              <div className="sonsotyo-copy" style={{ marginTop: '6px' }}>{nextStep.detail}</div>
+            </div>
           </div>
         )}
 
@@ -215,6 +223,15 @@ export const TransitStation: React.FC = () => {
                 <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.8rem' }}>{activeDistrict.name}</div>
                 <p className="sonsotyo-copy" style={{ marginTop: '12px' }}>{activeDistrict.description}</p>
                 {activeDistrictProfile && <div className="sonsotyo-copy" style={{ marginTop: '14px' }}>{activeDistrictProfile.atmosphere}</div>}
+                {selected === 'SUNSET_TERMINAL' && (
+                  <div className="transit-route-callout">
+                    <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>Recommended first drop</div>
+                    <div className="transit-next-step-title">Board Sunset Terminal, then open Card Annex.</div>
+                    <div className="sonsotyo-copy" style={{ marginTop: '6px' }}>
+                      The beginner bracket is the intended first sweep. Clear every round there in one run to finish the opening route cleanly.
+                    </div>
+                  </div>
+                )}
                 <div style={{ marginTop: '18px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
                   <TransitStat label="Resident NPCs" value={getNPCsInDistrict(selected).map((npc) => npc.name).join(', ') || 'NONE'} />
                   <TransitStat label="Facilities" value={[...(activeDistrict.shops ? ['Shop'] : []), ...(activeDistrict.events ? ['Arena'] : [])].join(' / ') || 'Residential'} />
@@ -224,6 +241,11 @@ export const TransitStation: React.FC = () => {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', justifyContent: 'center' }}>
                 <button className="neo-button primary" onClick={() => handleTravel(selected)}>Board Train</button>
+                <div className="sonsotyo-caption" style={{ textTransform: 'none', letterSpacing: '0.04em', lineHeight: 1.5 }}>
+                  {selected === 'SUNSET_TERMINAL'
+                    ? 'Best first stop: Sunset Terminal, then Card Annex.'
+                    : 'Preview first, then board when the route looks right.'}
+                </div>
                 <button className="neo-button" onClick={() => setSelected(null)}>Cancel</button>
               </div>
             </>

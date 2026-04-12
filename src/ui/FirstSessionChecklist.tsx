@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGame } from '../core/GameContext';
 import {
+  getCircuitNextStep,
   hasLucyOnboardingComplete,
   hasShopBeginnerCleared,
   hasTransitOnboardingComplete,
@@ -34,6 +35,7 @@ export const FirstSessionChecklist: React.FC<FirstSessionChecklistProps> = ({
   const lucyDone = hasLucyOnboardingComplete(circuitFlags);
   const transitDone = hasTransitOnboardingComplete(circuitFlags);
   const annexBeginnerDone = hasShopBeginnerCleared(circuitFlags);
+  const nextStep = getCircuitNextStep(circuitFlags, state.profile.stats.tournamentsWon);
 
   const body = (
     <>
@@ -76,6 +78,13 @@ export const FirstSessionChecklist: React.FC<FirstSessionChecklistProps> = ({
           </span>
         </li>
       </ol>
+      <div className="apartment-onboarding-next-step">
+        <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>
+          Next move · {nextStep.phase}
+        </div>
+        <div className="apartment-onboarding-next-step-title">{nextStep.title}</div>
+        <div className="apartment-onboarding-next-step-detail">{nextStep.detail}</div>
+      </div>
       <div className="sonsotyo-caption apartment-onboarding-objective" style={{ textTransform: 'none', letterSpacing: '0.04em' }}>
         Objective: {state.currentQuest}
       </div>

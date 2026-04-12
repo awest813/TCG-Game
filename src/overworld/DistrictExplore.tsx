@@ -5,6 +5,7 @@ import { NPCS } from '../npc/npcs';
 import { FirstSessionChecklist } from '../ui/FirstSessionChecklist';
 import { SystemMenu } from '../ui/SystemMenu';
 import { SceneType } from '../core/types';
+import { getCircuitNextStep, migrateCircuitFlags } from '../core/circuitProgression';
 import { createActionSession, createChampionSession } from '../visual-novel/scriptRegistry';
 import { getDistrictChampion, getDistrictProfile } from '../visual-novel/world';
 import '../styles/SceneVisuals.css';
@@ -36,6 +37,8 @@ export const DistrictExplore: React.FC = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [statusText, setStatusText] = useState('District link stable.');
+  const circuitFlags = migrateCircuitFlags(state.profile.progress.flags);
+  const nextStep = getCircuitNextStep(circuitFlags, state.profile.stats.tournamentsWon);
 
   const districtScenes = useMemo(() => DISTRICT_LOCATIONS[state.location] ?? [], [state.location]);
   const districtProfile = useMemo(() => getDistrictProfile(state.location), [state.location]);
@@ -201,6 +204,12 @@ export const DistrictExplore: React.FC = () => {
             </div>
           </div>
 
+          <div className="glass-panel sonsotyo-panel">
+            <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>Next move · {nextStep.phase}</div>
+            <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.1rem', lineHeight: 1.4 }}>{nextStep.title}</div>
+            <div className="sonsotyo-copy" style={{ marginTop: '10px' }}>{nextStep.detail}</div>
+          </div>
+
           <div className="glass-panel sonsotyo-panel" style={{ marginTop: 'auto' }}>
             <div className="sonsotyo-kicker">Circuit Scouter</div>
             <p style={{ marginTop: '12px', fontSize: '1rem', lineHeight: 1.7, fontStyle: 'italic' }}>"{currentLoc.description}"</p>
@@ -252,6 +261,9 @@ export const DistrictExplore: React.FC = () => {
                 <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
                   <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem' }}>{action.label}</span>
                   <span className="sonsotyo-caption">{actionRouteCaption(action)}</span>
+                  {state.location === 'SUNSET_TERMINAL' && action.label === 'Card Annex' && (
+                    <span className="district-recommended-chip">Recommended opening route</span>
+                  )}
                 </span>
               </button>
             ))}

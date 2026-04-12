@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 620" width="420" height="620">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#221308"/><stop offset="100%" stop-color="#080507"/></linearGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ffdc7c"/><stop offset="55%" stop-color="#d99030"/><stop offset="100%" stop-color="#7a3f00"/></linearGradient>
+  </defs>
+  <rect width="420" height="620" fill="url(#bg)"/>
+  <ellipse cx="210" cy="210" rx="170" ry="180" fill="#f0c67c" opacity="0.08"/>
+  <path d="M48 620 Q66 478 122 418 Q162 374 210 370 Q258 374 298 418 Q354 478 372 620 Z" fill="#120b08"/>
+  <path d="M78 620 Q100 468 156 426 Q186 404 210 402 Q234 404 264 426 Q320 468 342 620 Z" fill="#b76d15"/>
+  <path d="M124 620 Q142 514 184 474 Q200 460 220 474 Q262 514 280 620 Z" fill="#f4d8a4"/>
+  <path d="M188 340 L188 392 L232 392 L232 340 Z" fill="#efc793"/>
+  <ellipse cx="210" cy="266" rx="86" ry="98" fill="#efc793"/>
+  <path d="M124 246 Q108 156 154 92 Q208 40 268 84 Q314 122 296 248 Q256 214 210 212 Q164 214 124 246 Z" fill="url(#hair)"/>
+  <path d="M124 240 Q98 282 106 378 Q110 438 126 512 Q112 448 118 324 Q120 274 136 244 Z" fill="#ba6d14"/>
+  <path d="M296 240 Q322 282 314 378 Q310 438 294 512 Q308 448 302 324 Q300 274 284 244 Z" fill="#ba6d14"/>
+  <path d="M144 190 Q154 160 176 148 Q196 144 194 170 Q188 192 164 202 Z" fill="#ffe49b"/>
+  <path d="M192 188 Q200 150 220 146 Q238 152 232 180 Q222 194 204 200 Z" fill="#f7c95a"/>
+  <path d="M234 188 Q252 154 274 158 Q288 170 278 192 Q264 204 246 208 Z" fill="#ffde88"/>
+  <path d="M160 220 Q178 210 196 214" stroke="#683400" stroke-width="4" stroke-linecap="round"/>
+  <path d="M226 214 Q244 210 262 220" stroke="#683400" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="178" cy="246" rx="22" ry="19" fill="#2c1700"/><ellipse cx="178" cy="246" rx="18" ry="15" fill="#db8b27"/><ellipse cx="178" cy="246" rx="11" ry="10" fill="#834300"/><ellipse cx="171" cy="239" rx="4" ry="3" fill="#fff"/>
+  <ellipse cx="242" cy="246" rx="22" ry="19" fill="#2c1700"/><ellipse cx="242" cy="246" rx="18" ry="15" fill="#db8b27"/><ellipse cx="242" cy="246" rx="11" ry="10" fill="#834300"/><ellipse cx="235" cy="239" rx="4" ry="3" fill="#fff"/>
+  <path d="M204 286 Q210 294 216 286" stroke="#bf8d70" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M178 320 Q192 310 210 312 Q228 310 242 320" stroke="#cc7668" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <ellipse cx="154" cy="284" rx="18" ry="9" fill="#ef987f" opacity="0.25"/><ellipse cx="266" cy="284" rx="18" ry="9" fill="#ef987f" opacity="0.25"/>
+  <rect y="568" width="420" height="52" fill="#090507" opacity="0.94"/>
+  <text x="210" y="590" text-anchor="middle" font-family="monospace" font-size="18" fill="#f0c67c" letter-spacing="6">LUCY</text>
+  <text x="210" y="608" text-anchor="middle" font-family="monospace" font-size="11" fill="#9b8668" letter-spacing="4">CIRCUIT GUIDE</text>
+</svg>

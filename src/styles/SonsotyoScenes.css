@@ -573,6 +573,29 @@
   margin-top: 10px;
 }
 
+.apartment-onboarding-next-step {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 227, 154, 0.08), rgba(255, 227, 154, 0.04)),
+    url('/assets/bg/onboarding-route.svg');
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255, 227, 154, 0.18);
+}
+
+.apartment-onboarding-next-step-title,
+.transit-next-step-title,
+.shop-sweep-guide-title,
+.tournament-sweep-explainer-title {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--text-bright);
+}
+
 .apartment-first-session-vn {
   flex: 0 0 auto;
   display: flex;
@@ -608,6 +631,83 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.apartment-next-step-panel,
+.transit-route-callout,
+.shop-sweep-guide,
+.tournament-sweep-explainer {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
+    url('/assets/bg/onboarding-route.svg');
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shop-sweep-guide,
+.tournament-sweep-explainer {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
+    url('/assets/bg/sweep-protocol.svg');
+  background-size: cover;
+  background-position: center;
+}
+
+.transit-next-step-banner {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.district-recommended-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 227, 154, 0.12);
+  color: var(--accent-yellow);
+  font-size: 0.68rem;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+}
+
+.trainer-contact-card {
+  background:
+    linear-gradient(180deg, rgba(18, 20, 32, 0.94), rgba(8, 10, 18, 0.98)),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 30%);
+}
+
+.trainer-contact-portrait {
+  width: 102px;
+  min-width: 102px;
+  height: 150px;
+  position: relative;
+}
+
+.trainer-contact-signal {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trainer-contact-signal-label {
+  color: var(--accent-yellow);
+  margin-bottom: 4px;
+}
+
+.social-hangout-signal {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: 44ch;
 }
 
 .system-menu-intro {

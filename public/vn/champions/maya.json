@@ -12,7 +12,7 @@
           "background": "/bayline_wharf_bg.png",
           "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_maya.svg",
+          "bustRight": "/bust_maya.svg",
           "focusSide": "right",
           "transition": "fade"
         },
@@ -27,7 +27,7 @@
           "text": "Listen to the harbor before you answer me. Strong duelists learn the rhythm beneath the noise.",
           "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_maya.svg",
+          "bustRight": "/bust_maya.svg",
           "focusSide": "right"
         },
         {
@@ -94,7 +94,7 @@
           ],
           "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_maya.svg",
+          "bustRight": "/bust_maya.svg",
           "focusSide": "right"
         },
         {
@@ -109,7 +109,7 @@
           ],
           "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_maya.svg",
+          "bustRight": "/bust_maya.svg",
           "focusSide": "right"
         },
         {
@@ -124,7 +124,7 @@
           ],
           "portrait": "/portrait_maya.svg",
           "bustLeft": "/avatar_player.png",
-          "bustRight": "/portrait_maya.svg",
+          "bustRight": "/bust_maya.svg",
           "focusSide": "right"
         }
       ]

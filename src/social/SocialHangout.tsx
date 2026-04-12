@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { useGame } from '../core/GameContext';
+import { getTrainerById, getTrainerRelationshipSignal, mergeSocialState } from '../data/trainers';
 import '../styles/SonsotyoScenes.css';
 
 export const SocialHangout: React.FC = () => {
   const { state, setScene, updateProfile } = useGame();
   const [step, setStep] = useState(0);
+  const kaizen = getTrainerById('kaizen');
+  const social = mergeSocialState(state.profile.social);
+  const signal = kaizen ? getTrainerRelationshipSignal(kaizen, social.trainers.kaizen) : null;
 
   const dialogue = [
-    { speaker: 'KAIZEN', text: 'Hey! Glad you could make it to the terminal overlook. The view is insane during the pink sunset.', avatar: '/avatar_kaizen.png' },
+    { speaker: 'KAIZEN', text: 'Hey. Glad you actually showed. The terminal overlook hits different when the rails are still warm and the skyline goes pink.', avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/avatar_kaizen.png' },
     { speaker: 'PLAYER', text: "Yeah, it's pretty impressive. Most people are too busy dueling to notice.", avatar: '/avatar_player.png' },
-    { speaker: 'KAIZEN', text: "That's why I like it here. It reminds me why we do this. It's not just about the win, it's about the culture of the city.", avatar: '/avatar_kaizen.png' },
-    { speaker: 'KAIZEN', text: "Anyway, I wanted to give you this. It's a prototype card I've been working on. Think of it as a sign of our rivalry.", avatar: '/avatar_kaizen.png' }
+    { speaker: 'KAIZEN', text: "That's why I like it here. It's not just wins. It's the whole scene: the noise, the locals, the stories people pretend don't matter until they lose one.", avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/avatar_kaizen.png' },
+    { speaker: 'KAIZEN', text: "Anyway, take this prototype. I could call it a gift, but let's be honest, it feels better as fuel for the rivalry.", avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/avatar_kaizen.png' }
   ];
 
   const handleNext = () => {
@@ -77,6 +81,13 @@ export const SocialHangout: React.FC = () => {
             </div>
             <div className="sonsotyo-pill">Step 0{step + 1}</div>
           </div>
+
+          {!isPlayer && kaizen && signal && (
+            <div className="social-hangout-signal">
+              <div className="sonsotyo-caption trainer-contact-signal-label">{signal.label}</div>
+              <div className="sonsotyo-copy" style={{ fontSize: '0.82rem', lineHeight: 1.55 }}>{signal.text}</div>
+            </div>
+          )}
 
           <p style={{ fontSize: 'clamp(1.1rem, 2.3vw, 1.8rem)', lineHeight: 1.6, minHeight: '120px', color: 'white', fontStyle: 'italic', maxWidth: '44ch' }}>
             "{current.text}"

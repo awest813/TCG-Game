@@ -166,3 +166,92 @@ export function nextCircuitQuest(flags: CircuitFlagMap, titlesWon = 0): string {
 export function districtTournamentsForLobby() {
   return TOURNAMENT_TIERS.filter((t) => t.locationId !== 'card-shop').slice().sort((a, b) => a.prestige - b.prestige);
 }
+
+export type CircuitNextStep = {
+  phase: string;
+  title: string;
+  detail: string;
+};
+
+export function getCircuitNextStep(flags: CircuitFlagMap, titlesWon = 0): CircuitNextStep {
+  const f = migrateCircuitFlags(flags);
+  const titles = Math.max(0, Math.floor(titlesWon));
+
+  if (!hasLucyOnboardingComplete(f)) {
+    return {
+      phase: 'Apartment onboarding',
+      title: "Finish Lucy's apartment briefing",
+      detail: 'Stay in the apartment flow until the Lucy panel wraps. The deck check is optional, but the briefing is the unlock gate.'
+    };
+  }
+
+  if (!hasTransitOnboardingComplete(f)) {
+    return {
+      phase: 'Transit orientation',
+      title: 'Open Transit and finish the grid tutorial',
+      detail: 'Use the apartment transit link, clear Lucy’s grid explanation, then board Sunset Terminal when the route feed is live.'
+    };
+  }
+
+  if (!hasShopBeginnerCleared(f)) {
+    return {
+      phase: 'First sweep',
+      title: 'Sweep the Beginner Initiation bracket',
+      detail: 'At Sunset Terminal, open Card Annex and clear every round in one run. A sweep here means the full bracket is finished, not just one win.'
+    };
+  }
+
+  if (!hasShopMiniCleared(f)) {
+    return {
+      phase: 'Annex ladder',
+      title: 'Clear the Storefront Mini-Tourney',
+      detail: 'Your next rung is the paid mini bracket in Card Annex. Finish the full table to unlock the gauntlet.'
+    };
+  }
+
+  if (!hasShopVeteranCleared(f)) {
+    return {
+      phase: 'Annex ladder',
+      title: 'Clear the Counter Run Gauntlet',
+      detail: 'Five matches, higher pressure, and the last Annex gate before your Club License comes online.'
+    };
+  }
+
+  if (!hasRookieScrimCleared(f)) {
+    return {
+      phase: 'City circuit',
+      title: 'Enter the Casual Under-Circuit regional',
+      detail: 'Now that the license is live, start the first sanctioned city bracket from the tournament lobby.'
+    };
+  }
+
+  if (!hasMarketProAmCleared(f)) {
+    return {
+      phase: 'City circuit',
+      title: 'Save for and clear the Market Pro-Am',
+      detail: 'The next major is a 500 CR entry bracket. Full clears are where the larger sweep payouts begin.'
+    };
+  }
+
+  if (!hasNeonNightCleared(f)) {
+    return {
+      phase: 'Elite circuit',
+      title: 'Clear Neon Night Elite',
+      detail: 'Push the district ladder forward and keep chaining full bracket clears to reach Crown access.'
+    };
+  }
+
+  if (titles > 6) {
+    return {
+      phase: 'Champion loop',
+      title: 'Choose your next repeat run',
+      detail: 'Re-sweep a finite bracket for rivalry progress or stay in Crown to chase bigger cash-outs.'
+    };
+  }
+
+  return {
+    phase: 'Endgame',
+    title: 'Push the Unlimited Crown Gauntlet',
+    detail: 'Keep climbing until you want to cash out. Crown is the only bracket that never truly ends.'
+  };
+}

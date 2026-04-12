@@ -26,7 +26,7 @@ export const TutorialGuide: React.FC<{
   message,
   objective,
   actions,
-  portraitSrc = '/lucy_tutorial.png',
+  portraitSrc = '/bust_lucy.svg',
   portraitAlt = 'Lucy — circuit guide',
   dimBackdrop = false,
   onBackdropClick,

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { VNRunner } from '../ui/VNRunner';
 import { VNEngineState } from '../engine/types';
-import { hasLucyOnboardingComplete, hasShopBeginnerCleared, migrateCircuitFlags, nextCircuitQuest } from '../core/circuitProgression';
+import { getCircuitNextStep, hasLucyOnboardingComplete, hasShopBeginnerCleared, migrateCircuitFlags, nextCircuitQuest } from '../core/circuitProgression';
 import { FirstSessionChecklist } from '../ui/FirstSessionChecklist';
 import { SystemMenu } from '../ui/SystemMenu';
 import { createApartmentOnboardingSession } from '../visual-novel/scriptRegistry';
@@ -11,13 +11,14 @@ import '../styles/SonsotyoScenes.css';
 
 export const ApartmentHub: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { state, setScene, saveGame, advanceTime, updateProfile, updateGameState } = useGame();
+  const { state, saveGame, advanceTime, updateProfile, updateGameState } = useGame();
   const [showWakeUp, setShowWakeUp] = useState(state.timeOfDay === 'MORNING');
   const [showSettings, setShowSettings] = useState(false);
   const [statusText, setStatusText] = useState('Apartment systems online.');
   const circuitFlags = migrateCircuitFlags(state.profile.progress.flags);
   const showFirstSessionShell = !hasShopBeginnerCleared(circuitFlags);
   const needsLucyVN = !hasLucyOnboardingComplete(circuitFlags);
+  const nextStep = getCircuitNextStep(circuitFlags, state.profile.stats.tournamentsWon);
   const starter = state.profile.progress.flags.onboardingStarter as string | undefined;
   const canvasId = 'apartment-babylon-canvas';
   const onboardingSession = createApartmentOnboardingSession(starter, canvasId);
@@ -115,7 +116,7 @@ export const ApartmentHub: React.FC = () => {
       isDisposed = true;
       cleanup?.();
     };
-  }, [advanceTime, setScene, state.timeOfDay, updateGameState]);
+  }, [advanceTime, state.timeOfDay, updateGameState]);
 
   return (
     <div className="apartment-container sonsotyo-scene fade-in" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
@@ -134,6 +135,14 @@ export const ApartmentHub: React.FC = () => {
           <div className="glass-panel sonsotyo-panel">
             <div className="sonsotyo-kicker">Nav Feed</div>
             <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.1rem' }}>{statusText}</div>
+          </div>
+
+          <div className="glass-panel sonsotyo-panel apartment-next-step-panel">
+            <div className="sonsotyo-kicker" style={{ color: 'var(--accent-yellow)' }}>
+              Next move · {nextStep.phase}
+            </div>
+            <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.15rem', lineHeight: 1.4 }}>{nextStep.title}</div>
+            <div className="sonsotyo-copy" style={{ marginTop: '10px' }}>{nextStep.detail}</div>
           </div>
         </div>
 
@@ -165,7 +174,8 @@ export const ApartmentHub: React.FC = () => {
           <button
             className="neo-button primary"
             onClick={() => {
-              setStatusText('Opening transit planner...');
+              setStatusText(needsLucyVN ? 'Finish Lucy first, then transit opens.' : 'Opening transit planner...');
+              if (needsLucyVN) return;
               updateGameState({ transitReturn: 'APARTMENT', currentScene: 'TRANSIT' });
             }}
           >
@@ -280,7 +290,8 @@ export const ApartmentHub: React.FC = () => {
                     if (vnState.flags.reviewedDeck) {
                       updateGameState({ deckEditorReturn: 'APARTMENT', currentScene: 'DECK_EDITOR' });
                     } else {
-                      setScene('DISTRICT_EXPLORE');
+                      setStatusText('Lucy completed the onboarding route. Opening transit orientation...');
+                      updateGameState({ transitReturn: 'APARTMENT', currentScene: 'TRANSIT' });
                     }
                   }}
                 />
