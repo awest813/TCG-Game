@@ -18,6 +18,14 @@ The core engine remains renderer-agnostic. It only knows how to:
 
 That separation is what keeps Babylon.js optional and swappable.
 
+## World content & authoring (trainers, districts, shops, quests)
+
+For **adding NPCs, locations, champion routes, district scripts, shop/tournament gates, and navigation**, see **`src/visual-novel/README.md`**. It documents `scriptRegistry.ts`, URL conventions under `public/vn/`, and dev helpers (`paths.ts`, `contentIndex.ts`).
+
+For **tournament brackets, deck editor return routes, battle handoff, shop SKUs, transit flags, and `GameState` fields** (`activeTournament`, `deckEditorReturn`, …), see **`src/gameplay/README.md`** and `src/gameplay/systemsIndex.ts` (Dev Console → dump tournament tiers).
+
+For **adding files under `public/`, URL conventions, `fetchJson`, prefetch, and automated asset checks**, see **`src/content/README.md`** (`npm run content:verify`, Dev Console → verify strict assets).
+
 ## Related engines & ideas
 
 - **[Monogatari](https://developers.monogatari.io/documentation)** treats a VN as a normal web app: anything you can do on a website (DOM, canvas, APIs) can ship inside the story. That composability matches our split between `Engine` (data + steps) and React UI shells.

@@ -113,6 +113,9 @@ export class StateManager {
     const nextRelationships = { ...this.state.relationships };
     const nextVariables = { ...this.state.variables };
     const nextFlags = { ...this.state.flags };
+    const nextPluginResults = patch.pluginResults
+      ? { ...this.state.pluginResults, ...patch.pluginResults }
+      : this.state.pluginResults;
 
     Object.entries(patch.inventory ?? {}).forEach(([itemId, count]) => {
       nextInventory[itemId] = (nextInventory[itemId] ?? 0) + count;
@@ -134,7 +137,8 @@ export class StateManager {
       inventory: { items: nextInventory },
       relationships: nextRelationships,
       variables: nextVariables,
-      flags: nextFlags
+      flags: nextFlags,
+      pluginResults: nextPluginResults
     });
   }
 

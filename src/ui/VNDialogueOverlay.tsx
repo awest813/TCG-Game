@@ -28,6 +28,7 @@ export const VNDialogueOverlay: React.FC<{
           onClick={onDismiss}
           role="button"
           tabIndex={0}
+          aria-label={`${beat.speaker}: continue or tap`}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') onDismiss();
           }}

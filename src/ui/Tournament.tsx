@@ -253,7 +253,7 @@ export const Tournament: React.FC = () => {
           padding: '40px',
           paddingBottom: 'max(40px, env(safe-area-inset-bottom, 0px))',
           backgroundImage:
-            'linear-gradient(180deg, rgba(7,8,15,0.76), rgba(6,8,12,0.92)), radial-gradient(circle at 14% 18%, rgba(126,242,255,0.12), transparent 20%), url(/metro_map_bg.png)',
+            'linear-gradient(180deg, rgba(7,8,15,0.76), rgba(6,8,12,0.92)), radial-gradient(circle at 14% 18%, rgba(126,242,255,0.12), transparent 20%), url(/assets/bg/dialogue-lattice.svg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
@@ -276,7 +276,7 @@ export const Tournament: React.FC = () => {
               <div className="sonsotyo-meta-strip">
                 <div className="sonsotyo-pill">Currency {state.profile.currency.toLocaleString('en-US')} CR</div>
                 <div className="sonsotyo-pill">Titles {state.profile.stats.tournamentsWon}</div>
-                <div className="sonsotyo-pill">Sleep Circuit Active</div>
+                <div className="sonsotyo-pill">League link online</div>
               </div>
               <div style={{ marginTop: '14px' }}>
                 <button type="button" className="neo-button" onClick={() => { audioManager.playSFX('menu_open'); setShowSettings(true); }}>
@@ -477,7 +477,7 @@ export const Tournament: React.FC = () => {
         padding: '40px',
         paddingBottom: 'max(40px, env(safe-area-inset-bottom, 0px))',
         backgroundImage:
-          'linear-gradient(180deg, rgba(7,8,15,0.76), rgba(6,8,12,0.92)), radial-gradient(circle at 82% 16%, rgba(255,138,198,0.14), transparent 24%), url(/civic_crown_bg.png)',
+          'linear-gradient(180deg, rgba(7,8,15,0.76), rgba(6,8,12,0.92)), radial-gradient(circle at 82% 16%, rgba(255,138,198,0.14), transparent 24%), url(/assets/bg/sweep-protocol.svg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}

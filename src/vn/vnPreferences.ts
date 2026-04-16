@@ -17,8 +17,28 @@ export const VN_AUTO_MS_PRESETS = [1400, 2200, 3000] as const;
 const K = {
   textSpeed: 'vn-pref-text-speed',
   autoMs: 'vn-pref-auto-ms',
-  windowAlpha: 'vn-pref-window-alpha'
+  windowAlpha: 'vn-pref-window-alpha',
+  textScale: 'vn-pref-text-scale'
 } as const;
+
+/** Body text scale (Tyrano / Ren’Py–style comfort options). */
+export const VN_TEXT_SCALE = {
+  compact: 0.92,
+  comfortable: 1,
+  large: 1.12
+} as const;
+
+export type VNTextScale = keyof typeof VN_TEXT_SCALE;
+
+export function readTextScale(): VNTextScale {
+  const v = readPersisted(K.textScale);
+  if (v === 'compact' || v === 'comfortable' || v === 'large') return v;
+  return 'comfortable';
+}
+
+export function writeTextScale(s: VNTextScale) {
+  writePersisted(K.textScale, s);
+}
 
 export function readTextSpeed(): VNTextSpeed {
   const v = readPersisted(K.textSpeed);

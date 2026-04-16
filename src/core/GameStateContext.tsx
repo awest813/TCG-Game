@@ -7,7 +7,7 @@ import { AUTOSAVE_STORAGE_KEY, parsePersistedGameState } from './gameStatePersis
 import { sanitizeGameState } from './gameStateSanitize';
 import { createDefaultSocialState, mergeSocialState } from '../data/trainers';
 
-const INITIAL_QUEST = 'Tutorial: Talk to Maya in your apartment, then follow Lucy’s briefing.';
+const INITIAL_QUEST = 'Tip: Say hi to Lucy at home—she has the perfect rookie tour for you!';
 
 const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; species: string; deck: string[]; collection: string[]; packs: string[]; quest: string }> = {
   Pulse: {
@@ -16,7 +16,7 @@ const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; sp
     deck: ['ziprail', 'ziprail', 'neon-striker', 'neon-striker', 'voltlynx', 'voltlynx', 'signalmite', 'signalmite', 'quick-transfer', 'quick-transfer', 'rooftop-remedy', 'rooftop-remedy'],
     collection: ['ziprail', 'ziprail', 'rail-bastion', 'neon-striker', 'neon-striker', 'voltlynx', 'voltlynx', 'overdrive-fox', 'signalmite', 'signalmite', 'quick-transfer', 'quick-transfer', 'signal-boost', 'rooftop-remedy', 'rooftop-remedy', 'power-cell'],
     packs: ['Metro Pulse', 'Metro Pulse'],
-    quest: 'Tutorial: Apartment onboarding → Transit map → Card Annex beginner bracket → Sunset regional.'
+    quest: 'Adventure: Home with Lucy → Transit map → Card Annex warm-up → Sunset regional fun.'
   },
   Bloom: {
     partnerId: 'mosshop-p1',
@@ -24,7 +24,7 @@ const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; sp
     deck: ['mosshop', 'mosshop', 'verdajack', 'verdajack', 'spore-scout', 'spore-scout', 'signalmite', 'signalmite', 'rooftop-remedy', 'rooftop-remedy', 'quick-transfer', 'system-refresh'],
     collection: ['mosshop', 'mosshop', 'lush-golem', 'verdajack', 'verdajack', 'spore-scout', 'spore-scout', 'bloom-whisper', 'seedling-bot', 'solar-rose', 'quick-transfer', 'system-refresh', 'rooftop-remedy', 'rooftop-remedy', 'stim-patch', 'power-cell'],
     packs: ['Garden Shift', 'Metro Pulse'],
-    quest: 'Tutorial: Apartment onboarding → Transit map → Card Annex beginner bracket → Sunset regional.'
+    quest: 'Adventure: Home with Lucy → Transit map → Card Annex warm-up → Sunset regional fun.'
   },
   Tide: {
     partnerId: 'wharfin-p1',
@@ -32,7 +32,7 @@ const STARTER_LOADOUTS: Record<NewGameConfig['starter'], { partnerId: string; sp
     deck: ['wharfin', 'wharfin', 'mist-glider', 'mist-glider', 'coral-guard', 'coral-guard', 'quick-transfer', 'quick-transfer', 'system-refresh', 'system-refresh', 'rooftop-remedy', 'power-cell'],
     collection: ['wharfin', 'wharfin', 'tidal-whale', 'mist-glider', 'mist-glider', 'coral-guard', 'coral-guard', 'wave-rider', 'data-diver', 'quick-transfer', 'quick-transfer', 'system-refresh', 'system-refresh', 'rooftop-remedy', 'stim-patch', 'power-cell'],
     packs: ['Neon Echo', 'Bayline Current'],
-    quest: 'Tutorial: Apartment onboarding → Transit map → Card Annex beginner bracket → Sunset regional.'
+    quest: 'Adventure: Home with Lucy → Transit map → Card Annex warm-up → Sunset regional fun.'
   }
 };
 
@@ -41,7 +41,7 @@ const createProfile = (config?: NewGameConfig): PlayerProfile => {
   const loadout = STARTER_LOADOUTS[starter];
 
   return {
-    name: config?.name?.trim() || 'Neo_Rookie',
+    name: config?.name?.trim() || 'New Trainer',
     currency: DEFAULT_STARTING_CREDITS,
     level: 1,
     xp: 0,
@@ -105,7 +105,7 @@ const createInitialState = (config?: NewGameConfig, startInMenu = true): GameSta
     currentQuest: config
       ? STARTER_LOADOUTS[starter].quest
       : startInMenu
-        ? 'Title screen: Continue loads your autosave. New game opens the apartment tutorial (Lucy), then Transit and the Card Annex.'
+        ? 'Title: Continue picks up your save. New Trainer starts at home with Lucy, then the train and Card Annex!'
         : INITIAL_QUEST,
     activeTournament: null,
     pendingTournamentId: null,
@@ -127,7 +127,7 @@ const normalizeProfile = (profile: PlayerProfile): PlayerProfile => {
   const starterLoadout = STARTER_LOADOUTS[starter as NewGameConfig['starter']] ?? STARTER_LOADOUTS.Pulse;
 
   const safeCurrency = Math.max(0, Math.min(99_999_999, Math.floor(Number(profile.currency) || 0)));
-  const safeName = typeof profile.name === 'string' && profile.name.trim() ? profile.name.trim() : 'Neo_Rookie';
+  const safeName = typeof profile.name === 'string' && profile.name.trim() ? profile.name.trim() : 'New Trainer';
 
   return {
     ...profile,
@@ -248,7 +248,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetGame = (config?: NewGameConfig) => {
-    setState(createInitialState(config ?? { name: 'Neo_Rookie', starter: 'Pulse' }, false));
+    setState(createInitialState(config ?? { name: 'New Trainer', starter: 'Pulse' }, false));
   };
 
   return (

@@ -103,7 +103,7 @@ export const TransitStation: React.FC = () => {
         height: '100%',
         maxHeight: '100%',
         background:
-          'linear-gradient(180deg, rgba(8,10,18,0.82), rgba(4,6,10,0.94)), radial-gradient(circle at 50% 50%, rgba(126,242,255,0.08), transparent 44%), url("/rotom_map_bg.png")',
+          'linear-gradient(180deg, rgba(8,10,18,0.82), rgba(4,6,10,0.94)), radial-gradient(circle at 50% 50%, rgba(126,242,255,0.08), transparent 44%), url("/assets/bg/dialogue-lattice.svg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         overflow: 'hidden',
@@ -119,10 +119,10 @@ export const TransitStation: React.FC = () => {
       <div className="sonsotyo-content" style={{ position: 'absolute', inset: 0, padding: '30px', display: 'grid', gridTemplateRows: 'auto auto 1fr auto', gap: '18px' }}>
         <div className="sonsotyo-hero">
           <div className="glass-panel sonsotyo-hero-card">
-            <div className="sonsotyo-kicker">Neo-Rail GPS v4.0</div>
+            <div className="sonsotyo-kicker">Neo-Rail buddy map</div>
             <h1 className="sonsotyo-title" style={{ fontSize: 'clamp(2.4rem, 5vw, 4rem)', marginTop: '10px' }}>Transit Grid</h1>
             <p className="sonsotyo-copy" style={{ maxWidth: '42ch', marginTop: '12px' }}>
-              Sleep-city route planning for rival circuits, market detours, and late-night district hopping.
+              Hop trains between districts, chase rivals for rematches, and discover little market detours—the city is your playground.
             </p>
           </div>
           <div className="glass-panel sonsotyo-panel">

@@ -11,10 +11,10 @@ export const SocialHangout: React.FC = () => {
   const signal = kaizen ? getTrainerRelationshipSignal(kaizen, social.trainers.kaizen) : null;
 
   const dialogue = [
-    { speaker: 'KAIZEN', text: 'Hey. Glad you actually showed. The terminal overlook hits different when the rails are still warm and the skyline goes pink.', avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/avatar_kaizen.png' },
-    { speaker: 'PLAYER', text: "Yeah, it's pretty impressive. Most people are too busy dueling to notice.", avatar: '/avatar_player.png' },
-    { speaker: 'KAIZEN', text: "That's why I like it here. It's not just wins. It's the whole scene: the noise, the locals, the stories people pretend don't matter until they lose one.", avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/avatar_kaizen.png' },
-    { speaker: 'KAIZEN', text: "Anyway, take this prototype. I could call it a gift, but let's be honest, it feels better as fuel for the rivalry.", avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/avatar_kaizen.png' }
+    { speaker: 'KAIZEN', text: 'Hey. Glad you actually showed. The terminal overlook hits different when the rails are still warm and the skyline goes pink.', avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/bust_kaizen.svg' },
+    { speaker: 'PLAYER', text: "Yeah, it's pretty impressive. Most people are too busy dueling to notice.", avatar: '/bust_kaizen.svg' },
+    { speaker: 'KAIZEN', text: "That's why I like it here. It's not just wins. It's the whole scene: the noise, the locals, the stories people pretend don't matter until they lose one.", avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/bust_kaizen.svg' },
+    { speaker: 'KAIZEN', text: "Anyway, take this prototype. I could call it a gift, but let's be honest, it feels better as fuel for the rivalry.", avatar: kaizen?.bustPath ?? kaizen?.portraitPath ?? '/bust_kaizen.svg' }
   ];
 
   const handleNext = () => {

@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { audioManager } from '../core/AudioManager';
-import { ShopItem } from '../core/types';
 import { getCircuitNextStep, isShopVeteranUnlocked, migrateCircuitFlags } from '../core/circuitProgression';
+import type { ShopItem } from '../core/types';
 import { formatCredits, getBracketEconomyCaption, getBracketSweepPot } from '../core/economy';
 import { TOURNAMENT_TIERS } from '../core/TournamentManager';
 import { getCardById, resolveCardImage } from '../data/cards';
+import { SHOP_INVENTORY } from '../data/shopInventory';
 import { SystemMenu } from '../ui/SystemMenu';
 import '../styles/SonsotyoScenes.css';
-
-const SHOP_INVENTORY: ShopItem[] = [
-  { id: 'p1', targetId: 'Metro Pulse', name: 'METRO PULSE PACK', description: 'Core data from the city rhythm.', cost: 200, type: 'PACK', image: '/assets/packs/metro-pulse.svg' },
-  { id: 'p2', targetId: 'Neural Veil', name: 'NEURAL VEIL PACK', description: 'Technical denial and alloys.', cost: 250, type: 'PACK', image: '/assets/packs/neural-veil.svg' },
-  { id: 's1', targetId: 'neon-striker', name: 'NEON STRIKER (SINGLE)', description: 'Direct acquisition of the combat classic.', cost: 500, type: 'SINGLE', image: '' },
-  { id: 's2', targetId: 'voltlynx', name: 'VOLTLYNX (SINGLE)', description: 'Fast-sync voltage unit.', cost: 450, type: 'SINGLE', image: '' },
-  { id: 'c1', targetId: 'Gold Sleeve', name: 'CHAMPION SLEEVES', description: 'Cosmetic module for your data.', cost: 1000, type: 'COSMETIC', image: '/assets/items/holo-sleeve.svg' }
-];
 
 export const CardShop: React.FC = () => {
   const { state, updateProfile, updateGameState, setScene } = useGame();

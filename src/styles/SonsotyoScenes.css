@@ -102,7 +102,7 @@
   background:
     linear-gradient(180deg, rgba(4, 5, 10, 0.92), rgba(2, 3, 7, 0.97)),
     radial-gradient(ellipse 90% 45% at 50% -5%, rgba(120, 90, 50, 0.14), transparent 50%),
-    url(/sunset_terminal_bg.png);
+    url(/assets/bg/deck-terminal.svg);
   background-size: cover;
   background-position: center;
 }
@@ -149,6 +149,12 @@
   margin: 4px 0 0;
   letter-spacing: 0.03em;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+}
+
+.launcher-title--official {
+  font-size: clamp(1.05rem, 2.9vw, 1.72rem);
+  line-height: 1.18;
+  max-width: 100%;
 }
 
 .launcher-subtitle {
@@ -204,6 +210,12 @@
   flex: 1 1 auto;
   align-content: start;
   min-height: min(420px, 48vh);
+}
+
+.launcher-body--solo {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 520px;
+  margin: 0 auto;
 }
 
 .launcher-column--primary {
@@ -499,6 +511,12 @@
 
 .launcher-footer-sep {
   opacity: 0.45;
+}
+
+.launcher-footer-hint {
+  opacity: 0.42;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
 }
 
 .launcher-system-overlay {
@@ -1174,11 +1192,7 @@
   min-height: 0;
 }
 
-.apartment-first-session-vn-inner {
-  pointer-events: auto;
-  max-width: min(720px, 100%);
-  width: 100%;
-}
+/* Width + flex lives in VNPresentation.css (Lucy VN stack) */
 
 @media (max-width: 900px) {
   .apartment-onboarding-rail--stacked .apartment-onboarding-rail-inner {
@@ -1448,8 +1462,12 @@
 }
 
 .system-menu-intro {
-  margin-top: 12px;
-  max-width: 52ch;
+  margin-top: 6px;
+  margin-bottom: 0;
+  max-width: 48ch;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: rgba(200, 210, 230, 0.75);
 }
 
 .system-menu-summary-strip {
@@ -1729,14 +1747,13 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  opacity: 0.72;
-  transform: translateY(6px) scale(0.96);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  opacity: 0.78;
+  transform: none;
+  transition: opacity 0.2s ease;
 }
 
 .vn-runner-bust.focus {
   opacity: 1;
-  transform: translateY(0) scale(1);
 }
 
 .vn-runner-bust.empty {
@@ -1770,14 +1787,13 @@
 }
 
 .vn-runner-center-portrait {
-  opacity: 0.88;
-  transform: scale(0.98);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  opacity: 0.92;
+  transform: none;
+  transition: opacity 0.2s ease;
 }
 
 .vn-runner-center-portrait.focus {
   opacity: 1;
-  transform: scale(1);
 }
 
 .vn-runner-center-portrait img {
@@ -2097,7 +2113,7 @@
   background:
     linear-gradient(180deg, rgba(8, 10, 18, 0.82), rgba(4, 6, 10, 0.94)),
     radial-gradient(circle at 16% 18%, rgba(126, 242, 255, 0.14), transparent 22%),
-    url(/sunset_apartments_bg.png);
+    url(/assets/bg/onboarding-route.svg);
   background-size: cover;
   background-position: center;
 }
@@ -2106,13 +2122,13 @@
   background:
     linear-gradient(180deg, rgba(8, 10, 18, 0.84), rgba(4, 6, 10, 0.94)),
     radial-gradient(circle at 18% 18%, rgba(126, 242, 255, 0.14), transparent 22%),
-    url(/sunset_terminal_bg.png);
+    url(/assets/bg/deck-terminal.svg);
   background-size: cover;
   background-position: center;
 }
 
 .sonsotyo-scene-surface--photo-terminal {
-  background: url(/sunset_terminal_bg.png) center / cover;
+  background: url(/assets/bg/deck-terminal.svg) center / cover;
 }
 
 .sonsotyo-scene-surface--deck {
@@ -2129,7 +2145,7 @@
     linear-gradient(180deg, rgba(8, 10, 18, 0.82), rgba(4, 6, 10, 0.94)),
     radial-gradient(circle at 18% 18%, rgba(126, 242, 255, 0.12), transparent 22%),
     url(/assets/bg/card-annex.svg),
-    url(/market_arcade_bg.png);
+    url(/assets/bg/card-annex.svg);
   background-size: cover;
   background-position: center;
 }

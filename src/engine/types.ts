@@ -128,6 +128,8 @@ export interface StatePatch {
   relationships?: Record<string, number>;
   variables?: Record<string, JSONValue>;
   flags?: Record<string, boolean>;
+  /** Merge into `pluginResults` (e.g. narrative “dry run” without a Babylon plugin). */
+  pluginResults?: Record<string, PluginResult>;
 }
 
 export interface StateMutationStep extends StepBase {

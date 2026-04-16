@@ -7,7 +7,7 @@
       "id": "opening",
       "title": "Quiet Apartment",
       "steps": [
-        { "type": "visual", "background": "/sunset_apartments_bg.png", "transition": "fade" },
+        { "type": "visual", "background": "/assets/bg/onboarding-route.svg", "transition": "fade" },
         { "type": "audio", "action": "play-bgm", "track": "bgm_evening_rest" },
         { "type": "dialogue", "speakerId": "narrator", "text": "The apartment finally goes quiet enough for you to hear your own breathing." },
         {

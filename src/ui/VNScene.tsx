@@ -4,6 +4,7 @@ import { VNEngineState } from '../engine/types';
 import { TRAINERS, mergeSocialState } from '../data/trainers';
 import { createSceneTransition, createVNExitTransition } from '../core/sceneTransitions';
 import { resolveCompletionScene } from '../visual-novel/scriptRegistry';
+import '../styles/VNPresentation.css';
 import { VNRunner } from './VNRunner';
 
 const isScalarVariable = (value: unknown): value is string | number | boolean | null =>
@@ -88,14 +89,12 @@ export const VNScene: React.FC = () => {
 
   if (!session) {
     return (
-      <div className="fade-in vn-scene-scroll" style={{ display: 'grid', placeItems: 'center', padding: '16px' }}>
-        <div className="glass-panel" style={{ width: 'min(560px, 100%)', maxWidth: '100%', padding: '28px 30px', textAlign: 'center' }}>
-          <div className="system-menu-kicker">VN Scene</div>
-          <div className="glow-text" style={{ marginTop: '10px', fontSize: '2.4rem' }}>No Active Script</div>
-          <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            The route runner was opened without a valid script session.
-          </div>
-          <button className="neo-button" style={{ marginTop: '18px' }} onClick={() => updateGameState({ currentScene: 'APARTMENT' })}>
+      <div className="vn-scene-root vn-scene-root--idle fade-in">
+        <div className="glass-panel vn-scene-idle-card">
+          <div className="system-menu-kicker">Story</div>
+          <div className="glow-text vn-scene-idle-title">No active route</div>
+          <p className="vn-scene-idle-copy">The narrative runner was opened without a script session.</p>
+          <button type="button" className="neo-button primary" onClick={() => updateGameState({ currentScene: 'APARTMENT' })}>
             Return to apartment
           </button>
         </div>
@@ -104,16 +103,9 @@ export const VNScene: React.FC = () => {
   }
 
   return (
-    <div
-      className="fade-in vn-scene-scroll"
-      style={{
-        padding: 'clamp(24px, 10vh, 120px) 24px max(40px, env(safe-area-inset-bottom, 0px))',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
+    <div className="vn-scene-root fade-in">
       <VNRunner
+        presentationMode="immersive"
         scriptUrl={session.scriptUrl}
         canvasId={session.canvasId}
         title={session.title}

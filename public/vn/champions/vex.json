@@ -9,9 +9,9 @@
       "steps": [
         {
           "type": "visual",
-          "background": "/market_arcade_bg.png",
+          "background": "/assets/bg/card-annex.svg",
           "portrait": "/portrait_vex.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_vex.svg",
           "focusSide": "right",
           "transition": "fade"
@@ -21,7 +21,7 @@
           "speakerId": "vex",
           "text": "You can tell everything about a duelist from their first two moves. So make yours fast.",
           "portrait": "/portrait_vex.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_vex.svg",
           "focusSide": "right"
         },
@@ -88,7 +88,7 @@
             }
           ],
           "portrait": "/portrait_vex.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_vex.svg",
           "focusSide": "right"
         },
@@ -103,7 +103,7 @@
             }
           ],
           "portrait": "/portrait_vex.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_vex.svg",
           "focusSide": "right"
         },
@@ -118,7 +118,7 @@
             }
           ],
           "portrait": "/portrait_vex.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_vex.svg",
           "focusSide": "right"
         }

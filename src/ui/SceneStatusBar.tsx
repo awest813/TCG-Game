@@ -45,11 +45,11 @@ export const SceneStatusBar: React.FC = () => {
   return (
     <div className="scene-status-bar" role="region" aria-label="Session status">
       <div className="scene-status-bar__operator">
-        <span className="scene-status-bar__operator-label">Operator</span>
+        <span className="scene-status-bar__operator-label">Pilot</span>
         {operator}
       </div>
       <div className="scene-status-bar__quest">
-        <span className="scene-status-bar__quest-label">Objective</span>
+        <span className="scene-status-bar__quest-label">Quest</span>
         <span className="scene-status-bar__quest-text" title={questLine}>
           {questLine}
         </span>

@@ -9,9 +9,9 @@
       "steps": [
         {
           "type": "visual",
-          "background": "/redwood_heights_bg.png",
+          "background": "/assets/fields/battle-base.svg",
           "portrait": "/portrait_valerious.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_valerious.svg",
           "focusSide": "right",
           "transition": "fade"
@@ -21,7 +21,7 @@
           "speakerId": "valerious",
           "text": "Every leaf in Redwood Heights survives by earning its place in the sun. Why should a challenger be any different?",
           "portrait": "/portrait_valerious.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_valerious.svg",
           "focusSide": "right"
         },
@@ -88,7 +88,7 @@
             }
           ],
           "portrait": "/portrait_valerious.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_valerious.svg",
           "focusSide": "right"
         },
@@ -103,7 +103,7 @@
             }
           ],
           "portrait": "/portrait_valerious.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_valerious.svg",
           "focusSide": "right"
         },
@@ -118,7 +118,7 @@
             }
           ],
           "portrait": "/portrait_valerious.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_valerious.svg",
           "focusSide": "right"
         }

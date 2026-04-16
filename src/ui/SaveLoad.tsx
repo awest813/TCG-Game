@@ -145,7 +145,7 @@ export const SaveLoad: React.FC = () => {
       const text = await file.text();
       const parsed = parsePersistedGameState(text);
       if (!parsed) {
-        flashStatus('That file is not a valid Sleep Future save (wrong shape or corrupt JSON).', 'warn');
+        flashStatus('That file is not a valid Sonsotyo League: Duel Link save—wrong shape or corrupted JSON.', 'warn');
         return;
       }
 

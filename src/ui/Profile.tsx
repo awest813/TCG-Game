@@ -31,7 +31,7 @@ export const Profile: React.FC = () => {
       <div className="sonsotyo-content" style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
         <div className="sonsotyo-hero">
           <SonsotyoHeroCard>
-            <SonsotyoKicker>User Profile Authorized</SonsotyoKicker>
+            <SonsotyoKicker>Your Trainer card</SonsotyoKicker>
             <SonsotyoTitle style={{ fontSize: 'clamp(2.6rem, 6vw, 4.8rem)', marginTop: '10px' }}>{profile.name}</SonsotyoTitle>
             <p className="sonsotyo-copy" style={{ maxWidth: '44ch', marginTop: '14px' }}>
               A soft-glass passport for your duel route: stats, contacts, cards, and the shape of your playstyle over time.
@@ -44,7 +44,7 @@ export const Profile: React.FC = () => {
           </SonsotyoHeroCard>
 
           <SonsotyoPanel>
-            <SonsotyoKicker>Shell Navigation</SonsotyoKicker>
+            <SonsotyoKicker>Adventure snapshot</SonsotyoKicker>
             <div style={{ marginTop: '14px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               {(['DOSSIER', 'INVENTORY', 'SYNC_ANALYTICS'] as ProfileTab[]).map((tab) => (
                 <button key={tab} onClick={() => setActiveTab(tab)} className={`neo-button ${activeTab === tab ? 'primary' : ''}`}>
@@ -92,7 +92,7 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
   <div className="sonsotyo-grid two">
     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
       <SonsotyoPanel>
-        <SonsotyoKicker>Passport</SonsotyoKicker>
+        <SonsotyoKicker>League ID</SonsotyoKicker>
         <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '4.2rem', opacity: 0.18 }}>
           {(profile.name.trim()[0] ?? '?').toUpperCase()}
         </div>
@@ -104,7 +104,7 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
           <PassportStat label="Losses" value={profile.stats.losses} />
         </div>
         <div style={{ marginTop: '18px' }}>
-          <SonsotyoKicker>Credit Balance</SonsotyoKicker>
+          <SonsotyoKicker>Pocket credits</SonsotyoKicker>
           <div style={{ marginTop: '8px', fontFamily: 'var(--font-display)', fontSize: '1.8rem', color: 'var(--accent-yellow)' }}>
             {profile.currency.toLocaleString('en-US')} CR
           </div>
@@ -112,7 +112,7 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
       </SonsotyoPanel>
 
       <SonsotyoPanel>
-        <SonsotyoKicker>Faction standing</SonsotyoKicker>
+        <SonsotyoKicker>Team buddies</SonsotyoKicker>
         <p className="sonsotyo-copy" style={{ marginTop: '10px', fontSize: '0.82rem', lineHeight: 1.5 }}>
           Rep rises from story beats and circuit results. Rank gates how NPCs read you on the street.
         </p>
@@ -139,7 +139,7 @@ const DossierView: React.FC<{ profile: PlayerProfile; social: SocialState }> = (
     </div>
 
     <SonsotyoPanel>
-      <SonsotyoKicker>Known Contacts</SonsotyoKicker>
+      <SonsotyoKicker>Friends on the circuit</SonsotyoKicker>
       <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
         {TRAINERS.map((trainer) => {
           const relationship = social.trainers[trainer.id];
@@ -226,7 +226,7 @@ const InventoryView: React.FC<{ cards: Card[]; progress: number }> = ({ cards, p
 const AnalyticsView: React.FC<{ stats: PlayerProfile['stats'] }> = ({ stats }) => (
   <div className="sonsotyo-grid two">
     <SonsotyoPanel>
-      <SonsotyoKicker>Performance Metrics</SonsotyoKicker>
+      <SonsotyoKicker>Duel highlights</SonsotyoKicker>
       <div style={{ marginTop: '16px', display: 'grid', gap: '12px' }}>
         <AnalyticsRow label="Active Sync Time" value={`${stats.playTime} MINUTES`} />
         <AnalyticsRow label="Current win streak" value={String(stats.winStreak)} />
@@ -239,7 +239,7 @@ const AnalyticsView: React.FC<{ stats: PlayerProfile['stats'] }> = ({ stats }) =
     </SonsotyoPanel>
 
     <SonsotyoPanel>
-      <SonsotyoKicker>Archetype Resonance</SonsotyoKicker>
+      <SonsotyoKicker>Favorite styles</SonsotyoKicker>
       <div style={{ marginTop: '16px', display: 'grid', gap: '14px' }}>
         {Object.entries(stats.archetypeUsage).map(([type, value]) => {
           const percent = Math.min(100, value * 5);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../core/GameContext';
 import { VNRunner } from '../ui/VNRunner';
 import { VNEngineState } from '../engine/types';
@@ -12,8 +12,7 @@ import '../styles/SonsotyoScenes.css';
 import '../styles/VNPresentation.css';
 
 export const ApartmentHub: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { state, saveGame, advanceTime, updateProfile, updateGameState } = useGame();
+  const { state, saveGame, updateProfile, updateGameState } = useGame();
   const [showWakeUp, setShowWakeUp] = useState(state.timeOfDay === 'MORNING');
   const [showSettings, setShowSettings] = useState(false);
   const [statusText, setStatusText] = useState('Apartment systems online.');
@@ -23,118 +22,14 @@ export const ApartmentHub: React.FC = () => {
   const lucyStoryFocus = showFirstSessionShell && needsLucyVN;
   const nextStep = getCircuitNextStep(circuitFlags, state.profile.stats.tournamentsWon);
   const starter = state.profile.progress.flags.onboardingStarter as string | undefined;
-  const canvasId = 'apartment-babylon-canvas';
-  const onboardingSession = createApartmentOnboardingSession(starter, canvasId);
-
-  useEffect(() => {
-    if (!canvasRef.current) return undefined;
-
-    let isDisposed = false;
-    let cleanup: (() => void) | undefined;
-
-    const bootApartmentScene = async () => {
-      const { ArcRotateCamera, Color3, Engine, GlowLayer, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } = await import('@babylonjs/core');
-      if (!canvasRef.current || isDisposed) return;
-
-      const engine = new Engine(canvasRef.current, true);
-      const scene = new Scene(engine);
-      scene.clearColor = Color3.FromHexString('#050510').toColor4();
-
-      const camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2.5, 6, new Vector3(0, 1.5, 0), scene);
-      camera.attachControl(canvasRef.current, true);
-      camera.lowerRadiusLimit = 4;
-      camera.upperRadiusLimit = 10;
-      camera.useAutoRotationBehavior = true;
-
-      const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
-      light.intensity = 0.4;
-
-      const glow = new GlowLayer('glow', scene);
-      glow.intensity = 0.6;
-
-      const ground = MeshBuilder.CreateGround('ground', { width: 10, height: 10 }, scene);
-      const wallLeft = MeshBuilder.CreatePlane('wallLeft', { width: 10, height: 6 }, scene);
-      wallLeft.position.z = 5;
-      wallLeft.position.y = 3;
-      const wallRight = MeshBuilder.CreatePlane('wallRight', { width: 10, height: 6 }, scene);
-      wallRight.position.x = -5;
-      wallRight.position.y = 3;
-      wallRight.rotation.y = Math.PI / 2;
-
-      const roomMat = new StandardMaterial('roomMat', scene);
-      roomMat.diffuseColor = new Color3(0.1, 0.1, 0.15);
-      roomMat.specularColor = new Color3(0.2, 0.2, 0.3);
-      ground.material = wallLeft.material = wallRight.material = roomMat;
-
-      const bed = MeshBuilder.CreateBox('bed', { width: 2, height: 0.5, depth: 4 }, scene);
-      bed.position.set(3, 0.25, 3);
-      const bedMat = new StandardMaterial('bedMat', scene);
-      bedMat.diffuseColor = Color3.FromHexString('#2e1a47');
-      bed.material = bedMat;
-
-      const desk = MeshBuilder.CreateBox('desk', { width: 2.5, height: 0.8, depth: 1 }, scene);
-      desk.position.set(-3.5, 0.4, 4);
-      const deskMat = new StandardMaterial('deskMat', scene);
-      deskMat.diffuseColor = new Color3(0.05, 0.05, 0.1);
-      desk.material = deskMat;
-
-      const terminal = MeshBuilder.CreateBox('terminal', { size: 0.4 }, scene);
-      terminal.position.set(-3.5, 1, 4.2);
-      const terminalMat = new StandardMaterial('termMat', scene);
-      terminalMat.emissiveColor = Color3.FromHexString('#00f2ff');
-      terminal.material = terminalMat;
-
-      const windowMesh = MeshBuilder.CreatePlane('window', { width: 3, height: 2 }, scene);
-      windowMesh.position.set(0, 3, 4.95);
-      const winMat = new StandardMaterial('winMat', scene);
-      const winColors = { MORNING: '#ffaa00', AFTERNOON: '#00aaff', EVENING: '#ff00aa' } as const;
-      winMat.emissiveColor = Color3.FromHexString(winColors[state.timeOfDay]);
-      windowMesh.material = winMat;
-
-      scene.onPointerDown = (_, pickResult) => {
-        if (!pickResult.hit || !pickResult.pickedMesh) return;
-        const name = pickResult.pickedMesh.name;
-        if (name === 'terminal') {
-          setStatusText('Opening sync terminal...');
-          updateGameState({
-            deckEditorReturn: 'APARTMENT',
-            sceneTransition: createSceneTransition(state.currentScene, 'DECK_EDITOR', {
-              kicker: 'Apartment To Deck',
-              title: 'Opening sync terminal',
-              detail: 'Mounting deck tools, collection cache, and route notes.'
-            })
-          });
-        }
-        if (name === 'bed' && confirm('Rest until next time block?')) {
-          setStatusText('Advancing schedule...');
-          advanceTime();
-        }
-      };
-
-      engine.runRenderLoop(() => scene.render());
-      const onResize = () => engine.resize();
-      window.addEventListener('resize', onResize);
-      cleanup = () => {
-        window.removeEventListener('resize', onResize);
-        engine.dispose();
-      };
-    };
-
-    void bootApartmentScene();
-
-    return () => {
-      isDisposed = true;
-      cleanup?.();
-    };
-  }, [advanceTime, state.currentScene, state.timeOfDay, updateGameState]);
+  const onboardingSession = createApartmentOnboardingSession(starter);
 
   return (
     <div
-      className={`apartment-container sonsotyo-scene fade-in${lucyStoryFocus ? ' apartment-container--lucy-story' : ''}`}
+      className={`apartment-container sonsotyo-scene sonsotyo-scene-surface--apartments fade-in${lucyStoryFocus ? ' apartment-container--lucy-story' : ''}`}
       style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}
     >
       {showSettings && <SystemMenu onClose={() => setShowSettings(false)} />}
-      <canvas id={canvasId} ref={canvasRef} style={{ width: '100%', height: '100%', outline: 'none' }} />
       <div className="sonsotyo-overlay" />
 
       <div
@@ -300,7 +195,6 @@ export const ApartmentHub: React.FC = () => {
                 <VNRunner
                   presentationMode="immersive"
                   scriptUrl={onboardingSession.scriptUrl}
-                  canvasId={canvasId}
                   title={onboardingSession.title}
                   subtitle={onboardingSession.subtitle}
                   onStateSync={(vnState: VNEngineState) => {

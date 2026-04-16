@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import { useGame } from '../core/GameContext';
 import { SceneType } from '../core/types';
+import { listPrefetchBundleUrls, listStrictPublicAssetUrls } from '../content/referencedUrls';
+import { prefetchAssetUrls, verifyPublicUrlsReachable } from '../content/fetchContent';
+import { logTournamentSystemsIndex } from '../gameplay/systemsIndex';
+import { logExpectedNarrativeIndex } from '../visual-novel/contentIndex';
 import { EasyVNHost } from '../vn/EasyVNHost';
 import '../styles/SonsotyoScenes.css';
 
 export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { setScene, updateProfile, updateGameState } = useGame();
+  const { setScene, updateProfile, updateGameState, state } = useGame();
   const [showEasyVN, setShowEasyVN] = React.useState(false);
 
   const scenes: SceneType[] = [
@@ -76,6 +80,95 @@ export const DevConsole: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               Jump: {s.replace(/_/g, ' ')}
             </button>
           ))}
+        </div>
+
+        <div style={{ marginTop: '22px', paddingTop: '18px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ fontSize: '0.68rem', letterSpacing: '0.12rem', color: 'var(--accent-yellow)', marginBottom: '10px' }}>
+            VN CONTENT (see src/visual-novel/README.md)
+          </div>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="neo-button"
+              onClick={() => {
+                logExpectedNarrativeIndex();
+              }}
+            >
+              Dump VN path index (console)
+            </button>
+          </div>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', marginTop: '10px', lineHeight: 1.45, maxWidth: '52ch' }}>
+            Lists every champion JSON and district route JSON implied by npcs + locations. Use to find missing files before a build.
+          </p>
+        </div>
+
+        <div style={{ marginTop: '22px', paddingTop: '18px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ fontSize: '0.68rem', letterSpacing: '0.12rem', color: 'var(--accent-yellow)', marginBottom: '10px' }}>
+            CONTENT & ASSETS (see src/content/README.md)
+          </div>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="neo-button"
+              onClick={() => {
+                const urls = listPrefetchBundleUrls();
+                prefetchAssetUrls(urls);
+                console.info(`[Content] Prefetch started for ${urls.length} URLs (images + JSON cache).`);
+              }}
+            >
+              Prefetch strict bundle
+            </button>
+            <button
+              type="button"
+              className="neo-button"
+              onClick={() => {
+                void (async () => {
+                  const rows = await verifyPublicUrlsReachable(listStrictPublicAssetUrls());
+                  const bad = rows.filter((r) => !r.ok);
+                  console.table(rows.map((r) => ({ url: r.url, ok: r.ok ? 'yes' : 'NO' })));
+                  if (bad.length) {
+                    console.warn(`[Content] Missing or unreachable (${bad.length}):`, bad.map((b) => b.url));
+                  } else {
+                    console.info(`[Content] All ${rows.length} strict assets responded OK.`);
+                  }
+                })();
+              }}
+            >
+              Verify strict assets (HTTP)
+            </button>
+          </div>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', marginTop: '10px', lineHeight: 1.45, maxWidth: '56ch' }}>
+            HTTP check needs a running dev/preview server. For disk-only CI, run <code style={{ color: 'var(--accent-secondary)' }}>npm run content:verify</code>.
+          </p>
+        </div>
+
+        <div style={{ marginTop: '22px', paddingTop: '18px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ fontSize: '0.68rem', letterSpacing: '0.12rem', color: 'var(--accent-yellow)', marginBottom: '10px' }}>
+            GAMEPLAY (see src/gameplay/README.md)
+          </div>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="neo-button"
+              onClick={() => {
+                logTournamentSystemsIndex(state.profile.progress.flags);
+              }}
+            >
+              Dump tournament tiers (console)
+            </button>
+            <button
+              type="button"
+              className="neo-button"
+              onClick={() => {
+                logTournamentSystemsIndex({});
+              }}
+            >
+              Dump tiers — fresh flags
+            </button>
+          </div>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', marginTop: '10px', lineHeight: 1.45, maxWidth: '52ch' }}>
+            Console table: bracket length, entry fee, annex vs district, lock reasons. Second button uses empty flags (new-save view).
+          </p>
         </div>
 
         <div style={{ marginTop: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>

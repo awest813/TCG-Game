@@ -7,7 +7,7 @@
       "id": "opening",
       "title": "Platform Departure",
       "steps": [
-        { "type": "visual", "background": "/sunset_terminal_bg.png", "transition": "slide" },
+        { "type": "visual", "background": "/assets/bg/deck-terminal.svg", "transition": "slide" },
         { "type": "audio", "action": "play-sfx", "track": "sfx_train_arrival" },
         { "type": "dialogue", "speakerId": "announcer", "text": "NeoRail doors are opening. Next stop: the wider city and everything waiting inside it." },
         { "type": "dialogue", "speakerId": "narrator", "text": "Every route starts with the same sensation: the platform edge, the lights, and the feeling that the chapter is about to widen." }

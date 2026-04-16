@@ -570,10 +570,6 @@ input[type='range']::-moz-range-thumb {
     opacity: 0.45;
   }
 
-  .crt-flicker {
-    animation: none !important;
-  }
-
   .fade-in {
     animation: none !important;
     opacity: 1 !important;
@@ -627,17 +623,7 @@ input[type='range']::-moz-range-thumb {
     linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16));
   pointer-events: none;
   z-index: 100;
-  opacity: 0.22;
-}
-
-@keyframes flicker {
-  0% { opacity: 0.98; }
-  50% { opacity: 1; }
-  100% { opacity: 0.99; }
-}
-
-.crt-flicker {
-  animation: flicker 0.15s infinite;
+  opacity: 0.12;
 }
 
 .phone-ui-container {
@@ -662,14 +648,49 @@ input[type='range']::-moz-range-thumb {
   height: 100%;
   max-width: 1400px;
   max-height: 900px;
-  background: linear-gradient(180deg, rgba(30, 34, 52, 0.96), rgba(18, 21, 34, 0.98));
-  border-radius: 36px;
-  border: 10px solid #262b3b;
-  box-shadow: 0 0 80px rgba(0, 0, 0, 0.65), inset 0 0 24px rgba(255, 255, 255, 0.04), 0 0 36px rgba(126, 242, 255, 0.06);
+  background: linear-gradient(180deg, rgba(26, 28, 40, 0.98), rgba(14, 16, 24, 0.99));
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   position: relative;
-  padding: 18px;
+  padding: 12px 14px 14px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.phone-bezel-top,
+.phone-bezel-bottom {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+}
+
+.phone-bezel-title {
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  letter-spacing: 0.28rem;
+  text-transform: uppercase;
+  color: rgba(200, 210, 230, 0.45);
+}
+
+.phone-bezel-bottom {
+  min-height: 10px;
+  border-radius: 99px;
+  margin: 0 auto;
+  width: min(120px, 40%);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.phone-screen-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
 }
 
 .phone-screen {
@@ -731,9 +752,8 @@ input[type='range']::-moz-range-thumb {
   }
 
   .phone-shell {
-    border-width: 8px;
-    border-radius: 28px;
-    padding: 14px;
+    border-radius: 22px;
+    padding: 10px 12px 12px;
   }
 
   .phone-screen {
@@ -751,16 +771,20 @@ input[type='range']::-moz-range-thumb {
     max-height: none;
     border-width: 0;
     border-radius: 0;
-    padding: 8px;
+    padding: 6px 8px 8px;
+    box-shadow: none;
   }
 
   .phone-screen {
-    border-radius: 18px;
-    border-width: 2px;
+    border-radius: 14px;
+    border-width: 1px;
   }
 
-  /* Decorative “hardware” nubs — hide on narrow viewports to avoid horizontal bleed */
-  .phone-shell-side-buttons {
+  .phone-bezel-top {
+    min-height: 18px;
+  }
+
+  .phone-bezel-bottom {
     display: none;
   }
 }

@@ -9,9 +9,9 @@
       "steps": [
         {
           "type": "visual",
-          "background": "/sunset_apartments_bg.png",
+          "background": "/assets/bg/onboarding-route.svg",
           "portrait": "/portrait_lucy.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_lucy.svg",
           "focusSide": "right",
           "transition": "fade"
@@ -26,7 +26,7 @@
           "speakerId": "lucy",
           "text": "Morning, rookie. The city is waiting, and so is your first real route.",
           "portrait": "/portrait_lucy.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },
@@ -69,7 +69,7 @@
             }
           ],
           "portrait": "/portrait_lucy.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },
@@ -84,17 +84,27 @@
             }
           ],
           "portrait": "/portrait_lucy.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },
         {
-          "type": "trigger",
-          "event": "start_3d_combat",
-          "params": {
-            "enemy": "goblin"
-          },
-          "storeAs": "combatResult"
+          "type": "state",
+          "patch": {
+            "pluginResults": {
+              "start_3d_combat": {
+                "result": "victory",
+                "data": {
+                  "enemyId": "goblin",
+                  "healthLost": 12,
+                  "rewards": 150
+                }
+              }
+            },
+            "variables": {
+              "combatResult": "victory"
+            }
+          }
         },
         {
           "type": "jump",
@@ -109,9 +119,9 @@
         {
           "type": "dialogue",
           "speakerId": "lucy",
-          "text": "Good. The narrative layer handed control to the 3D arena and got the result back intact.",
+          "text": "Good. Sync layer ran a duel dry-run and handed the win flag back to the story — no arena hop required.",
           "portrait": "/portrait_lucy.svg",
-          "bustLeft": "/avatar_player.png",
+          "bustLeft": "/bust_kaizen.svg",
           "bustRight": "/bust_lucy.svg",
           "focusSide": "right"
         },

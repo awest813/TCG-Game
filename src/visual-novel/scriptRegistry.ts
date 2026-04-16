@@ -20,7 +20,8 @@ export const createChampionSession = (
   };
 };
 
-const slugifyLabel = (label: string) =>
+/** Slug for `public/vn/routes/<district>/<slug>.json` — must match action labels used in `DISTRICT_LOCATIONS`. */
+export const slugifyRouteLabel = (label: string) =>
   label
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -33,7 +34,7 @@ export const createActionSession = (
   type: 'EVENT' | 'TRAVEL' | 'DUEL',
   timeOfDay: TimeOfDay
 ): VNSession => {
-  const slug = slugifyLabel(label);
+  const slug = slugifyRouteLabel(label);
   const nextSceneOverrides: Record<string, SceneType> = {
     'challenge-elite-four': 'TOURNAMENT'
   };
@@ -63,13 +64,14 @@ export const createActionSession = (
   return baseSession;
 };
 
-export const createApartmentOnboardingSession = (starterLabel: string | undefined, canvasId: string): VNSession => ({
+/** Optional `canvasId` is only for VN plugins (e.g. combat) — use a dedicated canvas, not the apartment 3D scene canvas. */
+export const createApartmentOnboardingSession = (starterLabel: string | undefined, canvasId?: string): VNSession => ({
   scriptUrl: '/vn/demo-prologue.json',
   title: 'Apartment Onboarding',
   subtitle: `Lucy // ${starterLabel ?? 'Starter'} Route`,
   returnScene: 'APARTMENT',
   nextSceneOnComplete: 'DECK_EDITOR',
-  canvasId,
+  ...(canvasId ? { canvasId } : {}),
   sourceId: 'lucy-onboarding'
 });
 

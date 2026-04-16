@@ -50,7 +50,7 @@ export const BattleBoard: React.FC = () => {
   const opponent = NPCS.find((entry) => entry.id === opponentId);
   const trainer = getTrainerById(opponentId);
   const opponentName = opponent?.name ?? 'KAIZEN';
-  const opponentAvatar = trainer?.bustPath ?? trainer?.avatarPath ?? (opponentId === 'kaizen' ? '/avatar_kaizen.png' : '/avatar_player.png');
+  const opponentAvatar = trainer?.bustPath ?? trainer?.avatarPath ?? '/bust_kaizen.svg';
   const playerDeck = useMemo(() => {
     const ids = [...state.profile.inventory.deck];
     if (ids.length === 0) {
@@ -292,7 +292,7 @@ export const BattleBoard: React.FC = () => {
         };
 
   if (showVS) {
-    return <VSDisplay playerAvatar="/avatar_player.png" opponentAvatar={opponentAvatar} opponentName={opponentName.toUpperCase()} />;
+    return <VSDisplay playerAvatar="/bust_kaizen.svg" opponentAvatar={opponentAvatar} opponentName={opponentName.toUpperCase()} />;
   }
 
   return (
@@ -321,7 +321,7 @@ export const BattleBoard: React.FC = () => {
             <div className="glass-panel battle-rival-panel">
               <img className="battle-rival-avatar" src={opponentAvatar} alt={opponentName} />
               <div>
-                <div className="battle-kicker">Sonsotyo Dream Match</div>
+                <div className="battle-kicker">Official duel</div>
                 <div className="battle-rival-name" style={{ color: fieldTheme.accent }}>{opponentName}</div>
                 <div className="battle-rival-sub">{fieldTheme.mood}</div>
               </div>
@@ -332,7 +332,7 @@ export const BattleBoard: React.FC = () => {
             </div>
 
             <div className="glass-panel battle-feed">
-              <div className="battle-mini-label">Signal Feed</div>
+              <div className="battle-mini-label">Battle log</div>
               <div className="battle-feed-list">
                 {latestEvents.map((event, index) => (
                   <div key={index} className={`battle-feed-item ${index === 0 ? 'is-latest' : ''}`}>
@@ -341,7 +341,7 @@ export const BattleBoard: React.FC = () => {
                 ))}
               </div>
               <div className="battle-turn-pill" style={{ color: isPlayerTurn ? 'var(--accent-primary)' : 'var(--accent-secondary)' }}>
-                <span>{isPlayerTurn ? 'Your tempo' : 'Rival tempo'}</span>
+                <span>{isPlayerTurn ? 'Your turn' : "Rival's turn"}</span>
                 <strong>TURN {battleState.turn}</strong>
               </div>
               <div className={`battle-action-banner ${canAttack ? 'is-attack' : !isPlayerTurn ? 'is-wait' : 'is-setup'}`}>
@@ -366,7 +366,7 @@ export const BattleBoard: React.FC = () => {
                   </div>
                 ) : (
                   <div className="sonsotyo-caption" style={{ flex: '1 1 120px', opacity: 0.65, textTransform: 'none' }}>
-                    Exhibition sync — results stay in your career stats.
+                    Friendly exhibition—win or learn, your story still grows.
                   </div>
                 )}
                 <button
@@ -378,7 +378,7 @@ export const BattleBoard: React.FC = () => {
                     setShowSettings(true);
                   }}
                 >
-                  System
+                  Options
                 </button>
               </div>
             </div>
@@ -387,9 +387,9 @@ export const BattleBoard: React.FC = () => {
           <div className="battle-main">
             <div className="battle-stage" style={{ transform: boardShake ? 'translate(4px, 2px)' : 'none' }}>
               <div className="battle-stage-header">
-                <BattleStat label="Dream Sync" value={battleState.player.mana.toString()} detail={`${battleState.player.maxMana} max energy`} accent="var(--accent-primary)" />
-                <BattleStat label="Prize Pressure" value={`${playerPrizesTaken}-${opponentPrizesTaken}`} detail="captured marks" accent="var(--accent-yellow)" />
-                <BattleStat label="Sleep Phase" value={battleState.phase} detail={isPlayerTurn ? 'initiative in hand' : 'rival sequence live'} accent={isPlayerTurn ? 'var(--accent-primary)' : 'var(--accent-secondary)'} />
+                <BattleStat label="Your energy" value={battleState.player.mana.toString()} detail={`${battleState.player.maxMana} max`} accent="var(--accent-primary)" />
+                <BattleStat label="Prize duel" value={`${playerPrizesTaken}-${opponentPrizesTaken}`} detail="prizes taken" accent="var(--accent-yellow)" />
+                <BattleStat label="Duel phase" value={battleState.phase} detail={isPlayerTurn ? 'Your move!' : 'Hang tight—rival is thinking'} accent={isPlayerTurn ? 'var(--accent-primary)' : 'var(--accent-secondary)'} />
               </div>
 
               <div className="glass-panel battle-stage-shell" style={fieldTheme.stageStyle}>
@@ -404,13 +404,13 @@ export const BattleBoard: React.FC = () => {
               <LifePointTracker value={battleState.opponent.prizes} name="Rival prizes" color="var(--accent-secondary)" />
               <LifePointTracker value={battleState.player.prizes} name="Your prizes" color="var(--accent-primary)" />
               <div className="glass-panel battle-energy">
-                <div className="battle-mini-label">Energy Weave</div>
+                <div className="battle-mini-label">Energy bar</div>
                 <div className="battle-energy-bar">
                   <div className="battle-energy-fill" style={{ width: `${(battleState.player.mana / Math.max(1, battleState.player.maxMana)) * 100}%` }} />
                 </div>
                 <div className="battle-energy-meta">
                   <strong style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>{battleState.player.mana}/{battleState.player.maxMana}</strong>
-                  <span className="battle-mini-label" style={{ color: isPlayerTurn ? 'var(--accent-primary)' : 'var(--accent-secondary)' }}>{isPlayerTurn ? 'Your Window' : 'Locked'}</span>
+                  <span className="battle-mini-label" style={{ color: isPlayerTurn ? 'var(--accent-primary)' : 'var(--accent-secondary)' }}>{isPlayerTurn ? 'Go for it!' : 'Stand by'}</span>
                 </div>
               </div>
               {hoveredCard ? <CardInspector card={hoveredCard} /> : <IdleInspector opponentName={opponentName} fieldLabel={fieldTheme.label} />}
@@ -602,7 +602,7 @@ const LifePointTracker: React.FC<{ value: number; name: string; color: string }>
   <div className="glass-panel battle-prizes">
     <div className="battle-mini-label">{name}</div>
     <div className="battle-prize-value" style={{ color }}>{value}/3</div>
-    <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Marks left before collapse.</div>
+    <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>Grab three prizes to win this duel.</div>
   </div>
 );
 
@@ -610,7 +610,7 @@ const VSDisplay: React.FC<{ playerAvatar: string; opponentAvatar: string; oppone
   <div className="battle-vs-screen fade-in">
     <img className="battle-vs-portrait" src={playerAvatar} alt="P1" />
     <div className="battle-vs-center">
-      <div className="battle-kicker">Sonsotyo Sequence</div>
+      <div className="battle-kicker">Ready… set…</div>
       <div className="battle-vs-mark">VS</div>
       <div className="battle-vs-opponent">{opponentName}</div>
     </div>
@@ -633,9 +633,9 @@ const EndMatchModal: React.FC<{ title: string; color: string; body: string; onEx
 const IdleInspector: React.FC<{ opponentName: string; fieldLabel: string }> = ({ opponentName, fieldLabel }) => (
   <div className="glass-panel battle-inspector">
     <div className="battle-mini-label">Card readout</div>
-    <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.4rem' }}>Sonsotyo Lens</div>
+    <div style={{ marginTop: '10px', fontFamily: 'var(--font-display)', fontSize: '1.4rem' }}>Card zoom</div>
     <div style={{ marginTop: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-      Hover any card to inspect stats and rules. {opponentName} is holding the {fieldLabel} field channel.
+      Hover any card to peek at stats and moves. {opponentName} is channeling the {fieldLabel} field today.
     </div>
   </div>
 );

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { GAME_TAGLINE, GAME_TITLE } from '../core/gameBranding';
 import { useGame } from '../core/GameContext';
 import { hasAutosave } from '../core/gameStatePersistence';
 import { NewGameConfig } from '../core/types';
@@ -20,22 +21,22 @@ const STARTER_OPTIONS: Array<{
     id: 'Pulse',
     title: 'Pulse Rush',
     partner: 'Ziprail',
-    summary: 'Fast starts, direct pressure, and easy-to-read aggressive turns.',
-    bullets: ['Best for players who want clean early attacks', 'Learns tempo through direct damage and buffs', 'Starts with Metro Pulse packs']
+    summary: 'Ziprail and friends love a fast start—great if you want to cheer loud and strike first!',
+    bullets: ['Friendly for learning big hits early', 'Ziprail is quick on its feet—just like you', 'Opens with Metro Pulse–style energy']
   },
   {
     id: 'Bloom',
     title: 'Bloom Sustain',
     partner: 'Mosshop',
-    summary: 'Healing, survivability, and forgiving board states for learning.',
-    bullets: ['Best for slower, steadier play', 'Makes mistakes less punishing with healing', 'Starts with Garden Shift support']
+    summary: 'Mosshop keeps spirits high—healing and cozy boards when you want room to breathe.',
+    bullets: ['Perfect when you like a steady adventure', 'Forgives little mistakes with a warm heal loop', 'Garden Shift pals tag along']
   },
   {
     id: 'Tide',
     title: 'Tide Control',
     partner: 'Wharfin',
-    summary: 'Draw tools, flexible responses, and more tactical pacing.',
-    bullets: ['Best for players who like setup and decisions', 'Teaches resource flow and board control', 'Starts with Bayline-flavored utility']
+    summary: 'Wharfin flows with the tide—draw a little, think a little, then make the perfect splash.',
+    bullets: ['For trainers who love a clever setup', 'Teaches rhythm without the rush', 'Bayline buddies back you up']
   }
 ];
 
@@ -45,7 +46,7 @@ export const MainMenu: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [hasSaveData, setHasSaveData] = useState(false);
-  const [playerName, setPlayerName] = useState('Neo Rookie');
+  const [playerName, setPlayerName] = useState('New Trainer');
   const [starter, setStarter] = useState<NewGameConfig['starter']>('Pulse');
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -70,11 +71,11 @@ export const MainMenu: React.FC = () => {
 
   const handleContinue = () => {
     if (loadGame()) {
-      setStatusMessage('Session restored — returning to your last scene.');
+      setStatusMessage('Welcome back! Sending you right to where you left off.');
       setHasSaveData(hasAutosave());
       return;
     }
-    setStatusMessage('No autosave on file. Create a new duelist or use Recovery for manual slots.');
+    setStatusMessage('No save yet—tap New Trainer for a fresh start, or Recovery if you brought a backup file.');
   };
 
   const handleCreateCareer = () => {
@@ -99,44 +100,33 @@ export const MainMenu: React.FC = () => {
       <div className="sonsotyo-content launcher-shell">
         <header className="launcher-header">
           <div className="launcher-brand">
-            <span className="launcher-brand-eyebrow">Sonsotyo circuit · client</span>
-            <h1 className="launcher-title">Sleep Future</h1>
-            <p className="launcher-subtitle">Duel Signal</p>
+            <span className="launcher-brand-eyebrow">Official league client</span>
+            <h1 className="launcher-title launcher-title--official">{GAME_TITLE}</h1>
+            <p className="launcher-subtitle">{GAME_TAGLINE}</p>
           </div>
           <div className="launcher-header-meta">
-            <div className="launcher-realm-pill" title="Persistent progression on this device">
+            <div className="launcher-realm-pill" title="Your adventure saves on this device">
               <span className="launcher-realm-dot" aria-hidden="true" />
-              Realm: Neo Terminal
+              Your league link
             </div>
-            <span className="launcher-build">Build {CLIENT_BUILD}</span>
+            <span className="launcher-build">{CLIENT_BUILD}</span>
           </div>
         </header>
 
-        <div className="launcher-body">
+        <div className={`launcher-body${hasSaveData ? ' launcher-body--solo' : ''}`}>
           <section className="launcher-column launcher-column--primary" aria-labelledby="launcher-lede-heading">
             <h2 id="launcher-lede-heading" className="launcher-lede">
-              Neon card duels and a handheld circuit ladder. Resume your run or register a new duelist—deck edits and profile
-              stay available from this screen without starting over.
+              Pick up your story anytime—your deck and Trainer profile are always a tap away, just like your favorite handheld
+              classics.
             </h2>
 
             <div className="launcher-session-bar" role="status">
-              <div className="launcher-session-label">World status</div>
               <p className="launcher-session-msg">
                 {statusMessage ??
                   (hasSaveData
-                    ? 'Autosave ready — Enter world to load your last scene and objectives.'
-                    : 'No autosave yet — New duelist runs the apartment tutorial, then transit and the district.')}
+                    ? 'We found your save—Enter world hops you back into the action!'
+                    : 'No save yet—New Trainer kicks off with Lucy in your apartment, then the city opens up!')}
               </p>
-              <dl className="launcher-session-facts">
-                <div>
-                  <dt>Character</dt>
-                  <dd>{hasSaveData ? 'Returning pilot' : 'None registered'}</dd>
-                </div>
-                <div>
-                  <dt>Save data</dt>
-                  <dd>{hasSaveData ? 'Local autosave' : '—'}</dd>
-                </div>
-              </dl>
             </div>
 
             <div className="launcher-primary-actions">
@@ -149,8 +139,8 @@ export const MainMenu: React.FC = () => {
                   handleContinue();
                 }}
               >
-                <span className="launcher-cta-title">Enter world</span>
-                <span className="launcher-cta-hint">Load autosave · resume last scene</span>
+                <span className="launcher-cta-title">Continue adventure</span>
+                <span className="launcher-cta-hint">Jump back in</span>
               </button>
               <button
                 type="button"
@@ -160,61 +150,40 @@ export const MainMenu: React.FC = () => {
                   setShowOnboarding(true);
                 }}
               >
-                <span className="launcher-cta-title">New duelist</span>
-                <span className="launcher-cta-hint">Name · starter · apartment opener</span>
+                <span className="launcher-cta-title">New Trainer</span>
+                <span className="launcher-cta-hint">Name & partner deck</span>
               </button>
             </div>
 
             <nav className="launcher-nav" aria-label="Title services">
-              <LauncherNavRow
-                icon="I"
-                label="Profile"
-                detail="Stats, collection, circuit history"
-                onClick={() => updateGameState({ profileReturn: 'MAIN_MENU', currentScene: 'PROFILE' })}
-              />
-              <LauncherNavRow
-                icon="II"
-                label="Deck"
-                detail="Edit loadout before you ship out"
-                onClick={() => updateGameState({ deckEditorReturn: 'MAIN_MENU', currentScene: 'DECK_EDITOR' })}
-              />
-              <LauncherNavRow
-                icon="III"
-                label="Recovery"
-                detail="Three manual slots + import / export"
-                onClick={() => setScene('SAVE_LOAD')}
-              />
-              <LauncherNavRow
-                icon="IV"
-                label="Settings"
-                detail="Audio, display, fullscreen"
-                onClick={() => setShowSettings(true)}
-              />
+              <LauncherNavRow label="Trainer profile" detail="Your story & stats" onClick={() => updateGameState({ profileReturn: 'MAIN_MENU', currentScene: 'PROFILE' })} />
+              <LauncherNavRow label="Deck box" detail="Tune your partners" onClick={() => updateGameState({ deckEditorReturn: 'MAIN_MENU', currentScene: 'DECK_EDITOR' })} />
+              <LauncherNavRow label="Save corner" detail="Backups & import" onClick={() => setScene('SAVE_LOAD')} />
+              <LauncherNavRow label="Options" detail="Sound & screen" onClick={() => setShowSettings(true)} />
             </nav>
           </section>
 
-          <aside className="launcher-column launcher-column--side">
-            {!hasSaveData && (
+          {!hasSaveData && (
+            <aside className="launcher-column launcher-column--side">
               <div className="launcher-panel launcher-panel--notice">
                 <div className="launcher-panel-head">
-                  <span className="launcher-panel-tag">Quest</span>
-                  <h3 className="launcher-panel-title">First session</h3>
+                  <span className="launcher-panel-tag">Starter</span>
+                  <h3 className="launcher-panel-title">Your first league day</h3>
                 </div>
                 <ol className="launcher-quest-list">
-                  <li>New duelist — callsign and starter style.</li>
-                  <li>Apartment — Lucy&apos;s briefing; use the terminal to review cards.</li>
-                  <li>Transit — Sunset Terminal, then the district.</li>
-                  <li>Card Annex — beginner bracket, then ladders toward your license.</li>
+                  <li>Pick a Trainer name and a starter deck vibe you love.</li>
+                  <li>Meet Lucy at home—she&apos;ll show you the card terminal.</li>
+                  <li>Ride transit to Sunset Terminal, then explore the district.</li>
+                  <li>Visit the Card Annex for a warm-up bracket on the way to your license.</li>
                 </ol>
               </div>
-            )}
 
             <div className="launcher-panel">
               <div className="launcher-panel-head">
-                <span className="launcher-panel-tag">Classes</span>
-                <h3 className="launcher-panel-title">Starter styles</h3>
+                <span className="launcher-panel-tag">Partners</span>
+                <h3 className="launcher-panel-title">Starter decks</h3>
               </div>
-              <p className="launcher-panel-copy">Picked during registration. Same three paths in the character dialog.</p>
+              <p className="launcher-panel-copy">You&apos;ll choose one in a moment—each path has a signature partner waiting for you.</p>
               <div className="launcher-starter-rows">
                 {STARTER_OPTIONS.map((option) => (
                   <SonsotyoDiagnosticRow
@@ -229,23 +198,17 @@ export const MainMenu: React.FC = () => {
 
             <div className="launcher-panel launcher-panel--muted">
               <div className="launcher-panel-head">
-                <span className="launcher-panel-tag">Tip</span>
-                <h3 className="launcher-panel-title">In the city</h3>
+                <span className="launcher-panel-tag">Hint</span>
+                <h3 className="launcher-panel-title">Around town</h3>
               </div>
-              <p className="launcher-panel-copy">
-                The objective rail in most scenes tracks your current task. After the annex, major tournaments open from district
-                gates.
-              </p>
+              <p className="launcher-panel-copy">Keep an eye on the little quest line at the top—it cheers you toward the next big moment. Big stadium events open once you clear the annex.</p>
             </div>
-          </aside>
+            </aside>
+          )}
         </div>
 
         <footer className="launcher-footer">
-          <span>Dev console · grave accent (`) key</span>
-          <span className="launcher-footer-sep" aria-hidden="true">
-            ·
-          </span>
-          <span>Sound buses active</span>
+          <span className="launcher-footer-hint">` — debug</span>
         </footer>
       </div>
 
@@ -265,12 +228,12 @@ export const MainMenu: React.FC = () => {
           >
             <div className="launcher-dialog-head">
               <div>
-                <span className="launcher-dialog-eyebrow">Character creation</span>
+                <span className="launcher-dialog-eyebrow">Let&apos;s meet you</span>
                 <h2 id="main-menu-onboarding-title" className="launcher-dialog-title">
-                  Register duelist
+                  Create your Trainer
                 </h2>
                 <p id="main-menu-onboarding-desc" className="launcher-dialog-desc">
-                  Escape or backdrop closes this panel. You begin in the apartment (morning), then transit and the district.
+                  Press Escape or tap outside to close. We&apos;ll drop you in a sunny morning at your apartment—Lucy can&apos;t wait to say hi—then it&apos;s off to the city!
                 </p>
               </div>
               <button type="button" onClick={() => setShowOnboarding(false)} className="launcher-dialog-dismiss">
@@ -281,33 +244,33 @@ export const MainMenu: React.FC = () => {
             <div className="sonsotyo-starter-grid">
               <div>
                 <div className="main-menu-step-badge">1</div>
-                <SonsotyoKicker style={{ marginBottom: '10px' }}>Display name</SonsotyoKicker>
+                <SonsotyoKicker style={{ marginBottom: '10px' }}>Trainer name</SonsotyoKicker>
                 <input
                   ref={nameInputRef}
                   className="glass-panel main-menu-name-input launcher-name-input"
                   value={playerName}
                   maxLength={24}
                   autoComplete="username"
-                  aria-label="Duelist display name"
+                  aria-label="Trainer display name"
                   aria-invalid={!canSubmitCareer}
                   onChange={(event) => setPlayerName(event.target.value.slice(0, 24))}
                   onBlur={() => setPlayerName((v) => v.trim().replace(/\s+/g, ' '))}
-                  placeholder="Callsign"
+                  placeholder="Your Trainer name"
                   style={{ width: '100%', padding: '14px 16px', color: 'var(--text-bright)', fontSize: '1rem' }}
                 />
                 <div className="sonsotyo-caption launcher-input-meta" style={{ marginTop: '8px', textTransform: 'none' }}>
-                  {normalizedName.length}/24 · letters, numbers, spaces (trimmed for save)
+                  {normalizedName.length}/24 letters · we&apos;ll tidy extra spaces for you
                 </div>
                 {!canSubmitCareer && (
                   <div className="sonsotyo-caption main-menu-name-hint" style={{ marginTop: '6px', textTransform: 'none' }}>
-                    Add at least one character for your callsign.
+                    Type at least one letter or number so friends can shout your name!
                   </div>
                 )}
 
                 <div className="main-menu-step-badge" style={{ marginTop: '22px' }}>
                   2
                 </div>
-                <SonsotyoKicker style={{ marginTop: '8px', marginBottom: '12px' }}>Starter deck style</SonsotyoKicker>
+                <SonsotyoKicker style={{ marginTop: '8px', marginBottom: '12px' }}>Pick your first partner vibe</SonsotyoKicker>
                 <div className="sonsotyo-option-list" role="group" aria-label="Starter style">
                   {STARTER_OPTIONS.map((option) => (
                     <button
@@ -327,9 +290,9 @@ export const MainMenu: React.FC = () => {
 
               <SonsotyoPanel className="launcher-review-panel">
                 <div className="main-menu-step-badge">3</div>
-                <SonsotyoKicker style={{ marginTop: '8px' }}>Review</SonsotyoKicker>
+                <SonsotyoKicker style={{ marginTop: '8px' }}>All set?</SonsotyoKicker>
                 <div style={{ marginTop: '12px', fontFamily: 'var(--font-main)', fontSize: '1.05rem', color: 'var(--text-secondary)' }}>
-                  Pilot <span style={{ color: 'var(--accent-secondary)' }}>{normalizedName || '—'}</span>
+                  Trainer <span style={{ color: 'var(--accent-secondary)' }}>{normalizedName || '—'}</span>
                 </div>
                 <div
                   style={{
@@ -350,8 +313,8 @@ export const MainMenu: React.FC = () => {
                   ))}
                 </ul>
                 <button type="submit" className="launcher-cta launcher-cta--confirm" disabled={!canSubmitCareer}>
-                  <span className="launcher-cta-title">Begin at apartment</span>
-                  <span className="launcher-cta-hint">Tutorial · Lucy · morning</span>
+                  <span className="launcher-cta-title">Start my adventure!</span>
+                  <span className="launcher-cta-hint">Apartment · Lucy · sunny morning</span>
                 </button>
               </SonsotyoPanel>
             </div>
@@ -365,11 +328,10 @@ export const MainMenu: React.FC = () => {
 };
 
 const LauncherNavRow: React.FC<{
-  icon: string;
   label: string;
   detail: string;
   onClick: () => void;
-}> = ({ icon, label, detail, onClick }) => (
+}> = ({ label, detail, onClick }) => (
   <button
     type="button"
     className="launcher-nav-row"
@@ -378,9 +340,6 @@ const LauncherNavRow: React.FC<{
       onClick();
     }}
   >
-    <span className="launcher-nav-idx" aria-hidden="true">
-      {icon}
-    </span>
     <span className="launcher-nav-text">
       <span className="launcher-nav-label">{label}</span>
       <span className="launcher-nav-detail">{detail}</span>
